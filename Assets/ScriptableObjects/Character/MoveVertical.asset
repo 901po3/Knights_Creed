@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: MoveVertical
   m_EditorClassIdentifier: 
   duration: 0
-  speed: 5
+  forwardSpeed: 5
+  backwardSpeed: 3
