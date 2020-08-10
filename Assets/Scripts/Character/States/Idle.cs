@@ -3,10 +3,8 @@
  * Date: 2020.8.10
  * Last Modified : 2020.8.10
  * Author: Hyukin Kwon 
- * Description:  
+ * Description:  서 있는 애니메이션 스크립터블오브젝트
 */
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HyukinKwon
@@ -19,7 +17,7 @@ namespace HyukinKwon
             CharacterControl character = characterState.GetCharacterControl(animator);
 
             float vz = character.velocity.z;
-            if (vz > 0.1f || vz < -0.1f)
+            if (vz > 0.1f || vz < -0.1f) //이동 중이면 이동 애니메이션 재생
             {
                 animator.SetFloat("RunningVeritical", vz);
             }

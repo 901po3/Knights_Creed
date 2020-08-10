@@ -3,10 +3,8 @@
  * Date: 2020.8.10
  * Last Modified : 2020.8.10
  * Author: Hyukin Kwon 
- * Description:  
+ * Description:  앞뒤 이동 에니메이션 스크립터블오브젝트
 */
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HyukinKwon
@@ -16,6 +14,8 @@ namespace HyukinKwon
     {
         public float forwardSpeed;
         public float backwardSpeed;
+
+        //속도에 따라 앞뒤 이동과 맞는 애니메이션 재생
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
