@@ -28,16 +28,10 @@ namespace HyukinKwon
             transform.position = cameraManObj.transform.position;
         }
 
-        private void Update()
-        {
-            //Rotate();
-            //transform.rotation = cameraManObj.transform.rotation;
-            //Move();
-        }
-
         private void FixedUpdate()
         {
-            transform.rotation = cameraManObj.transform.rotation;
+            //transform.rotation = cameraManObj.transform.rotation;
+            Rotate();
             Move();
         }
 
@@ -82,14 +76,14 @@ namespace HyukinKwon
 
             //2. cameraManObj를 회전
             Vector3 angle = cameraManObj.transform.eulerAngles;
-            float mouseY = Input.GetAxis("Mouse Y");
-            if (mouseY > 0)  //마우스 오른쪽으로 이동
+            float mouseX = Input.GetAxis("Mouse X");
+            if (mouseX > 0)  //마우스 오른쪽으로 이동
             {
-                angle.y += Input.GetAxis("Mouse Y");
+                angle.y += mouseX;
             }
-            else if (mouseY < 0) //마우스 왼쪽 이동
+            else if (mouseX < 0) //마우스 왼쪽 이동
             {
-                angle.y -= Input.GetAxis("Mouse Y");
+                angle.y -= mouseX;
             }
             Quaternion rot = Quaternion.Euler(angle);
             cameraManObj.transform.rotation = Quaternion.Slerp(cameraManObj.transform.rotation, rot, rotSpeed * Time.deltaTime);

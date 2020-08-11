@@ -12,6 +12,17 @@ namespace HyukinKwon
     public class CameraMan : MonoBehaviour
     {
         [SerializeField] private GameObject player;
+        private Rigidbody rigidbody;
+
+        private void Awake()
+        {
+            rigidbody = GetComponent<Rigidbody>();
+        }
+
+        public Rigidbody GetRigidbody()
+        {
+            return rigidbody;
+        }
 
         private void FixedUpdate()
         {
