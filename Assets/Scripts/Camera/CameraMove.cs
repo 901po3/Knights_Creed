@@ -22,6 +22,8 @@ namespace HyukinKwon
 
         //회전 관련 변수
         [SerializeField] private float rotSpeed;
+        [SerializeField] float minAngle;
+        [SerializeField] float maxAngle;
         float prevX = 0;
 
         private void Awake()
@@ -84,8 +86,11 @@ namespace HyukinKwon
             Vector3 angle = cameraManObj.transform.eulerAngles;
             float sensitivity = 10f;
             angle.y += Input.GetAxis("Mouse X") * sensitivity;
-            Quaternion rot = Quaternion.Euler(angle);
+            angle.x -= Input.GetAxis("Mouse Y") * sensitivity;
+            angle.x = Mathf.Clamp(angle.x, minAngle, maxAngle);
+            Quaternion rot = Quaternion.Euler(angle.x, angle.y, 0);
             cameraManObj.transform.rotation = Quaternion.Slerp(cameraManObj.transform.rotation, rot, rotSpeed * Time.deltaTime);
+
 
             //3. 회전 후 저장했던 distance만큼 이동
             transform.position = transform.position - cameraManObj.transform.forward * curDistance;

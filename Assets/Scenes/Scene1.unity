@@ -850,7 +850,9 @@ MonoBehaviour:
   maxDistance: 3.5
   zoomSpeed: 30
   distanceSpeed: 30
-  rotSpeed: 40
+  rotSpeed: 35
+  minAngle: -240
+  maxAngle: 60
 --- !u!4 &4700934884605281521
 Transform:
   m_ObjectHideFlags: 0
