@@ -20,8 +20,8 @@ namespace HyukinKwon
         public Vector3 runVelocity = Vector3.zero;
 
         //이동 방향의 기준
-        //플레이어면 카매라가 바라보는 방향
-        public Vector3 facingStandardDir = Vector3.zero;
+        //플레이어면 카매라 - 카매라 정면이 기준
+        public Transform facingStandardTransfom;
 
         public Animator GetAnimator()
         {

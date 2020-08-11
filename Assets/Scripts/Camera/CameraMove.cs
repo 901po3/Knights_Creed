@@ -21,29 +21,19 @@ namespace HyukinKwon
         [SerializeField] private float distanceSpeed; //부드러운 카매라 이동
 
         //회전 관련 변수
-        [SerializeField] private float minHeight;
-        [SerializeField] private float maxHeight;
         [SerializeField] private float rotSpeed;
 
         private void Awake()
         {
-            Cursor.visible = false;
             transform.position = cameraManObj.transform.position;
         }
 
         private void Update()
         {
-            Rotate();
+            //Rotate();
+            transform.rotation = cameraManObj.transform.rotation;
             Move();
         }
-
-        //private void FixedUpdate()
-        //{
-        //    if (Vector3.Distance(cameraManObj.transform.position, transform.position) > maxDistance)
-        //    {
-        //        transform.position = transform.position - cameraManObj.transform.forward * maxDistance;
-        //    }
-        //}
 
         private void Move()
         {
