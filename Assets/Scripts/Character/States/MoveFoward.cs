@@ -1,9 +1,11 @@
 ﻿/*
  * Class: MoveVertical
  * Date: 2020.8.10
- * Last Modified : 2020.8.10
+ * Last Modified : 2020.8.11
  * Author: Hyukin Kwon 
- * Description:  앞뒤 이동 에니메이션 스크립터블오브젝트
+ * Description: 이동 에니메이션 스크립터블오브젝트
+ *              캐릭터는 항상 바라보는 방향기준 앞으로 이동
+ *              다른 방향으로 이동하면 회전 후 이동
 */
 using UnityEngine;
 
@@ -28,12 +30,11 @@ namespace HyukinKwon
 
             //속도 적용
             float dir = character.runVelocity.normalized.magnitude;
-            Debug.Log(dir);
             animator.SetFloat("RunningVeritical", dir);
-            character.transform.Translate(Vector3.forward * runSpeed * dir * Time.deltaTime);
+            character.transform.Translate(Vector3.forward * runSpeed * dir * Time.fixedDeltaTime);
             //회전
             character.transform.rotation = 
-                Quaternion.LookRotation(Vector3.RotateTowards(character.transform.forward, character.runVelocity, turnSpeed * Time.deltaTime, 0f));
+                Quaternion.LookRotation(Vector3.RotateTowards(character.transform.forward, character.runVelocity, turnSpeed * Time.fixedDeltaTime, 0f));
         }
     }
 }

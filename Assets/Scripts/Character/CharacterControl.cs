@@ -1,7 +1,7 @@
 ﻿/*
  * Class: CharacterControl
  * Date: 2020.8.10
- * Last Modified : 2020.8.10
+ * Last Modified : 2020.8.11
  * Author: Hyukin Kwon 
  * Description: 캐릭터(플레이어, AI)의 상태 클래스 
  *              플레이어면 인풋 클래스와 함께 사용

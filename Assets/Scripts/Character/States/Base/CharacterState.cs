@@ -1,7 +1,7 @@
 ﻿/*
  * Class: CharacterState
  * Date: 2020.8.10
- * Last Modified : 2020.8.10
+ * Last Modified : 2020.8.11
  * Author: Hyukin Kwon 
  * Description: 애니메이션에 들어가는 스크립트로
  *              사용 중인 모든 애니메이션 스크립터블오브젝트를 재생
@@ -37,6 +37,7 @@ namespace HyukinKwon
             }
         }
 
+        //MonoBehaviour의 Update와 동일한 함수
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             UpdateAll(this, animator);

@@ -1,7 +1,7 @@
 ﻿/*
  * Class: CharacterState
  * Date: 2020.8.10
- * Last Modified : 2020.8.10
+ * Last Modified : 2020.8.11
  * Author: Hyukin Kwon 
  * Description: 플레이어의 인풋을 받는 클래스
  *              플레이어의 인풋으로 CharacterControl 상태 변수를 제어한다.

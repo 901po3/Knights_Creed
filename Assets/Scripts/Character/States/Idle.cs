@@ -1,7 +1,7 @@
 ﻿/*
  * Class: Idle
  * Date: 2020.8.10
- * Last Modified : 2020.8.10
+ * Last Modified : 2020.8.11
  * Author: Hyukin Kwon 
  * Description:  서 있는 애니메이션 스크립터블오브젝트
 */
