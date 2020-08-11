@@ -27,6 +27,9 @@ namespace HyukinKwon
 
         private void MoveVerticalInput()
         {
+            //플레이어의 이동 방향 기준 카매라 정면으로 설정
+            character.facingStandardDir = Camera.main.transform.forward; 
+
             character.runVelocity.z = Input.GetAxis("Vertical");
             character.runVelocity.x = Input.GetAxis("Horizontal");
         }

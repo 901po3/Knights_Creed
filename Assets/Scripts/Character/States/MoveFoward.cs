@@ -31,10 +31,13 @@ namespace HyukinKwon
             //속도 적용
             float dir = character.runVelocity.normalized.magnitude;
             animator.SetFloat("RunningVeritical", dir);
-            character.transform.Translate(Vector3.forward * runSpeed * dir * Time.deltaTime);
+            character.transform.Translate(character.facingStandardDir * dir * runSpeed * Time.deltaTime); //지정된 방향 기준을 중심으로 이동 
             //회전
+            Vector3 targetDirection = character.runVelocity.normalized;
+            targetDirection = Camera.main.transform.TransformDirection(targetDirection);
+            targetDirection.y = 0f;
             character.transform.rotation = 
-                Quaternion.LookRotation(Vector3.RotateTowards(character.transform.forward, character.runVelocity, turnSpeed * Time.deltaTime, 0f));
+                Quaternion.LookRotation(Vector3.RotateTowards(character.transform.forward, targetDirection, turnSpeed * Time.deltaTime, 0f));
         }
     }
 }
