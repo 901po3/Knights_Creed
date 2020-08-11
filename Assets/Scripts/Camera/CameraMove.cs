@@ -22,16 +22,22 @@ namespace HyukinKwon
 
         //회전 관련 변수
         [SerializeField] private float rotSpeed;
+        float prevX = 0;
 
         private void Awake()
         {
             transform.position = cameraManObj.transform.position;
+            Cursor.lockState = CursorLockMode.Locked; //회전을 위해 마우스커서 잠금
+        }
+
+        private void Update()
+        {
+            Rotate();
         }
 
         private void FixedUpdate()
         {
             //transform.rotation = cameraManObj.transform.rotation;
-            Rotate();
             Move();
         }
 
@@ -76,23 +82,16 @@ namespace HyukinKwon
 
             //2. cameraManObj를 회전
             Vector3 angle = cameraManObj.transform.eulerAngles;
-            float mouseX = Input.GetAxis("Mouse X");
-            if (mouseX > 0)  //마우스 오른쪽으로 이동
-            {
-                angle.y += mouseX;
-            }
-            else if (mouseX < 0) //마우스 왼쪽 이동
-            {
-                angle.y -= mouseX;
-            }
+            float sensitivity = 10f;
+            angle.y += Input.GetAxis("Mouse X") * sensitivity;
             Quaternion rot = Quaternion.Euler(angle);
             cameraManObj.transform.rotation = Quaternion.Slerp(cameraManObj.transform.rotation, rot, rotSpeed * Time.deltaTime);
 
             //3. 회전 후 저장했던 distance만큼 이동
             transform.position = transform.position - cameraManObj.transform.forward * curDistance;
-            transform.rotation = cameraManObj.transform.rotation;
-            //transform.LookAt(cameraManObj.transform);
 
+            prevX = Input.GetAxis("Mouse X");
+            transform.rotation = cameraManObj.transform.rotation;
         }
     }
 }
