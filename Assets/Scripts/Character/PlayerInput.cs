@@ -27,11 +27,8 @@ namespace HyukinKwon
 
         private void MoveVerticalInput()
         {
-            float vertical = Input.GetAxis("Vertical");
-            if(vertical >= 0)
-            {
-                character.runningState = vertical;
-            }
+            character.runVelocity.z = Input.GetAxis("Vertical");
+            character.runVelocity.x = Input.GetAxis("Horizontal");
         }
     }
 

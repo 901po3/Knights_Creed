@@ -16,8 +16,7 @@ namespace HyukinKwon
         private Animator animator;
 
         //상태 변수들 (애니메이션 전환에 쓰인다)
-        [Range(0, 1)]
-        public float runningState;
+        public Vector3 runVelocity = Vector3.zero;
 
         public Animator GetAnimator()
         {
