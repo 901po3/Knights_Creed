@@ -12,11 +12,18 @@ namespace HyukinKwon
     public class CameraMove : MonoBehaviour
     {
         [SerializeField] private GameObject campPivotObj;
+
+        //이동 관련 변수
         [SerializeField] private float distance;
         [SerializeField] private float minDistance;
         [SerializeField] private float maxDistance;
-        [SerializeField] private float zoomSpeed;
-        private float distanceSpeed = 15;
+        [SerializeField] private float zoomSpeed; // 마우스 스크롤에 의한 줌 속도
+        [SerializeField] private float distanceSpeed; //부드러운 카매라 이동
+
+        //회전 관련 변수
+        [SerializeField] private float minHeight;
+        [SerializeField] private float maxHeight;
+        [SerializeField] private float rotSpeed;
 
         private void Awake()
         {
@@ -25,6 +32,7 @@ namespace HyukinKwon
 
         private void Update()
         {
+            //Rotate();
             Move();
         }
 
@@ -51,13 +59,23 @@ namespace HyukinKwon
                 {
                     transform.localPosition = Vector3.Lerp(transform.position, campPivotObj.transform.position - Vector3.forward * hit.distance, distanceSpeed * Time.deltaTime);
                 }
-                Debug.Log(hit.transform.gameObject);
             }
             else //사이에 물체가 없으면 기존에 구한 Distance값 적용
             {
                 transform.localPosition = Vector3.Lerp(transform.position, campPivotObj.transform.position - Vector3.forward * distance, distanceSpeed * Time.deltaTime);
-                Debug.Log("Did not hit");
             }
+        }
+
+        private void Rotate()
+        {
+            Vector3 angle = campPivotObj.transform.eulerAngles;
+            angle.y += Input.GetAxis("Mouse X") * Time.deltaTime * rotSpeed;
+            angle.x += Input.GetAxis("Mouse Y") * Time.deltaTime * rotSpeed;
+            angle.x = Mathf.Clamp(angle.x, minHeight, maxHeight);
+
+            Quaternion rot = Quaternion.Euler(angle);
+            campPivotObj.transform.rotation = Quaternion.Slerp(campPivotObj.transform.rotation, rot, rotSpeed * Time.deltaTime);
+            transform.rotation = campPivotObj.transform.rotation;
         }
     }
 }

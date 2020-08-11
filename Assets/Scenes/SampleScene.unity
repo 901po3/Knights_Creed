@@ -434,7 +434,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 84
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!114 &742671087
 MonoBehaviour:
@@ -691,6 +691,10 @@ MonoBehaviour:
   minDistance: 0.5
   maxDistance: 3.5
   zoomSpeed: 80
+  distanceSpeed: 50
+  minHeight: 0
+  maxHeight: 10
+  rotSpeed: 15
 --- !u!1001 &1237344032
 PrefabInstance:
   m_ObjectHideFlags: 0

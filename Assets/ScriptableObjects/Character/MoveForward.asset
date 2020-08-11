@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: MoveForward
   m_EditorClassIdentifier: 
   duration: 0
-  runSpeed: 1
-  turnSpeed: 7.5
+  runSpeed: 4
+  turnSpeed: 15
