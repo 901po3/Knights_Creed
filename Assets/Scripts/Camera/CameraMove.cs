@@ -31,6 +31,12 @@ namespace HyukinKwon
         private void Update()
         {
             //Rotate();
+            //transform.rotation = cameraManObj.transform.rotation;
+            //Move();
+        }
+
+        private void FixedUpdate()
+        {
             transform.rotation = cameraManObj.transform.rotation;
             Move();
         }
@@ -56,14 +62,14 @@ namespace HyukinKwon
             {
                 if (hit.transform.tag != "MainCamera")
                 {
-                    transform.localPosition = Vector3.Lerp(transform.position, cameraManObj.transform.position + dir * hit.distance, distanceSpeed * Time.deltaTime);
+                    transform.localPosition = Vector3.Lerp(transform.position, cameraManObj.transform.position + dir * hit.distance, distanceSpeed * Time.fixedDeltaTime);
                     Debug.DrawRay(cameraManObj.transform.position, dir * hit.distance, Color.green);
                 }
             }
             else //사이에 물체가 없으면 기존에 구한 Distance값 적용
             {
                 Debug.DrawRay(cameraManObj.transform.position, dir * distance, Color.red);
-                transform.localPosition = Vector3.Lerp(transform.position, cameraManObj.transform.position + dir * distance, distanceSpeed * Time.deltaTime);
+                transform.localPosition = Vector3.Lerp(transform.position, cameraManObj.transform.position + dir * distance, distanceSpeed * Time.fixedDeltaTime);
             }
             transform.localPosition = new Vector3(transform.localPosition.x, cameraManObj.transform.position.y, transform.localPosition.z);
         }

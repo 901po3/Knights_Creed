@@ -11,10 +11,12 @@ namespace HyukinKwon
 {
     public class CameraMan : MonoBehaviour
     {
-        [SerializeField] private GameObject CamPivotObj;
-        private void Update()
+        [SerializeField] private GameObject player;
+
+        private void FixedUpdate()
         {
-            transform.position = CamPivotObj.transform.position;
+            transform.position = player.GetComponent<CharacterControl>().GetRigidbody().position;
+            transform.position = new Vector3(transform.position.x, transform.position.y + 1.5f, transform.position.z);
         }
     }
 }
