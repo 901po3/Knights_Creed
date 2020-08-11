@@ -10,28 +10,22 @@ using UnityEngine;
 namespace HyukinKwon
 {
     [CreateAssetMenu(fileName = "New State", menuName = "HyukinKwon/AbilityData/MoveVertical")]
-    public class MoveVertical : StateData
+    public class MoveFoward : StateData
     {
-        public float forwardSpeed;
-        public float backwardSpeed;
+        public float speed;
 
         //속도에 따라 앞뒤 이동과 맞는 애니메이션 재생
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            float vz = character.velocity.z;
-            animator.SetFloat("RunningVeritical", vz);
-            if(vz <= 0.1f && vz >= -0.1f)
+            animator.SetFloat("RunningVeritical", character.runningState);
+            if(character.runningState <= 0.1f)
             {
                 return;
             }
-            else if(vz > 0.1f)
+            else if(character.runningState > 0.1f)
             {
-                character.transform.Translate(character.velocity * forwardSpeed * character.speed * Time.deltaTime);
-            }
-            else if(vz < -0.1f)
-            {
-                character.transform.Translate(character.velocity * backwardSpeed * character.speed * Time.deltaTime);
+                character.transform.Translate(Vector3.forward * speed * character.runningState * Time.deltaTime);
             }
         }
     }

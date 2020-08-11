@@ -13,11 +13,11 @@ namespace HyukinKwon
 {
     public class CharacterControl : MonoBehaviour
     {
-        public float speed;
         private Animator animator;
 
-        //상태 변수들
-        public Vector3 velocity = Vector3.zero;
+        //상태 변수들 (애니메이션 전환에 쓰인다)
+        [Range(0, 1)]
+        public float runningState;
 
         public Animator GetAnimator()
         {

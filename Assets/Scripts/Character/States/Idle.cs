@@ -16,10 +16,9 @@ namespace HyukinKwon
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
 
-            float vz = character.velocity.z;
-            if (vz > 0.1f || vz < -0.1f) //이동 중이면 이동 애니메이션 재생
+            if (character.runningState > 0.1f) //이동 중이면 이동 애니메이션 재생
             {
-                animator.SetFloat("RunningVeritical", vz);
+                animator.SetFloat("RunningVeritical", character.runningState);
             }
         } 
     }
