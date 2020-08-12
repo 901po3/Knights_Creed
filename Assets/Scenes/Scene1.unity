@@ -19362,6 +19362,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 131468, guid: f61def225eac3e247985f6679965a655, type: 3}
+      propertyPath: m_TagString
+      value: Equipment
+      objectReference: {fileID: 0}
     - target: {fileID: 465914, guid: f61def225eac3e247985f6679965a655, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.2
@@ -22157,7 +22161,7 @@ GameObject:
   - component: {fileID: 4700934883861096629}
   m_Layer: 0
   m_Name: UndrawedOneHandedSword
-  m_TagString: Untagged
+  m_TagString: Equipment
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -24067,6 +24071,10 @@ MonoBehaviour:
   isTurning: 0
   isBattleModeOne: 0
   isDrawingWeapon: 0
+  isDetected: 0
+  undetectedTime: 4
+  curUndetectedTime: 0
+  isAttacking: 0
 --- !u!114 &4700934884251577194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24079,6 +24087,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fd5317a82bcde74fbca2c70481510ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackInputOffTime: 0.5
 --- !u!54 &4700934884251577195
 Rigidbody:
   m_ObjectHideFlags: 0

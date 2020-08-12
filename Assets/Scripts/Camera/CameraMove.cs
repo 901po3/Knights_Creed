@@ -29,7 +29,7 @@ namespace HyukinKwon
         private void Awake()
         {
             transform.position = cameraManObj.transform.position;
-            Cursor.lockState = CursorLockMode.Locked; //회전을 위해 마우스커서 잠금
+            //Cursor.lockState = CursorLockMode.Locked; //회전을 위해 마우스커서 잠금
         }
 
         private void Update()
@@ -62,7 +62,12 @@ namespace HyukinKwon
             Vector3 dir = -cameraManObj.transform.forward;
             if (Physics.Raycast(cameraManObj.transform.position, dir, out hit, distance)) //만약 카매라와 플레이어 사이에 물체가 있으면 줌인
             {
-                if (hit.transform.tag != "MainCamera")
+                if(hit.transform.tag == "Equipment" || hit.transform.tag == "Player")
+                {
+                    Debug.DrawRay(cameraManObj.transform.position, dir * distance, Color.red);
+                    transform.localPosition = Vector3.Lerp(transform.position, cameraManObj.transform.position + dir * distance, distanceSpeed * Time.fixedDeltaTime);
+                }
+                else if(hit.transform.tag != "MainCamera")
                 {
                     transform.localPosition = Vector3.Lerp(transform.position, cameraManObj.transform.position + dir * hit.distance, distanceSpeed * Time.fixedDeltaTime);
                     Debug.DrawRay(cameraManObj.transform.position, dir * hit.distance, Color.green);

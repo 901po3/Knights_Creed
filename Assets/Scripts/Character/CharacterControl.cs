@@ -33,6 +33,7 @@ namespace HyukinKwon
         public bool isDetected = false; //어그로 체크
         public float undetectedTime; //undetectedTime초 이후에 전투모드 Off
         public float curUndetectedTime; //undetectedTime 타이머
+        public bool isAttacking = false;
 
         private void Awake()
         {
@@ -43,7 +44,7 @@ namespace HyukinKwon
 
         public Animator GetAnimator()
         {
-            if(animator == null)
+            if (animator == null)
             {
                 animator = GetComponent<Animator>();
             }
@@ -52,7 +53,7 @@ namespace HyukinKwon
 
         public Rigidbody GetRigidbody()
         {
-            if(rigidbody == null)
+            if (rigidbody == null)
             {
                 rigidbody = GetComponent<Rigidbody>();
             }
