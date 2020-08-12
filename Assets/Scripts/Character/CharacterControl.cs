@@ -16,12 +16,13 @@ namespace HyukinKwon
         private Animator animator;
         private Rigidbody rigidbody;
 
-        //상태 변수들 (애니메이션 전환에 쓰인다)
-        public Vector3 runVelocity = Vector3.zero;
-
         //이동 방향의 기준
         //플레이어면 카매라 - 카매라 정면이 기준
         public Transform facingStandardTransfom;
+
+        //상태 변수들 (애니메이션 전환에 쓰인다)
+        public Vector3 runVelocity = Vector3.zero;
+        public bool isTurning = false;
 
         public Animator GetAnimator()
         {
