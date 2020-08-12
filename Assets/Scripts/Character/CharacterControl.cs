@@ -28,8 +28,11 @@ namespace HyukinKwon
         //상태 변수들 (애니메이션 전환에 쓰인다)
         public Vector3 runVelocity = Vector3.zero;
         public bool isTurning = false;
-        public bool isBattleModeOne = false;
-        public bool isDrawingWeapon = false;
+        public bool isBattleModeOne = false;  //전투모드 
+        public bool isDrawingWeapon = false;  //무기 들고 있는지 아닌지
+        public bool isDetected = false; //어그로 체크
+        public float undetectedTime; //undetectedTime초 이후에 전투모드 Off
+        public float curUndetectedTime; //undetectedTime 타이머
 
         private void Awake()
         {

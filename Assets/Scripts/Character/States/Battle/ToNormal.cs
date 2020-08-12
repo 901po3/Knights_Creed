@@ -19,18 +19,21 @@ namespace HyukinKwon
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
-            //전투모드로 돌입하고 무기 뽑기 애니메이션으로 이동
             CharacterControl character = characterState.GetCharacterControl(animator);
-            if (!character.isBattleModeOne)
+            if(!character.isDetected)
             {
-                if (character.isDrawingWeapon)
+                character.curUndetectedTime += Time.deltaTime;
+                if(character.curUndetectedTime >= character.undetectedTime)
                 {
-                    character.isDrawingWeapon = false;
-                    animator.SetBool("BattleModeOn", false);
+                    character.curUndetectedTime = 0;
+                    character.isBattleModeOne = false;
+                    TurnOffBattleMode(character);
                 }
-                return;
             }
-
+            else
+            {
+                character.curUndetectedTime = 0f;
+            }
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
@@ -38,6 +41,20 @@ namespace HyukinKwon
             CharacterControl character = characterState.GetCharacterControl(animator);
             Debug.Log("Drawing Weapon");
             Equipment.ToogleWeapon(character);
+        }
+
+        private void TurnOffBattleMode(CharacterControl character)
+        {
+            //전투모드로 해제
+            if (!character.isBattleModeOne)
+            {
+                if (character.isDrawingWeapon)
+                {
+                    character.isDrawingWeapon = false;
+                    character.GetAnimator().SetBool("BattleModeOn", false);
+                }
+                return;
+            }
         }
     }
 }
