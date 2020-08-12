@@ -24,12 +24,19 @@ namespace HyukinKwon
         private void Update()
         {
             MoveVerticalInput();
+            StartBattleInput();
         }
 
         private void MoveVerticalInput()
         {
             character.runVelocity.z = Input.GetAxis("Vertical");
             character.runVelocity.x = Input.GetAxis("Horizontal");
+        }
+
+        private void StartBattleInput()
+        {
+            if(Input.GetMouseButtonDown(0))
+                character.isBattleModeOne = true;
         }
     }
 

@@ -1,7 +1,7 @@
 ﻿/*
  * Class: Idle
  * Date: 2020.8.10
- * Last Modified : 2020.8.11
+ * Last Modified : 2020.8.12
  * Author: Hyukin Kwon 
  * Description:  서 있는 애니메이션 스크립터블오브젝트
 */
@@ -12,6 +12,11 @@ namespace HyukinKwon
     [CreateAssetMenu(fileName = "New State", menuName = "HyukinKwon/AbilityData/Idle")]
     public class Idle : StateData
     {
+        public override void StartAbility(CharacterState characterState, Animator animator)
+        {
+
+        }
+
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
@@ -26,7 +31,12 @@ namespace HyukinKwon
             {
                 animator.SetFloat("RunningVeritical", Mathf.Abs(character.runVelocity.x));
             }
-        } 
+        }
+
+        public override void ExitAbility(CharacterState characterState, Animator animator)
+        {
+
+        }
     }
 
 }

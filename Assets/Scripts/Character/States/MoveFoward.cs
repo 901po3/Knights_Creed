@@ -17,7 +17,11 @@ namespace HyukinKwon
         public float runSpeed;
         public float turnSpeed;
 
-        //속도에 따라 앞뒤 이동과 맞는 애니메이션 재생
+        public override void StartAbility(CharacterState characterState, Animator animator)
+        {
+
+        }
+
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
@@ -32,12 +36,17 @@ namespace HyukinKwon
             float power = character.runVelocity.normalized.magnitude;
             animator.SetFloat("RunningVeritical", power);
             //지정된 방향 기준을 중심으로 이동 
-            character.GetRigidbody().MovePosition(character.transform.position + character.transform.forward * power * runSpeed * Time.deltaTime);
+            character.GetRigidbody().MovePosition(character.transform.position + character.transform.forward * power * runSpeed * Time.fixedDeltaTime);
             //회전
             Vector3 targetDirection = character.runVelocity.normalized;
             targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
             targetDirection.y = 0f;
-            character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards(character.transform.forward, targetDirection, turnSpeed * Time.deltaTime, 0f)));
+            character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards(character.transform.forward, targetDirection, turnSpeed * Time.fixedDeltaTime, 0f)));
+        }
+
+        public override void ExitAbility(CharacterState characterState, Animator animator)
+        {
+
         }
     }
 }

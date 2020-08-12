@@ -9,9 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5033dc6574ff804d90d113326275002, type: 3}
-  m_Name: MoveForward
+  m_Script: {fileID: 11500000, guid: 0d95d61ba98116040976373a4af264b6, type: 3}
+  m_Name: ToBattle
   m_EditorClassIdentifier: 
   duration: 0
-  runSpeed: 5
-  turnSpeed: 10

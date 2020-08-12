@@ -91,7 +91,6 @@ namespace HyukinKwon
             float a = angle.x + 90;
             if (a > 360)
                 a -= 360;
-            Debug.Log(a);
             if(a > maxAngle) //보정한 각도값 적용
             {
                 angle.x -= (a - maxAngle);
