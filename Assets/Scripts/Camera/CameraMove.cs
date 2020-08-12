@@ -87,7 +87,20 @@ namespace HyukinKwon
             float sensitivity = 10f;
             angle.y += Input.GetAxis("Mouse X") * sensitivity;
             angle.x -= Input.GetAxis("Mouse Y") * sensitivity;
-            angle.x = Mathf.Clamp(angle.x, minAngle, maxAngle);
+            //각도값 사용이 편하게 보정 (minAngle(작은수) ~maxAngle(큰수))
+            float a = angle.x + 90;
+            if (a > 360)
+                a -= 360;
+            Debug.Log(a);
+            if(a > maxAngle) //보정한 각도값 적용
+            {
+                angle.x -= (a - maxAngle);
+            }
+            else if( a < minAngle)
+            {
+                angle.x += (minAngle - a);
+            }
+                        
             Quaternion rot = Quaternion.Euler(angle.x, angle.y, 0);
             cameraManObj.transform.rotation = Quaternion.Slerp(cameraManObj.transform.rotation, rot, rotSpeed * Time.deltaTime);
 
