@@ -1,16 +1,16 @@
 ﻿/*
- * Class: ToBattle
+ * Class: ToNormal
  * Date: 2020.8.12
  * Last Modified : 2020.8.12
  * Author: Hyukin Kwon 
- * Description: 전투모드 돌입 체크
+ * Description: 전투모드 해제 체크
 */
 using UnityEngine;
 
 namespace HyukinKwon
 {
-    [CreateAssetMenu(fileName = "New State", menuName = "HyukinKwon/AbilityData/ToBattle")]
-    public class ToBattle : StateData
+    [CreateAssetMenu(fileName = "New State", menuName = "HyukinKwon/AbilityData/ToNormal")]
+    public class ToNormal : StateData
     {
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
@@ -21,21 +21,23 @@ namespace HyukinKwon
         {
             //전투모드로 돌입하고 무기 뽑기 애니메이션으로 이동
             CharacterControl character = characterState.GetCharacterControl(animator);
-            if (character.isBattleModeOne)
+            if (!character.isBattleModeOne)
             {
-                if(!character.isDrawingWeapon)
+                if (character.isDrawingWeapon)
                 {
-                    character.isDrawingWeapon = true;
-                    animator.SetBool("BattleModeOn", true);
-                    animator.SetTrigger("DrawingWeapon");
+                    character.isDrawingWeapon = false;
+                    animator.SetBool("BattleModeOn", false);
                 }
                 return;
             }
+
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
-
+            CharacterControl character = characterState.GetCharacterControl(animator);
+            Debug.Log("Drawing Weapon");
+            Equipment.ToogleWeapon(character);
         }
     }
 }

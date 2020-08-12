@@ -36,7 +36,7 @@ namespace HyukinKwon
         private void StartBattleInput()
         {
             if(Input.GetMouseButtonDown(0))
-                character.isBattleModeOne = true;
+                character.isBattleModeOne = !character.isBattleModeOne;
         }
     }
 
