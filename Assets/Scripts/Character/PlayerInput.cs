@@ -48,7 +48,7 @@ namespace HyukinKwon
         {
             if (character.isDrawingWeapon) //무기를 들고있을때
             {
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButton(0))
                 {
                     character.curUndetectedTime = 0; //공격 -> 전투 해제 타이머 리셋
                     character.isAttacking = true;
