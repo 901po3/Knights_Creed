@@ -1,12 +1,10 @@
 ﻿/*
  * Class: Idle
  * Date: 2020.8.10
- * Last Modified : 2020.8.10
+ * Last Modified : 2020.8.11
  * Author: Hyukin Kwon 
- * Description:  
+ * Description:  서 있는 애니메이션 스크립터블오브젝트
 */
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HyukinKwon
@@ -18,10 +16,15 @@ namespace HyukinKwon
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
 
-            float vz = character.velocity.z;
-            if (vz > 0.1f || vz < -0.1f)
+            //이동 중이면 이동 애니메이션 재생
+            //방향은 무관하게 앞으로 이동 속도만 전달
+            if (character.runVelocity.z != 0) 
             {
-                animator.SetFloat("RunningVeritical", vz);
+                animator.SetFloat("RunningVeritical", Mathf.Abs(character.runVelocity.z));
+            }
+            else if(character.runVelocity.x != 0)
+            {
+                animator.SetFloat("RunningVeritical", Mathf.Abs(character.runVelocity.x));
             }
         } 
     }

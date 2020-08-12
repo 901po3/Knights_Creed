@@ -3,19 +3,18 @@
  * Date: 2020.8.10
  * Last Modified : 2020.8.10
  * Author: Hyukin Kwon 
- * Description:  
+ * Description:  모든 스크립터블오브젝트 스테이트들의 최상위 클래스
 */
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HyukinKwon
 {
     public abstract class StateData : ScriptableObject
     {
-        public float duration;
+        public float duration; //애니메이션 지속시간
 
-        public abstract void UpdateAbility(CharacterState characterState, Animator animator);
+        //각 스테이트 오브젝트들의 업데이트 함수
+        public abstract void UpdateAbility(CharacterState characterState, Animator animator); 
     }
 
 }
