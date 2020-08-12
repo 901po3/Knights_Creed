@@ -39,17 +39,19 @@ namespace HyukinKwon
                 case DIRECTION.RIGHT:
                     character.GetRigidbody().AddForce(character.transform.position + character.facingStandardTransfom.transform.right * power);
                     break;
-            } 
+            }
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
-
+            CharacterControl character = characterState.GetCharacterControl(animator);
+            character.GetRigidbody().freezeRotation = true;
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
-
+            CharacterControl character = characterState.GetCharacterControl(animator);
+            character.GetRigidbody().constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;        
         }
     }
 

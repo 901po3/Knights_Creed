@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d19f0f0050b309408526d17d4db27c8, type: 3}
-  m_Name: SwingFoward 300
+  m_Script: {fileID: 11500000, guid: a8815c272c092484787145ceb95fb010, type: 3}
+  m_Name: AttackTrans
   m_EditorClassIdentifier: 
   duration: 0
-  power: 600
-  direction: 0
+  damage: 0
+  turnSpeed: 0
