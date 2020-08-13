@@ -20,7 +20,8 @@ namespace HyukinKwon
         private void Awake()
         {
             character = GetComponent<CharacterControl>();
-            character.facingStandardTransfom = Camera.main.transform;  //플레이어의 이동 방향 기준을 카매라로 설정  
+            //플레이어의 이동 방향 기준을 카매라로 설정  
+            character.facingStandardTransfom = Camera.main.transform;  
         }
 
         private void Update()

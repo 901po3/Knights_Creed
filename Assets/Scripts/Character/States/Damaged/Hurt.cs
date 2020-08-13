@@ -15,7 +15,6 @@ namespace HyukinKwon
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
