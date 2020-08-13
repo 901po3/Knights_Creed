@@ -27,7 +27,7 @@ namespace HyukinKwon
             CharacterControl character = characterState.GetCharacterControl(animator);
             character.curUndetectedTime = 0; //피하기 시도-> 전투 해제 시간 리셋
             //피하기 종류 선택
-            if (character.isAttacking || character.runVelocity == Vector3.zero)
+            if (character.isAttacking || character.runVelocity.normalized.magnitude < 0.1f)
             {
                 duration = 0.8f;
                 dodgeType = DODGE_TPYE.BACK;
@@ -35,7 +35,7 @@ namespace HyukinKwon
                 character.isAttacking = false;
                 animator.SetBool("SwingSword", false);
             }
-            else if(character.runVelocity != Vector3.zero)
+            else if(character.runVelocity.normalized.magnitude >= 0.1f)
             {
                 duration = 0.125f;
                 dodgeType = DODGE_TPYE.DASH;
