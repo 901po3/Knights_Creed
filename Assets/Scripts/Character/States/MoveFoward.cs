@@ -41,7 +41,8 @@ namespace HyukinKwon
             Vector3 targetDirection = character.runVelocity.normalized;
             targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
             targetDirection.y = 0f;
-            character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards(character.transform.forward, targetDirection, turnSpeed * Time.fixedDeltaTime, 0f)));
+            character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards
+                (character.transform.forward, targetDirection, turnSpeed * Time.fixedDeltaTime, 0f)));
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)

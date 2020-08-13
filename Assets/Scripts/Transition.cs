@@ -15,8 +15,6 @@ namespace HyukinKwon
     {
         public enum TRANSITION_TYPE
         {
-            TO_BATTLE,
-            TO_NORMAL,
             ATTACK,
             DODGE
         }
@@ -53,18 +51,6 @@ namespace HyukinKwon
             {
                 switch (t)
                 {
-                    case TRANSITION_TYPE.TO_BATTLE:
-                        if (character.isBattleModeOne)
-                        {
-                            return false;
-                        }
-                        break;
-                    case TRANSITION_TYPE.TO_NORMAL:
-                        if (!character.isBattleModeOne)
-                        {
-                            return false;
-                        }
-                        break;
                     case TRANSITION_TYPE.ATTACK:
                         if (!character.isAttacking)
                         {

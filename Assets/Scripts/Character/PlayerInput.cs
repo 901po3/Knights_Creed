@@ -28,12 +28,14 @@ namespace HyukinKwon
             MoveVerticalInput();
             StartBattleInput();
             AttackInput();
+            DodgeInput();
         }
 
         private void MoveVerticalInput()
         {
             character.runVelocity.z = Input.GetAxis("Vertical");
             character.runVelocity.x = Input.GetAxis("Horizontal");
+            character.runVelocity.y = 0;
         }
 
         private void StartBattleInput()

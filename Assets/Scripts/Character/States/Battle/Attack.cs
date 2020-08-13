@@ -14,10 +14,11 @@ namespace HyukinKwon
     {
         public float damage;
         public float turnSpeed;
+        private float time; //duration만 회전 가능
 
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
-
+            time = 0f;
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -26,11 +27,17 @@ namespace HyukinKwon
             if (character.isAttacking)
             {
                 animator.SetBool("SwingSword", true);
-                //기준 방향 정면으로 회전
-                Vector3 targetDirection = character.runVelocity.normalized;
-                targetDirection.y = 0f;
-                character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards(character.transform.forward,
-                    targetDirection, turnSpeed * Time.fixedDeltaTime, 0f)));
+                if(time < duration)
+                {
+                    time += Time.deltaTime;
+
+                    //회전
+                    Vector3 targetDirection = character.runVelocity.normalized;
+                    targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
+                    targetDirection.y = 0f;
+                    character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards(character.transform.forward,
+                        targetDirection, turnSpeed * Time.fixedDeltaTime, 0f)));
+                }
             }
             else
             {
