@@ -58,6 +58,7 @@ namespace HyukinKwon
             //맞는 무기를 장비한다.
             Equipment.Clear(this);
             Equipment.ToogleWeapon(this);
+            drawedWeapon[(int)weapon].GetComponent<BoxCollider>().enabled = false;
         }
 
         public Animator GetAnimator()
@@ -93,7 +94,6 @@ namespace HyukinKwon
                 CharacterControl character = other.GetComponentInParent<CharacterControl>();
                 if (character.isAttacking && character.team != team)
                 {
-                    character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = false;
                     isHurt = true;
                     GetComponent<Animator>().SetBool("HurtRight", true);
                     GetDamaged(character.damage);

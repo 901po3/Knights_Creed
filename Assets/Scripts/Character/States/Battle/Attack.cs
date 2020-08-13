@@ -20,7 +20,7 @@ namespace HyukinKwon
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
             character.damage = damage;
-            character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = false;
+            character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = true;
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -32,12 +32,6 @@ namespace HyukinKwon
                 if(character.attackTimer < duration)
                 {
                     character.attackTimer += Time.deltaTime;
-
-                    if (character.attackTimer >= 0.2f)
-                    {
-                        character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = true;
-                    }
-
                     //회전
                     Vector3 targetDirection = character.runVelocity.normalized;
                     targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
@@ -56,6 +50,7 @@ namespace HyukinKwon
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
             character.attackTimer = 0;
+            character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = false;
         }
     }
 

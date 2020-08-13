@@ -15,13 +15,6 @@ namespace HyukinKwon
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-
-            if(character.tag != "Player")
-            {
-                character.GetRigidbody().constraints = RigidbodyConstraints.FreezePositionX
-                    | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ;
-                character.GetRigidbody().freezeRotation = true;
-            }
             character.isChangingMode = false;
         }
 
@@ -37,11 +30,6 @@ namespace HyukinKwon
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            if (character.tag != "Player")
-            {
-                character.GetRigidbody().constraints = RigidbodyConstraints.None;
-                character.GetRigidbody().freezeRotation = true;
-            }
         }
     }
 
