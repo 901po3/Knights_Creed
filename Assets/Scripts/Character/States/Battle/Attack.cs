@@ -27,7 +27,7 @@ namespace HyukinKwon
             {
                 animator.SetBool("SwingSword", true);
                 //기준 방향 정면으로 회전
-                Vector3 targetDirection = character.facingStandardTransfom.transform.forward;
+                Vector3 targetDirection = character.runVelocity.normalized;
                 targetDirection.y = 0f;
                 character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards(character.transform.forward,
                     targetDirection, turnSpeed * Time.fixedDeltaTime, 0f)));

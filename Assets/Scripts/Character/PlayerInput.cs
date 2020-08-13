@@ -1,7 +1,7 @@
 ﻿/*
  * Class: CharacterState
  * Date: 2020.8.10
- * Last Modified : 2020.8.11
+ * Last Modified : 2020.8.13
  * Author: Hyukin Kwon 
  * Description: 플레이어의 인풋을 받는 클래스
  *              플레이어의 인풋으로 CharacterControl 상태 변수를 제어한다.
@@ -62,6 +62,21 @@ namespace HyukinKwon
                 {
                     curAttackTime = 0f;
                     character.isAttacking = false;
+                }
+            }
+        }
+
+        private void DodgeInput()
+        {
+            if(character.isBattleModeOne) //전투중인지 먼저 체크 후 
+            {
+                if(character.isDrawingWeapon) //무기를 들고 있는지 체크
+                {
+                    if(Input.GetKeyDown(KeyCode.Space))
+                    {
+                        character.isDodging = true;
+                        character.GetAnimator().SetBool("Dodging", true);
+                    }
                 }
             }
         }

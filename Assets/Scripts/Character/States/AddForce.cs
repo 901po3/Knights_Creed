@@ -24,20 +24,20 @@ namespace HyukinKwon
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            
-            switch(direction) //방향에 맞게 포스 추가
+
+            switch (direction) //방향에 맞게 포스 추가
             {
                 case DIRECTION.FOWARD:
-                    character.GetRigidbody().AddForce(character.transform.position + character.facingStandardTransfom.transform.forward * power);
+                    character.GetRigidbody().AddForce(character.transform.position + character.transform.forward * power);
                     break;
                 case DIRECTION.BACKWARD:
-                    character.GetRigidbody().AddForce(character.transform.position - character.facingStandardTransfom.transform.forward * power);
+                    character.GetRigidbody().AddForce(character.transform.position - character.transform.forward * power);
                     break;
                 case DIRECTION.LEFT:
-                    character.GetRigidbody().AddForce(character.transform.position - character.facingStandardTransfom.transform.right * power);
+                    character.GetRigidbody().AddForce(character.transform.position - character.transform.right * power);
                     break;
                 case DIRECTION.RIGHT:
-                    character.GetRigidbody().AddForce(character.transform.position + character.facingStandardTransfom.transform.right * power);
+                    character.GetRigidbody().AddForce(character.transform.position + character.transform.right * power);
                     break;
             }
         }

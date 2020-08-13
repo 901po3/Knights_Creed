@@ -9,9 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f42fdacf100f866488477f8b2cc38462, type: 3}
-  m_Name: SwingSword
+  m_Script: {fileID: 11500000, guid: b199c05a3197e2c4d8bb48a73b45eefe, type: 3}
+  m_Name: Dodge
   m_EditorClassIdentifier: 
   duration: 0
-  damage: 10
-  turnSpeed: 30

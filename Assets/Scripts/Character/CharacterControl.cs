@@ -30,10 +30,14 @@ namespace HyukinKwon
         public bool isTurning = false;
         public bool isBattleModeOne = false;  //전투모드 
         public bool isDrawingWeapon = false;  //무기 들고 있는지 아닌지
+
         public bool isDetected = false; //어그로 체크
         public float undetectedTime; //undetectedTime초 이후에 전투모드 Off
-        public float curUndetectedTime; //undetectedTime 타이머
+        public float curUndetectedTime = 0; //undetectedTime 타이머
+
         public bool isAttacking = false;
+
+        public bool isDodging = false;
 
         private void Awake()
         {
