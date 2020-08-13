@@ -40,12 +40,12 @@ namespace HyukinKwon
                 duration = 0.125f;
                 dodgeType = DODGE_TPYE.DASH;
             }
+            character.GetRigidbody().freezeRotation = true; //회전 잠금
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-
             switch(dodgeType) //타입에 맞게 이동
             {
                 case DODGE_TPYE.DASH:
@@ -74,6 +74,8 @@ namespace HyukinKwon
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
+            CharacterControl character = characterState.GetCharacterControl(animator);
+            character.GetRigidbody().constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         }
     }
