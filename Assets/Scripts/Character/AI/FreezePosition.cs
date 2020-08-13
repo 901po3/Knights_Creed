@@ -18,8 +18,7 @@ namespace HyukinKwon
 
             if (character.tag != "Player")
             {
-                character.GetRigidbody().constraints = RigidbodyConstraints.FreezePositionX
-                    | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ;
+                character.GetRigidbody().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
                 character.GetRigidbody().freezeRotation = true;
             }
         }
