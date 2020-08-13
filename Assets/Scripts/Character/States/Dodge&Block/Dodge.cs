@@ -12,33 +12,49 @@ namespace HyukinKwon
     [CreateAssetMenu(fileName = "New State", menuName = "HyukinKwon/AbilityData/Dodge")]
     public class Dodge : StateData
     {
+        public enum DODGE_TPYE
+        {
+            DASH, BACK
+        }
+
         public float dodgeTime = 0f; //파하기 타이머
         public float turnSpeed;
         public float speed;
+        private DODGE_TPYE dodgeType;
 
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
 
-            //캐릭터가 서있으면 반대방향으로 회전
-            if (character.runVelocity == Vector3.zero)
+            //피하기 종류 선택
+            if (character.isAttacking || character.runVelocity == Vector3.zero)
             {
-                character.transform.rotation = Quaternion.LookRotation(-character.transform.forward);
+                duration = 0.8f;
+                dodgeType = DODGE_TPYE.BACK;
+
+                character.isAttacking = false;
+                animator.SetBool("SwingSword", false);
+            }
+            else if(character.runVelocity != Vector3.zero)
+            {
+                duration = 0.125f;
+                dodgeType = DODGE_TPYE.DASH;
             }
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            if (character.runVelocity == Vector3.zero)
-            {
-                character.GetRigidbody().MovePosition(character.transform.position + character.transform.forward * speed * Time.fixedDeltaTime);
-            }
-            else
-            {
-                character.GetRigidbody().MovePosition(character.transform.position + character.transform.forward * speed * 1.3f * Time.fixedDeltaTime);
-            }
 
+            switch(dodgeType)
+            {
+                case DODGE_TPYE.DASH:
+                    character.GetRigidbody().MovePosition(character.transform.position + character.transform.forward * speed * 1.3f * Time.fixedDeltaTime);
+                    break;
+                case DODGE_TPYE.BACK:
+                    character.GetRigidbody().MovePosition(character.transform.position - character.transform.forward * speed * 0.3f * Time.fixedDeltaTime);                
+                    break;
+            }
 
             //dodgeDuration 이후에 피하기 상태 해제
             if (character.isDodging)
