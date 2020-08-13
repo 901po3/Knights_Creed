@@ -23083,7 +23083,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &4700934883863329671
 GameObject:
   m_ObjectHideFlags: 0
@@ -24075,6 +24075,7 @@ MonoBehaviour:
   undetectedTime: 4
   curUndetectedTime: 0
   isAttacking: 0
+  isDodging: 0
 --- !u!114 &4700934884251577194
 MonoBehaviour:
   m_ObjectHideFlags: 0

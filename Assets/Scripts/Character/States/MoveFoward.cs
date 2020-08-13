@@ -26,7 +26,7 @@ namespace HyukinKwon
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
 
-            if (character.runVelocity == Vector3.zero) //서있기로 전환
+            if (character.runVelocity.normalized.magnitude == 0) //서있기로 전환
             {
                 animator.SetFloat("RunningVeritical", 0);
                 return;

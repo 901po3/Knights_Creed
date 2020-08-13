@@ -23,14 +23,7 @@ namespace HyukinKwon
 
             //이동 중이면 이동 애니메이션 재생
             //방향은 무관하게 앞으로 이동 속도만 전달
-            if (character.runVelocity.z != 0) 
-            {
-                animator.SetFloat("RunningVeritical", Mathf.Abs(character.runVelocity.z));
-            }
-            else if(character.runVelocity.x != 0)
-            {
-                animator.SetFloat("RunningVeritical", Mathf.Abs(character.runVelocity.x));
-            }
+            animator.SetFloat("RunningVeritical", Mathf.Abs(character.runVelocity.normalized.magnitude));
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
