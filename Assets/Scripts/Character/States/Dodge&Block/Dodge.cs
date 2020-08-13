@@ -40,7 +40,6 @@ namespace HyukinKwon
                 duration = 0.125f;
                 dodgeType = DODGE_TPYE.DASH;
             }
-            character.GetRigidbody().freezeRotation = true; //회전 잠금
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -74,8 +73,6 @@ namespace HyukinKwon
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
-            CharacterControl character = characterState.GetCharacterControl(animator);
-            character.GetRigidbody().constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         }
     }
