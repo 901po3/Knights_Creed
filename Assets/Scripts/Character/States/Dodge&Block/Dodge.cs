@@ -14,7 +14,7 @@ namespace HyukinKwon
     {
         public enum DODGE_TPYE
         {
-            DASH, BACK
+            DASH, ATTACK, BACK
         }
 
         public float dodgeTime = 0f; //파하기 타이머
@@ -25,7 +25,7 @@ namespace HyukinKwon
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-
+            character.curUndetectedTime = 0; //피하기 시도-> 전투 해제 시간 리셋
             //피하기 종류 선택
             if (character.isAttacking || character.runVelocity == Vector3.zero)
             {
@@ -46,7 +46,7 @@ namespace HyukinKwon
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
 
-            switch(dodgeType)
+            switch(dodgeType) //타입에 맞게 이동
             {
                 case DODGE_TPYE.DASH:
                     character.GetRigidbody().MovePosition(character.transform.position + character.transform.forward * speed * 1.3f * Time.fixedDeltaTime);
