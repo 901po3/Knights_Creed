@@ -66,13 +66,13 @@ namespace HyukinKwon
                         }
                         break;
                     case TRANSITION_TYPE.ATTACK:
-                        if (character.isAttacking)
+                        if (!character.isAttacking)
                         {
                             return false;
                         }
                         break;
                     case TRANSITION_TYPE.DODGE:
-                        if (character.isDodging)
+                        if (!character.isDodging)
                         {
                             return false;
                         }

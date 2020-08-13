@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8815c272c092484787145ceb95fb010, type: 3}
-  m_Name: AttackTrans
+  m_Script: {fileID: 11500000, guid: 3c2eff546d19e5049b651d9e697a0f81, type: 3}
+  m_Name: AttackTransition
   m_EditorClassIdentifier: 
   duration: 0
-  damage: 0
-  turnSpeed: 0
+  index: 1
+  transition: 02000000
