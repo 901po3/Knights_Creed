@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5033dc6574ff804d90d113326275002, type: 3}
-  m_Name: MoveForward
+  m_Script: {fileID: 11500000, guid: 3c2eff546d19e5049b651d9e697a0f81, type: 3}
+  m_Name: DodgeTrans
   m_EditorClassIdentifier: 
   duration: 0
-  runSpeed: 5
-  turnSpeed: 10
+  index: 2
+  transition: 01000000

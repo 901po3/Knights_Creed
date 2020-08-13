@@ -62,7 +62,12 @@ namespace HyukinKwon
             Vector3 dir = -cameraManObj.transform.forward;
             if (Physics.Raycast(cameraManObj.transform.position, dir, out hit, distance)) //만약 카매라와 플레이어 사이에 물체가 있으면 줌인
             {
-                if (hit.transform.tag != "MainCamera")
+                if(hit.transform.tag == "Equipment" || hit.transform.tag == "Player" || hit.transform.tag == "MainCamera")
+                {
+                    Debug.DrawRay(cameraManObj.transform.position, dir * distance, Color.red);
+                    transform.localPosition = Vector3.Lerp(transform.position, cameraManObj.transform.position + dir * distance, distanceSpeed * Time.fixedDeltaTime);
+                }
+                else
                 {
                     transform.localPosition = Vector3.Lerp(transform.position, cameraManObj.transform.position + dir * hit.distance, distanceSpeed * Time.fixedDeltaTime);
                     Debug.DrawRay(cameraManObj.transform.position, dir * hit.distance, Color.green);
@@ -91,7 +96,6 @@ namespace HyukinKwon
             float a = angle.x + 90;
             if (a > 360)
                 a -= 360;
-            Debug.Log(a);
             if(a > maxAngle) //보정한 각도값 적용
             {
                 angle.x -= (a - maxAngle);
