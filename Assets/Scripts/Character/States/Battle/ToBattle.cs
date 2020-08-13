@@ -36,7 +36,6 @@ namespace HyukinKwon
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            Debug.Log("Drawing Weapon");
             Equipment.ToogleWeapon(character);
         }
     }

@@ -12,13 +12,15 @@ namespace HyukinKwon
     [CreateAssetMenu(fileName = "New State", menuName = "HyukinKwon/AbilityData/Attack")]
     public class Attack : StateData
     {
-        public float damage;
+        public int damage;
+        public float range;
         public float turnSpeed;
-        private float time; //duration만 회전 가능
 
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
-            time = 0f;
+            CharacterControl character = characterState.GetCharacterControl(animator);
+            character.damage = damage;
+            character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = false;
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -27,9 +29,14 @@ namespace HyukinKwon
             if (character.isAttacking)
             {
                 animator.SetBool("SwingSword", true);
-                if(time < duration)
+                if(character.attackTimer < duration)
                 {
-                    time += Time.deltaTime;
+                    character.attackTimer += Time.deltaTime;
+
+                    if (character.attackTimer >= 0.2f)
+                    {
+                        character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = true;
+                    }
 
                     //회전
                     Vector3 targetDirection = character.runVelocity.normalized;
@@ -47,7 +54,8 @@ namespace HyukinKwon
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
-
+            CharacterControl character = characterState.GetCharacterControl(animator);
+            character.attackTimer = 0;
         }
     }
 

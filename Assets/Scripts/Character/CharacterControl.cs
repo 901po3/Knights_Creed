@@ -12,8 +12,17 @@ using UnityEngine;
 
 namespace HyukinKwon
 {
+    public enum TEAM
+    {
+        BLUE, YELLOW, BLACK
+    }
+
     public class CharacterControl : MonoBehaviour
     {
+        public TEAM team;
+        public int health;
+        public int damage;
+
         public List<GameObject> undrawedWeapon;
         public List<GameObject> drawedWeapon;
         public Equipment.WEAPON weapon;
@@ -36,8 +45,13 @@ namespace HyukinKwon
         public float curUndetectedTime = 0; //undetectedTime 타이머
 
         public bool isAttacking = false;
-
+        public float attackTimer; //공격 타이머
         public bool isDodging = false;
+        public float dodgeTimer = 0f; //파하기 타이머
+        public bool isHurt = false;
+        public float hurtTimer = 0;
+
+        public bool isChangingMode = false;
 
         private void Awake()
         {
@@ -62,6 +76,35 @@ namespace HyukinKwon
                 rigidbody = GetComponent<Rigidbody>();
             }
             return rigidbody;
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            CheckHurt(other);
+        }
+
+        private void CheckHurt(Collider other)
+        {
+            //다치는 상태가 아니고
+            //적이 공격중이고
+            //다른팀이면 피격
+            if (other.transform.tag == "Weapon" && !isHurt)
+            {
+                CharacterControl character = other.GetComponentInParent<CharacterControl>();
+                if (character.isAttacking && character.team != team)
+                {
+                    character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = false;
+                    isHurt = true;
+                    GetComponent<Animator>().SetBool("HurtRight", true);
+                    GetDamaged(character.damage);
+                }
+            }
+        }
+
+        public void GetDamaged(int damage)
+        {
+            health -= damage;
+            Debug.Log(health);
         }
     }
 }

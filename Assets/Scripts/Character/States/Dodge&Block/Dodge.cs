@@ -17,7 +17,6 @@ namespace HyukinKwon
             DASH, ATTACK, BACK
         }
 
-        public float dodgeTime = 0f; //파하기 타이머
         public float turnSpeed;
         public float speed;
         private DODGE_TPYE dodgeType;
@@ -58,12 +57,12 @@ namespace HyukinKwon
             //dodgeDuration 이후에 피하기 상태 해제
             if (character.isDodging)
             {
-                if (dodgeTime < duration)
+                if (character.dodgeTimer < duration)
                 {
-                    dodgeTime += Time.deltaTime;
-                    if (dodgeTime >= duration)
+                    character.dodgeTimer += Time.deltaTime;
+                    if (character.dodgeTimer >= duration)
                     {
-                        dodgeTime = 0f;
+                        character.dodgeTimer = 0f;
                         character.isDodging = false;
                         character.GetAnimator().SetBool("Dodging", false);
                     }

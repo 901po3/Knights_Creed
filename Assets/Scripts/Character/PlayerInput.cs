@@ -25,6 +25,7 @@ namespace HyukinKwon
 
         private void Update()
         {
+            if (character.isChangingMode) return;
             MoveVerticalInput();
             StartBattleInput();
             AttackInput();
@@ -40,9 +41,10 @@ namespace HyukinKwon
 
         private void StartBattleInput()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && !character.isBattleModeOne)
             {
                 character.isBattleModeOne = true;
+                character.isChangingMode = true;
             }
         }
 

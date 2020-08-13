@@ -3075,6 +3075,19 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 634107557}
   m_PrefabAsset: {fileID: 0}
+--- !u!65 &323493778
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 323493777}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.12, y: 0.9, z: 0.059882592}
+  m_Center: {x: 0.0000004544854, y: 0.39, z: 0.00000018840402}
 --- !u!4 &332237346 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 492634, guid: c4ea6c556c8f2064a877d7f0982758f3,
@@ -5274,7 +5287,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.4
+  m_Radius: 0.35
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
@@ -5306,6 +5319,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 143405c4af3f758489243cd411505d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  team: 1
+  health: 60
+  damage: 0
   undrawedWeapon:
   - {fileID: 1595344137}
   drawedWeapon:
@@ -5320,7 +5336,12 @@ MonoBehaviour:
   undetectedTime: 4
   curUndetectedTime: 0
   isAttacking: 0
+  attackTimer: 0
   isDodging: 0
+  dodgeTimer: 0
+  isHurt: 0
+  hurtTimer: 0
+  isChangingMode: 0
 --- !u!4 &541165102 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 415236, guid: bc6b7d6f0fb98544a873a3d69729fe66,
@@ -5467,6 +5488,25 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 346402d3a99cf4645b573a2679f4ee97, type: 3}
+--- !u!1 &555367192 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8529035946425995051, guid: 804844ba44afbe3459ff8f350d358899,
+    type: 3}
+  m_PrefabInstance: {fileID: 8529035947165462641}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &555367193
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 555367192}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.12, y: 1, z: 0.059882592}
+  m_Center: {x: 0.0000004544854, y: 0.39, z: 0.00000018840402}
 --- !u!4 &556613938 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 485100, guid: 5e1d462ffd80d7444837984e9e18388b,
@@ -6219,6 +6259,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: OneHandedSwrod
       objectReference: {fileID: 0}
+    - target: {fileID: 131468, guid: f61def225eac3e247985f6679965a655, type: 3}
+      propertyPath: m_TagString
+      value: Weapon
+      objectReference: {fileID: 0}
     - target: {fileID: 465914, guid: f61def225eac3e247985f6679965a655, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.2
@@ -6275,7 +6319,13 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 99.99998
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 64370003151808260, guid: f61def225eac3e247985f6679965a655,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 64370003151808260, guid: f61def225eac3e247985f6679965a655, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: f61def225eac3e247985f6679965a655, type: 3}
 --- !u!4 &634107558 stripped
 Transform:
@@ -15051,6 +15101,7 @@ GameObject:
   - component: {fileID: 533029723}
   - component: {fileID: 533029722}
   - component: {fileID: 533029724}
+  - component: {fileID: 1244134223}
   m_Layer: 0
   m_Name: soldier
   m_TagString: AI
@@ -15058,6 +15109,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!136 &1244134223
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244134222}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.45
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &1244134850
 GameObject:
   m_ObjectHideFlags: 0
@@ -24711,6 +24776,20 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 8529035947165462641}
   m_PrefabAsset: {fileID: 0}
+--- !u!136 &4700934883863258404
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4700934883863258403}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.45
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1001 &4700934884310972622
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24888,8 +24967,8 @@ MonoBehaviour:
   distance: 2.5
   minDistance: 0.5
   maxDistance: 3.5
-  zoomSpeed: 30
-  distanceSpeed: 30
+  zoomSpeed: 10
+  distanceSpeed: 10
   rotSpeed: 30
   minAngle: 40
   maxAngle: 145
@@ -25105,15 +25184,41 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 3990235859973557524, guid: 804844ba44afbe3459ff8f350d358899,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3990235860369611524, guid: 804844ba44afbe3459ff8f350d358899,
         type: 3}
       propertyPath: m_Radius
-      value: 0.4
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 3990235860369611524, guid: 804844ba44afbe3459ff8f350d358899,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3990235860369611545, guid: 804844ba44afbe3459ff8f350d358899,
+        type: 3}
+      propertyPath: health
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 3990235860369611546, guid: 804844ba44afbe3459ff8f350d358899,
         type: 3}
       propertyPath: m_Constraints
-      value: 112
+      value: 116
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8529035946425995051, guid: 804844ba44afbe3459ff8f350d358899,
+        type: 3}
+      propertyPath: m_TagString
+      value: Weapon
+      objectReference: {fileID: 0}
+    - target: {fileID: 8529035946425995051, guid: 804844ba44afbe3459ff8f350d358899,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 8555019790904568227, guid: 804844ba44afbe3459ff8f350d358899, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 804844ba44afbe3459ff8f350d358899, type: 3}

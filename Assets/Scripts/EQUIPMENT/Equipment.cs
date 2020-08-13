@@ -45,5 +45,7 @@ namespace HyukinKwon
                 character.drawedWeapon[(int)character.weapon].SetActive(false);
             }
         }
+
+
     }
 }
