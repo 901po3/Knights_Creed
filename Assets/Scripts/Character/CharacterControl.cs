@@ -27,8 +27,13 @@ namespace HyukinKwon
         public List<GameObject> drawedWeapon;
         public Equipment.WEAPON weapon;
 
-        private Animator animator;
-        private Rigidbody rigidbody;
+        private Animator mAnimator;
+        private Rigidbody mRigidbody;
+
+        //레그돌
+        private Collider[] colliders;
+        private Rigidbody[] rigidbodies;
+        private Collider mCollider;
 
         //이동 방향의 기준
         //플레이어면 카매라 - 카매라 정면이 기준
@@ -59,24 +64,40 @@ namespace HyukinKwon
             Equipment.Clear(this);
             Equipment.ToogleWeapon(this);
             drawedWeapon[(int)weapon].GetComponent<BoxCollider>().enabled = false;
+            colliders = GetComponentsInChildren<Collider>();
+            rigidbodies = GetComponentsInChildren<Rigidbody>();
+
+            mCollider = GetComponent<Collider>();
+            mRigidbody = GetComponent<Rigidbody>();
+
+            foreach ( Collider c in colliders)
+            {
+                c.enabled = false;
+            }
+            foreach( Rigidbody r in rigidbodies)
+            {
+                r.isKinematic = true;
+            }
+            mCollider.enabled = true;
+            mRigidbody.isKinematic = false;
         }
 
         public Animator GetAnimator()
         {
-            if (animator == null)
+            if (mAnimator == null)
             {
-                animator = GetComponent<Animator>();
+                mAnimator = GetComponent<Animator>();
             }
-            return animator;
+            return mAnimator;
         }
 
         public Rigidbody GetRigidbody()
         {
-            if (rigidbody == null)
+            if (mRigidbody == null)
             {
-                rigidbody = GetComponent<Rigidbody>();
+                mRigidbody = GetComponent<Rigidbody>();
             }
-            return rigidbody;
+            return mRigidbody;
         }
 
         private void OnTriggerEnter(Collider other)
