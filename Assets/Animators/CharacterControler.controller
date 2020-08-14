@@ -1170,7 +1170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilityDataList:
-  - {fileID: 11400000, guid: de09c27f35ade244ba058d1f4831ed5c, type: 2}
+  - {fileID: 11400000, guid: 1a153a2fdf9660746938a00f5c68c8ab, type: 2}
   - {fileID: 11400000, guid: d5c34a7c8e81b9642b9632d045d78117, type: 2}
   - {fileID: 11400000, guid: 0cced4c0418b37d4a9fdf8ae28d455d1, type: 2}
 --- !u!114 &2161917499923514377
