@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 33c93f3493fffdf42ad0d855a25a111c, type: 3}
-  m_Name: Turn
+  m_Name: IdleTurn
   m_EditorClassIdentifier: 
-  duration: 0.667
-  speed: 4
+  duration: 0.3
+  speed: 8

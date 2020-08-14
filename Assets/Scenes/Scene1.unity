@@ -26409,6 +26409,11 @@ PrefabInstance:
       propertyPath: health
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 3990235860369611545, guid: 804844ba44afbe3459ff8f350d358899,
+        type: 3}
+      propertyPath: facingStandardTransfom
+      value: 
+      objectReference: {fileID: 4700934884605281521}
     - target: {fileID: 3990235860369611546, guid: 804844ba44afbe3459ff8f350d358899,
         type: 3}
       propertyPath: m_Constraints

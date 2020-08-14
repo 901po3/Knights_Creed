@@ -59,6 +59,7 @@ namespace HyukinKwon
         public bool isChangingMode = false;
 
         public bool turning = false;
+        public float turnTimer = 0;
 
         private void Awake()
         {

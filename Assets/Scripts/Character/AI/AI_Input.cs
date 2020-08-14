@@ -14,6 +14,13 @@ namespace HyukinKwon
     {
         //캐릭터 Gameobject의 CharacterControl 스크립트
         private CharacterControl character;
+
+        private void Awake()
+        {
+            character = GetComponent<CharacterControl>();
+            //자기 자신으로 기준
+            character.facingStandardTransfom = character.transform;
+        }
     }
 
 }

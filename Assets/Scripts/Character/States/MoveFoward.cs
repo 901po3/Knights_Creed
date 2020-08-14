@@ -45,9 +45,17 @@ namespace HyukinKwon
             Debug.Log(Vector3.Angle(character.transform.forward, targetDirection));
             float rotSpeed = turnSpeed;
             
-            if (Vector3.Angle(character.transform.forward, targetDirection) > 160) 
+            if (Vector3.Angle(character.transform.forward, targetDirection) > 160) //빠른 180도 회전
             {
-                animator.SetTrigger("Turn");
+                Vector3 cross = Vector3.Cross(character.transform.rotation * Vector3.forward, Quaternion.Euler(targetDirection) * Vector3.forward);
+                if(cross.y > 0)
+                {
+                    animator.SetBool("TurnRight", true);
+                }
+                else
+                {
+                    animator.SetBool("TurnLeft", true);
+                }
                 character.turning = true;
                 return;
             }
