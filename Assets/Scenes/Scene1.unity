@@ -2561,6 +2561,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 4700934883863258403}
+  heightOffset: 1.75
+  dampSpeed: 8
 --- !u!4 &184823800
 Transform:
   m_ObjectHideFlags: 0
@@ -25774,14 +25776,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraManObj: {fileID: 184823798}
-  distance: 2.5
-  minDistance: 0.5
-  maxDistance: 3.5
+  distance: 4
+  minDistance: 1.5
+  maxDistance: 6
   zoomSpeed: 10
   distanceSpeed: 10
   rotSpeed: 30
   minAngle: 40
-  maxAngle: 145
+  maxAngle: 120
 --- !u!4 &4700934884605281521
 Transform:
   m_ObjectHideFlags: 0
@@ -26011,6 +26013,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3990235859963880006, guid: 804844ba44afbe3459ff8f350d358899,
+        type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3990235859973100188, guid: 804844ba44afbe3459ff8f350d358899,
         type: 3}

@@ -58,6 +58,8 @@ namespace HyukinKwon
 
         public bool isChangingMode = false;
 
+        public bool turning = false;
+
         private void Awake()
         {
             //맞는 무기를 장비한다.

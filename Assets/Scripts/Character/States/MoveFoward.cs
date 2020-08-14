@@ -41,8 +41,19 @@ namespace HyukinKwon
             Vector3 targetDirection = character.runVelocity.normalized;
             targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
             targetDirection.y = 0f;
+
+            Debug.Log(Vector3.Angle(character.transform.forward, targetDirection));
+            float rotSpeed = turnSpeed;
+            
+            if (Vector3.Angle(character.transform.forward, targetDirection) > 160) 
+            {
+                animator.SetTrigger("Turn");
+                character.turning = true;
+                return;
+            }
+
             character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards
-                (character.transform.forward, targetDirection, turnSpeed * Time.fixedDeltaTime, 0f)));
+                (character.transform.forward, targetDirection, rotSpeed * Time.fixedDeltaTime, 0f)));
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
