@@ -69,57 +69,67 @@ namespace HyukinKwon
 
             mCollider = GetComponent<Collider>();
             mRigidbody = GetComponent<Rigidbody>();
+            mAnimator = GetComponent<Animator>();
 
-            foreach ( Collider c in colliders)
-            {
-                c.enabled = false;
-            }
-            foreach( Rigidbody r in rigidbodies)
-            {
-                r.isKinematic = true;
-            }
-            mCollider.enabled = true;
-            mRigidbody.isKinematic = false;
+            ToggleRagdoll(false);
         }
 
         public Animator GetAnimator()
         {
-            if (mAnimator == null)
-            {
-                mAnimator = GetComponent<Animator>();
-            }
             return mAnimator;
-        }
+        } 
 
         public Rigidbody GetRigidbody()
         {
-            if (mRigidbody == null)
-            {
-                mRigidbody = GetComponent<Rigidbody>();
-            }
             return mRigidbody;
         }
 
-        private void OnTriggerEnter(Collider other)
+        private void OnCollisionEnter(Collision collision)
         {
-            CheckHurt(other);
+            CheckHurt(collision);
         }
 
-        private void CheckHurt(Collider other)
+        private void CheckHurt(Collision collision)
         {
             //다치는 상태가 아니고
             //적이 공격중이고
             //다른팀이면 피격
-            if (other.transform.tag == "Weapon" && !isHurt)
+
+            /*레그돌
+             * 애니에미터 끄고, m콜라이더 끄고, navmesh있으면 끈다.
+             */
+            if (collision.transform.tag == "Weapon" && !isHurt)
             {
-                CharacterControl character = other.GetComponentInParent<CharacterControl>();
+                CharacterControl character = collision.gameObject.GetComponentInParent<CharacterControl>();
                 if (character.isAttacking && character.team != team)
                 {
-                    isHurt = true;
-                    GetComponent<Animator>().SetBool("HurtRight", true);
+                    isHurt = true;                  
+                    //GetComponent<Animator>().SetBool("HurtRight", true);
                     GetDamaged(character.damage);
+
+                    //공격 들어온 방향에 맞게 힘 적용
+                    Vector3 dir = collision.contacts[0].point - collision.gameObject.transform.position;
+                    mRigidbody.AddForce(dir * 100);
+
+                    ToggleRagdoll(true);
                 }
             }
+        }
+
+        private void ToggleRagdoll(bool b) //if b == true 레그돌 활성
+        {
+            foreach (Collider c in colliders)
+            {
+                c.enabled = b;
+            }
+            foreach (Rigidbody r in rigidbodies)
+            {
+                r.isKinematic = !b;
+            }
+
+            mAnimator.enabled = !b;
+            mCollider.enabled = !b;
+            mRigidbody.isKinematic = b;
         }
 
         public void GetDamaged(int damage)
