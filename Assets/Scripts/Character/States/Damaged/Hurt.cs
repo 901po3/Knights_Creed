@@ -15,6 +15,22 @@ namespace HyukinKwon
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
+            switch(character.attacker.medAttackType)
+            {
+                case MED_ATTACK_TYPE.HIGH:
+                    animator.SetFloat("RandomHit", 0);
+                    break;
+                case MED_ATTACK_TYPE.MIDDLE:
+                    animator.SetFloat("RandomHit", 1);
+                    break;
+                case MED_ATTACK_TYPE.LOW:
+                    animator.SetFloat("RandomHit", 2);
+                    break;
+            }
+            Transform attackerTrans = character.attacker.transform;
+            attackerTrans.position = new Vector3(character.attacker.transform.position.x, 
+                character.transform.position.y, character.attacker.transform.position.z);
+            character.transform.LookAt(attackerTrans);
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -29,7 +45,7 @@ namespace HyukinKwon
                     {
                         character.hurtTimer = 0f;
                         character.isHurt = false;
-                        animator.SetBool("HurtRight", false);
+                        animator.SetBool("Hurt", false);
                         character.isBattleModeOne = true;
                     }
                 }
@@ -38,7 +54,7 @@ namespace HyukinKwon
             {
                 character.hurtTimer = 0f;
                 character.isHurt = false;
-                animator.SetBool("HurtRight", false);
+                animator.SetBool("Hurt", false);
                 animator.SetBool("Dead", true);
             }
         }
