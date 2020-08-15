@@ -27,6 +27,16 @@ namespace HyukinKwon
         SWORD_IDLE_1, SWORD_IDLE_2, SWORD_IDLE_3
     }
 
+    public enum MED_ATTACK_TYPE
+    {
+        HIGH, MIDDLE, LOW
+    }
+
+    public enum HIT_TYPE
+    {
+
+    }
+
 
     public class CharacterControl : MonoBehaviour
     {
@@ -70,6 +80,9 @@ namespace HyukinKwon
 
         //공격 관련
         public bool isAttacking = false;
+        public float curAttackTime = 0;
+        public MED_ATTACK_TYPE medAttackType;
+        public MED_ATTACK_TYPE prevMedAttackType;
 
         //피하기 관련
         public bool isDodging = false;

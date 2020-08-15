@@ -13,45 +13,91 @@ namespace HyukinKwon
     public class Attack : StateData
     {
         public int damage;
-        public float range;
-        public float turnSpeed;
+        public float attackEnableTime;
 
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
             character.damage = damage;
-            character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = true;
+            
+            switch(Random.Range(0, 3))
+            {
+                case 0:
+                    character.medAttackType = MED_ATTACK_TYPE.HIGH;
+                    character.curAttackTime = 1.783f;
+                    break;
+                case 1:
+                    character.medAttackType = MED_ATTACK_TYPE.MIDDLE;
+                    character.curAttackTime = 1.5f;
+                    break;
+                case 2:
+                    character.medAttackType = MED_ATTACK_TYPE.LOW;
+                    character.curAttackTime = 1.9f;
+                    break;
+            }
+            if(character.prevMedAttackType == character.medAttackType)
+            {
+                character.medAttackType = (character.medAttackType + 1);
+                if ((int)character.medAttackType == 3)
+                    character.medAttackType = 0;
+            }
+            animator.SetFloat("RandomAttack", (float)character.medAttackType);
+            character.prevMedAttackType = character.medAttackType;
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
+
+            character.attackTimer += Time.deltaTime;
             if (character.isAttacking)
             {
                 animator.SetBool("SwingSword", true);
-                if(character.attackTimer < duration)
+
+                if(character.attackTimer > attackEnableTime) //무기 공격 활성화
                 {
-                    character.attackTimer += Time.deltaTime;
-                    //회전
-                    Vector3 targetDirection = character.runVelocity.normalized;
-                    targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
-                    targetDirection.y = 0f;
-                    character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards(character.transform.forward,
-                        targetDirection, turnSpeed * Time.fixedDeltaTime, 0f)));
-                }
+                    character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = true;
+                }            
             }
-            else
+            
+            if(character.attackTimer > character.curAttackTime - Time.deltaTime)
             {
                 animator.SetBool("SwingSword", false);
-            }          
+            }           
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
             character.attackTimer = 0;
+            character.isAttacking = false;
             character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = false;
         }
+
+
+        //private void OldAtttackFunc(CharacterState characterState, Animator animator)
+        //{
+        //    CharacterControl character = characterState.GetCharacterControl(animator);
+        //    if (character.isAttacking)
+        //    {
+        //        animator.SetBool("SwingSword", true);
+        //        if (character.attackTimer < duration)
+        //        {
+        //            character.attackTimer += Time.deltaTime;
+        //            //회전
+        //            Vector3 targetDirection = character.runVelocity.normalized;
+        //            targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
+        //            targetDirection.y = 0f;
+        //            character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards(character.transform.forward,
+        //                targetDirection, turnSpeed * Time.fixedDeltaTime, 0f)));
+        //        }
+        //    }
+        //    else
+        //    {
+        //        animator.SetBool("SwingSword", false);
+        //    }
+        //}
+
     }
 
 }
