@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b199c05a3197e2c4d8bb48a73b45eefe, type: 3}
   m_Name: Dodge
   m_EditorClassIdentifier: 
-  duration: 0
-  dodgeTime: 0
+  duration: 0.125
   turnSpeed: 5000
-  speed: 5
+  speed: 4
