@@ -1,7 +1,7 @@
 ﻿/*
  * Class: Turn
  * Date: 2020.8.14
- * Last Modified : 2020.8.14
+ * Last Modified : 2020.8.15
  * Author: Hyukin Kwon 
  * Description:  급회전 애니메이션
 */
@@ -12,9 +12,14 @@ namespace HyukinKwon
     [CreateAssetMenu(fileName = "New State", menuName = "HyukinKwon/AbilityData/Turn")]
     public class Turn : StateData
     {
-        [Range(0, 10)]
+        public enum DIRECTION
+        {
+            LEFT, RIGHT
+        }
+
+        public DIRECTION direction;
+        [Range(0, 200)]
         public float speed;
-        Vector3 cross;
         Vector3 targetDirection;
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
@@ -24,8 +29,6 @@ namespace HyukinKwon
             targetDirection = targetDirection = character.runVelocity.normalized;
             targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
             targetDirection.y = 0f;
-
-            cross = Vector3.Cross(character.transform.rotation * Vector3.forward, Quaternion.Euler(targetDirection) * Vector3.forward);
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -39,8 +42,24 @@ namespace HyukinKwon
                 animator.SetBool("TurnLeft", false);
                 animator.SetBool("TurnRight", false);
             }
-            character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards
-                    (character.transform.forward, targetDirection, speed * Time.fixedDeltaTime, 0)));
+
+            if (Vector3.Angle(character.transform.forward, targetDirection) > 2.5f) //제안두기
+            {
+                if (direction == DIRECTION.LEFT)
+                {
+                    character.transform.Rotate(Vector3.up * speed * Time.fixedDeltaTime);
+                }
+                else
+                {
+                    character.transform.Rotate(Vector3.up * -speed * Time.fixedDeltaTime);
+                }
+            }
+            else
+            {
+                character.turning = false;
+                animator.SetBool("TurnLeft", false);
+                animator.SetBool("TurnRight", false);
+            }
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)

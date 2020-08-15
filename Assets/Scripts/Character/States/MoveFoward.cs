@@ -32,27 +32,87 @@ namespace HyukinKwon
                 return;
             }
 
+            Move(character, animator); //이동 함수
+            RotateToForward(character, animator); //회전 함수 (정면으로)
+        }
+
+        public override void ExitAbility(CharacterState characterState, Animator animator)
+        {
+
+        }
+
+        //정면 이동 함수
+        private void Move(CharacterControl character, Animator animator)
+        {
+            Vector3 curRunVelocity = character.runVelocity;
             //속도 적용
-            float power = character.runVelocity.normalized.magnitude;
+            float power = curRunVelocity.normalized.magnitude;
             animator.SetFloat("RunningVeritical", power);
             //지정된 방향 기준을 중심으로 이동 
             character.GetRigidbody().MovePosition(character.transform.position + character.transform.forward * power * runSpeed * Time.fixedDeltaTime);
+
+            float dampSpeed = 3;
+            if (curRunVelocity.x != 0 && curRunVelocity.z != 0)
+            {
+                Vector3 cross = Vector3.Cross(curRunVelocity.normalized, character.prevRunVelocity.normalized);
+                if(curRunVelocity.x == curRunVelocity.z)
+                {
+                    character.horizontalV = Mathf.Lerp(character.horizontalV, 0, 0.5f);
+                }
+                else if (cross.y < 0) //오른쪽 회전 중이면서 이동
+                {
+                    character.horizontalV += Time.deltaTime * dampSpeed;
+                }
+                else if (cross.y > 0) //왼쪽 회전 중이면서 이동
+                {
+                    character.horizontalV -= Time.deltaTime * dampSpeed;
+                }
+                character.horizontalV = Mathf.Clamp(character.horizontalV, -1, 1);
+            }
+            else
+            {
+                if(character.horizontalV > 0)
+                {
+                    character.horizontalV -= Time.deltaTime * dampSpeed;
+                    if(character.horizontalV < 0)
+                    {
+                        character.horizontalV = 0;
+                    }
+                }
+                else if(character.horizontalV < 0)
+                {
+                    character.horizontalV += Time.deltaTime * dampSpeed;
+                    if (character.horizontalV > 0)
+                    {
+                        character.horizontalV = 0;
+                    }
+                }
+            }
+            animator.SetFloat("RunningHorizontal", character.horizontalV);
+
+            character.prevRunVelocity = curRunVelocity;
+        }
+
+        //기준 정면으로 회전 함수
+        private void RotateToForward(CharacterControl character, Animator animator)
+        {
+            Vector3 curRunVelocity = character.runVelocity;
             //회전
-            Vector3 targetDirection = character.runVelocity.normalized;
+            Vector3 targetDirection = curRunVelocity.normalized;
             targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
             targetDirection.y = 0f;
 
             Debug.Log(Vector3.Angle(character.transform.forward, targetDirection));
             float rotSpeed = turnSpeed;
-            
-            if (Vector3.Angle(character.transform.forward, targetDirection) > 160) //빠른 180도 회전
+
+            //빠른 180도 회전
+            if (Vector3.Angle(character.transform.forward, targetDirection) > 160)
             {
-                Vector3 cross = Vector3.Cross(character.transform.rotation * Vector3.forward, Quaternion.Euler(targetDirection) * Vector3.forward);
-                if(cross.y > 0)
+                if (curRunVelocity.x > 0.5f || curRunVelocity.z < -0.5f)
                 {
                     animator.SetBool("TurnRight", true);
                 }
-                else
+                else if (curRunVelocity.x < -0.5f || curRunVelocity.z > 0.5f)
                 {
                     animator.SetBool("TurnLeft", true);
                 }
@@ -62,11 +122,6 @@ namespace HyukinKwon
 
             character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards
                 (character.transform.forward, targetDirection, rotSpeed * Time.fixedDeltaTime, 0f)));
-        }
-
-        public override void ExitAbility(CharacterState characterState, Animator animator)
-        {
-
         }
     }
 }

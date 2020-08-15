@@ -40,7 +40,9 @@ namespace HyukinKwon
         public Transform facingStandardTransfom;
 
         //상태 변수들 (애니메이션 전환에 쓰인다)
+        public Vector3 prevRunVelocity = Vector3.zero;// velocity의 변화값으로 어느 방향으로 회전 중인지 체크
         public Vector3 runVelocity = Vector3.zero;
+        public float horizontalV = 0;
         public bool isTurning = false;
         public bool isBattleModeOne = false;  //전투모드 
         public bool isDrawingWeapon = false;  //무기 들고 있는지 아닌지
