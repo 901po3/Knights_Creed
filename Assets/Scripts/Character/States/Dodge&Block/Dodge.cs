@@ -24,7 +24,7 @@ namespace HyukinKwon
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            character.curUndetectedTime = 0; //피하기 시도-> 전투 해제 시간 리셋
+            character.curUndetectedTimer = 0; //피하기 시도하면-> 전투 해제 시간 리셋
             //피하기 종류 선택
             if (character.isAttacking || character.runVelocity.normalized.magnitude < 0.1f)
             {

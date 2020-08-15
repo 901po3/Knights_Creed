@@ -16,6 +16,7 @@ namespace HyukinKwon
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
             character.isChangingMode = false;
+            animator.SetFloat("RandomIdle", (float)character.IdleType);
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -43,7 +44,7 @@ namespace HyukinKwon
 
             //이동 중이면 이동 애니메이션 재생
             //방향은 무관하게 앞으로 이동 속도만 전달
-            if(!character.turning)
+            if (!character.turning)
             {
                 animator.SetFloat("RunningVeritical", Mathf.Abs(character.runVelocity.normalized.magnitude));
             }

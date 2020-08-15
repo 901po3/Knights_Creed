@@ -22,10 +22,10 @@ namespace HyukinKwon
             CharacterControl character = characterState.GetCharacterControl(animator);
             if(!character.isDetected)
             {
-                character.curUndetectedTime += Time.deltaTime;
-                if(character.curUndetectedTime >= character.undetectedTime)
+                character.curUndetectedTimer += Time.deltaTime;
+                if(character.curUndetectedTimer >= character.undetectedTime)
                 {
-                    character.curUndetectedTime = 0;
+                    character.curUndetectedTimer = 0;
                     character.isBattleModeOne = false;
                     character.isChangingMode = true;
                     TurnOffBattleMode(character);
@@ -33,7 +33,7 @@ namespace HyukinKwon
             }
             else
             {
-                character.curUndetectedTime = 0f;
+                character.curUndetectedTimer = 0f;
             }
         }
 

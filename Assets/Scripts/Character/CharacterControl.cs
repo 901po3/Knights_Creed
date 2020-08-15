@@ -17,6 +17,12 @@ namespace HyukinKwon
         BLUE, YELLOW, BLACK
     }
 
+    public enum IDLE_TYPE
+    {
+        IDLE = 0, RELAXED_IDLE, GUARD_IDLE_1, GUARD_IDLE_2
+    }
+
+
     public class CharacterControl : MonoBehaviour
     {
         public TEAM team;
@@ -43,25 +49,38 @@ namespace HyukinKwon
         public Vector3 prevRunVelocity = Vector3.zero;// velocity의 변화값으로 어느 방향으로 회전 중인지 체크
         public Vector3 runVelocity = Vector3.zero;
         public float horizontalV = 0;
-        public bool isTurning = false;
+
+        //서있기 관련
+        public IDLE_TYPE IdleType;
+
+        //모드 바꾸기 관련
         public bool isBattleModeOne = false;  //전투모드 
         public bool isDrawingWeapon = false;  //무기 들고 있는지 아닌지
-
-        public bool isDetected = false; //어그로 체크
-        public float undetectedTime; //undetectedTime초 이후에 전투모드 Off
-        public float curUndetectedTime = 0; //undetectedTime 타이머
-
-        public bool isAttacking = false;
-        public float attackTimer; //공격 타이머
-        public bool isDodging = false;
-        public float dodgeTimer = 0f; //파하기 타이머
-        public bool isHurt = false;
-        public float hurtTimer = 0;
-
         public bool isChangingMode = false;
 
-        public bool turning = false;
-        public float turnTimer = 0;
+        //어그로 관련
+        public bool isDetected = false; //어그로 체크
+        public float undetectedTime; //undetectedTime초 이후에 전투모드 Off
+
+        //공격 관련
+        public bool isAttacking = false;
+
+        //피하기 관련
+        public bool isDodging = false;
+
+        //공격 받음 관련
+        public bool isHurt = false;
+
+        //회전 관련
+        public bool isTurning = false; //회전중
+        public bool turning = false; //180도 급회전 변수
+
+        //타이머 변수들
+        public float turnTimer = 0; //180도 급회전 변수 타이머
+        public float hurtTimer = 0;
+        public float curUndetectedTimer = 0; //undetectedTime 타이머
+        public float attackTimer; //공격 타이머
+        public float dodgeTimer = 0f; //파하기 타이머
 
         private void Awake()
         {
