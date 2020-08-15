@@ -16,7 +16,16 @@ namespace HyukinKwon
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
             character.isChangingMode = false;
-            animator.SetFloat("RandomIdle", (float)character.IdleType);
+
+            //전투 비전투 모드에 따라 다른 애니메이션 재생
+            if(!character.isBattleModeOne)
+            {
+                animator.SetFloat("RandomIdle", (float)character.NormalIdleType);
+            }
+            else
+            {
+                animator.SetFloat("RandomIdle", (float)character.BattleIdleType);
+            }
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)

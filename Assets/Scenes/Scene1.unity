@@ -285,7 +285,7 @@ PrefabInstance:
     - target: {fileID: 7335592016086248298, guid: 0a215a1408157d74e8c7359bd2611733,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7335592016086248298, guid: 0a215a1408157d74e8c7359bd2611733,
         type: 3}
@@ -331,6 +331,16 @@ PrefabInstance:
         type: 3}
       propertyPath: IdleType
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7335592016990176568, guid: 0a215a1408157d74e8c7359bd2611733,
+        type: 3}
+      propertyPath: BattleIdleType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7335592016990176568, guid: 0a215a1408157d74e8c7359bd2611733,
+        type: 3}
+      propertyPath: NormalIdleType
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a215a1408157d74e8c7359bd2611733, type: 3}
@@ -12506,7 +12516,7 @@ PrefabInstance:
     - target: {fileID: 7335592016086248298, guid: 0a215a1408157d74e8c7359bd2611733,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7335592016086248298, guid: 0a215a1408157d74e8c7359bd2611733,
         type: 3}
@@ -15371,8 +15381,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1243761934}
-  - {fileID: 180481823}
   - {fileID: 1874931835}
+  - {fileID: 180481823}
   - {fileID: 126865019}
   - {fileID: 553629545}
   - {fileID: 164259438}
@@ -26010,6 +26020,16 @@ PrefabInstance:
       propertyPath: IdleType
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 7335592016990176568, guid: 0a215a1408157d74e8c7359bd2611733,
+        type: 3}
+      propertyPath: BattleIdleType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7335592016990176568, guid: 0a215a1408157d74e8c7359bd2611733,
+        type: 3}
+      propertyPath: NormalIdleType
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a215a1408157d74e8c7359bd2611733, type: 3}
 --- !u!1001 &8529035947165462641
@@ -26424,6 +26444,11 @@ PrefabInstance:
       propertyPath: facingStandardTransfom
       value: 
       objectReference: {fileID: 4700934884605281521}
+    - target: {fileID: 3990235860369611545, guid: 804844ba44afbe3459ff8f350d358899,
+        type: 3}
+      propertyPath: BattleIdleType
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3990235860369611546, guid: 804844ba44afbe3459ff8f350d358899,
         type: 3}
       propertyPath: m_Constraints

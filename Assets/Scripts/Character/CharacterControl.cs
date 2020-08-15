@@ -17,9 +17,14 @@ namespace HyukinKwon
         BLUE, YELLOW, BLACK
     }
 
-    public enum IDLE_TYPE
+    public enum NORMAL_IDLE_TYPE
     {
         IDLE = 0, RELAXED_IDLE, GUARD_IDLE_1, GUARD_IDLE_2
+    }
+
+    public enum BATTLE_IDLE_TYPE
+    {
+        SWORD_IDLE_1, SWORD_IDLE_2, SWORD_IDLE_3
     }
 
 
@@ -51,7 +56,8 @@ namespace HyukinKwon
         public float horizontalV = 0;
 
         //서있기 관련
-        public IDLE_TYPE IdleType;
+        public NORMAL_IDLE_TYPE NormalIdleType;
+        public BATTLE_IDLE_TYPE BattleIdleType;
 
         //모드 바꾸기 관련
         public bool isBattleModeOne = false;  //전투모드 
@@ -128,14 +134,14 @@ namespace HyukinKwon
                 if (character.isAttacking && character.team != team)
                 {
                     isHurt = true;                  
-                    //GetComponent<Animator>().SetBool("HurtRight", true);
+                    GetComponent<Animator>().SetBool("HurtRight", true);
                     GetDamaged(character.damage);
 
                     //공격 들어온 방향에 맞게 힘 적용
                     Vector3 dir = collision.contacts[0].point - collision.gameObject.transform.position;
                     mRigidbody.AddForce(dir * 100);
 
-                    ToggleRagdoll(true);
+                    //ToggleRagdoll(true);
                 }
             }
         }
