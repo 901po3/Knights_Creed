@@ -20,16 +20,26 @@ namespace HyukinKwon
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            if(character.hurtTimer < duration)
+            if(character.health > 0)
             {
-                character.hurtTimer += Time.deltaTime;
-                if(character.hurtTimer >= duration)
+                if (character.hurtTimer < duration)
                 {
-                    character.hurtTimer = 0f;
-                    character.isHurt = false;
-                    animator.SetBool("HurtRight", false);
-                    character.isBattleModeOne = true;
+                    character.hurtTimer += Time.deltaTime;
+                    if (character.hurtTimer >= duration)
+                    {
+                        character.hurtTimer = 0f;
+                        character.isHurt = false;
+                        animator.SetBool("HurtRight", false);
+                        character.isBattleModeOne = true;
+                    }
                 }
+            }
+            else
+            {
+                character.hurtTimer = 0f;
+                character.isHurt = false;
+                animator.SetBool("HurtRight", false);
+                animator.SetBool("Dead", true);
             }
         }
 

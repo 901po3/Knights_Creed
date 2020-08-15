@@ -146,15 +146,13 @@ namespace HyukinKwon
                 CharacterControl character = collision.gameObject.GetComponentInParent<CharacterControl>();
                 if (character.isAttacking && character.team != team)
                 {
-                    isHurt = true;                  
-                    GetComponent<Animator>().SetBool("HurtRight", true);
-                    GetDamaged(character.damage);
-
+                    isHurt = true;
                     //공격 들어온 방향에 맞게 힘 적용
                     Vector3 dir = collision.contacts[0].point - collision.gameObject.transform.position;
                     mRigidbody.AddForce(dir * 100);
 
-                    //ToggleRagdoll(true);
+                    GetDamaged(character.damage);
+                    GetComponent<Animator>().SetBool("HurtRight", true);
                 }
             }
         }
@@ -178,7 +176,7 @@ namespace HyukinKwon
         public void GetDamaged(int damage)
         {
             health -= damage;
-            Debug.Log(health);
+            Debug.Log(gameObject + "'s health: " + health);
         }
     }
 }
