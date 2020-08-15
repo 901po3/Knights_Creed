@@ -19,28 +19,28 @@ namespace HyukinKwon
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
-            CharacterControl character = characterState.GetCharacterControl(animator);
-            if(!character.isDetected)
-            {
-                character.curUndetectedTimer += Time.deltaTime;
-                if(character.curUndetectedTimer >= character.undetectedTime)
-                {
-                    character.curUndetectedTimer = 0;
-                    character.isBattleModeOne = false;
-                    character.isChangingMode = true;
-                    TurnOffBattleMode(character);
-                }
-            }
-            else
-            {
-                character.curUndetectedTimer = 0f;
-            }
+            //CharacterControl character = characterState.GetCharacterControl(animator);
+            //if(!character.isDetected)
+            //{
+            //    character.curUndetectedTimer += Time.deltaTime;
+            //    if(character.curUndetectedTimer >= character.undetectedTime)
+            //    {
+            //        character.curUndetectedTimer = 0;
+            //        character.isBattleModeOne = false;
+            //        character.isChangingMode = true;
+            //        TurnOffBattleMode(character);
+            //    }
+            //}
+            //else
+            //{
+            //    character.curUndetectedTimer = 0f;
+            //}
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
-            CharacterControl character = characterState.GetCharacterControl(animator);
-            Equipment.ToogleWeapon(character);
+            //CharacterControl character = characterState.GetCharacterControl(animator);
+            //Equipment.ToogleWeapon(character);
         }
 
         private void TurnOffBattleMode(CharacterControl character)

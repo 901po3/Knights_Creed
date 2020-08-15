@@ -46,15 +46,22 @@ namespace HyukinKwon
             float power = curRunVelocity.normalized.magnitude;
             animator.SetFloat("RunningVeritical", power);
             //지정된 방향 기준을 중심으로 이동 
+            Vector3 forward = character.facingStandardTransfom.transform.forward;
+            Vector3 right = character.facingStandardTransfom.transform.right;
+            forward.y = 0;
+            right.y = 0;
+            forward.Normalize();
+            right.Normalize();
 
-            character.GetRigidbody().MovePosition(character.transform.position + character.transform.forward * power * runSpeed * Time.fixedDeltaTime);
+            Vector3 dir = forward * curRunVelocity.z + right * curRunVelocity.x;
+            character.GetRigidbody().MovePosition(character.transform.position + dir * power * runSpeed * Time.fixedDeltaTime);
+            animator.SetFloat("BattleMoveHorizontal", curRunVelocity.x);
+            animator.SetFloat("BattleMoveVertical", curRunVelocity.z);
 
             //회전
-            Vector3 targetDirection = curRunVelocity.normalized;
-            targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
+            Vector3 targetDirection = character.facingStandardTransfom.forward;
             targetDirection.y = 0f;
 
-            Debug.Log(Vector3.Angle(character.transform.forward, targetDirection));
             float rotSpeed = turnSpeed;
 
             character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards

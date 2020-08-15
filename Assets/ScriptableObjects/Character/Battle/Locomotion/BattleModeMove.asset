@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: BattleModeMove
   m_EditorClassIdentifier: 
   duration: 0
-  runSpeed: 5
-  turnSpeed: 10
+  runSpeed: 2.5
+  turnSpeed: 5

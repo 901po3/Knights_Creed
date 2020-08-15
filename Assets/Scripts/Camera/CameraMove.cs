@@ -29,7 +29,7 @@ namespace HyukinKwon
         private void Awake()
         {
             transform.position = cameraManObj.transform.position;
-            Cursor.lockState = CursorLockMode.Locked; //회전을 위해 마우스커서 잠금
+            //Cursor.lockState = CursorLockMode.Locked; //회전을 위해 마우스커서 잠금
         }
 
         private void Update()

@@ -36,19 +36,22 @@ namespace HyukinKwon
             Vector3 targetDirection = character.runVelocity.normalized;
             targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
             targetDirection.y = 0f;
-            if (Vector3.Angle(character.transform.forward, targetDirection) > 160) //빠른 180도 회전
+            if(!character.isBattleModeOne)
             {
-                Vector3 cross = Vector3.Cross(character.transform.rotation * Vector3.forward, Quaternion.Euler(targetDirection) * Vector3.forward);
-                if (cross.y > 0)
+                if (Vector3.Angle(character.transform.forward, targetDirection) > 160) //빠른 180도 회전
                 {
-                    animator.SetBool("TurnRight", true);
+                    Vector3 cross = Vector3.Cross(character.transform.rotation * Vector3.forward, Quaternion.Euler(targetDirection) * Vector3.forward);
+                    if (cross.y > 0)
+                    {
+                        animator.SetBool("TurnRight", true);
+                    }
+                    else
+                    {
+                        animator.SetBool("TurnLeft", true);
+                    }
+                    character.turning = true;
+                    return;
                 }
-                else
-                {
-                    animator.SetBool("TurnLeft", true);
-                }
-                character.turning = true;
-                return;
             }
 
             //이동 중이면 이동 애니메이션 재생
