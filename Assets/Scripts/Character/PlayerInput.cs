@@ -14,8 +14,6 @@ namespace HyukinKwon
     {
         //캐릭터 Gameobject의 CharacterControl 스크립트
         private CharacterControl character;
-        public float attackInputOffTime = 0.5f;
-        private float curAttackTime = 0f;
 
         private void Awake()
         {
@@ -31,6 +29,8 @@ namespace HyukinKwon
             StartBattleInput();
             AttackInput();
             DodgeInput();
+
+            Debug.Log(Vector3.Distance(transform.position, character.targetEnemy.transform.position));
         }
 
         private void MoveVerticalInput()
@@ -42,9 +42,9 @@ namespace HyukinKwon
 
         private void StartBattleInput()
         {
-            if (Input.GetMouseButtonDown(0) && !character.isBattleModeOne)
+            if (Input.GetMouseButtonDown(0) && !character.isBattleModeOn)
             {
-                character.isBattleModeOne = true;
+                character.isBattleModeOn = true;
                 character.isChangingMode = true;
             }
         }
@@ -57,16 +57,6 @@ namespace HyukinKwon
                 {
                     character.curUndetectedTimer = 0; //공격 -> 전투 해제 타이머 리셋
                     character.isAttacking = true;
-                    curAttackTime = 0f;
-                }
-            }
-            if (character.isAttacking) //일정 시간 마우스를 누르지 공격 취소
-            {
-                curAttackTime += Time.deltaTime;
-                if (curAttackTime >= attackInputOffTime)
-                {
-                    curAttackTime = 0f;
-                    character.isAttacking = false;
                 }
             }
         }

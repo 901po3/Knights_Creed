@@ -68,7 +68,7 @@ namespace HyukinKwon
         public BATTLE_IDLE_TYPE BattleIdleType;
 
         //모드 바꾸기 관련
-        public bool isBattleModeOne = false;  //전투모드 
+        public bool isBattleModeOn = false;  //전투모드 
         public bool isDrawingWeapon = false;  //무기 들고 있는지 아닌지
         public bool isChangingMode = false;
 
@@ -81,12 +81,14 @@ namespace HyukinKwon
         public MED_ATTACK_TYPE medAttackType;
         public MED_ATTACK_TYPE prevMedAttackType;
         public float attackEndTime = 0;
+        public float attackRange = 0;
+        public Vector3 attackChargeDes = new Vector3(0, 10000, 0); //공격시 위치 보정 용도
+        public float chargeDis = 4;
 
         //피하기 관련
         public bool isDodging = false;
 
         //공격 받음 관련
-        public bool isHurt = false;
         public CharacterControl attacker; //자신을 때린 적
         private Vector3 contactPoint = new Vector3(0, 10000, 0);
         private Vector3 contactDir = Vector3.zero;
@@ -184,10 +186,8 @@ namespace HyukinKwon
                     atk.GetRigidbody().velocity = new Vector3(0, atk.GetRigidbody().velocity.y, 0);
 
                     attacker = atk;
-                    isHurt = true;
                     contactDir = collision.contacts[0].point - collision.gameObject.transform.position;
                     contactPoint = collision.contacts[0].point;
-
                     mAnimator.SetBool("Hurt", true);
                     mAnimator.SetBool("Dead", false);
                 }
@@ -257,14 +257,17 @@ namespace HyukinKwon
                 case 0:
                     medAttackType = MED_ATTACK_TYPE.HIGH;
                     curAimTime = 1.783f;
+                    attackRange = 1.3f;
                     break;
                 case 1:
                     medAttackType = MED_ATTACK_TYPE.MIDDLE;
                     curAimTime = 1.5f;
+                    attackRange = 0.6f;
                     break;
                 case 2:
                     medAttackType = MED_ATTACK_TYPE.LOW;
                     curAimTime = 1.9f;
+                    attackRange = 1.3f;
                     break;
             }
             if (prevMedAttackType == medAttackType)

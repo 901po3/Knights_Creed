@@ -102,7 +102,7 @@ namespace HyukinKwon
             targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
             targetDirection.y = 0f;
 
-            Debug.Log(Vector3.Angle(character.transform.forward, targetDirection));
+            //Debug.Log(Vector3.Angle(character.transform.forward, targetDirection));
             float rotSpeed = turnSpeed;
 
             //빠른 180도 회전

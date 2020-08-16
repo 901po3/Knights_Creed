@@ -46,7 +46,7 @@ namespace HyukinKwon
         private void TurnOffBattleMode(CharacterControl character)
         {
             //전투모드로 해제
-            if (!character.isBattleModeOne)
+            if (!character.isBattleModeOn)
             {
                 if (character.isDrawingWeapon)
                 {

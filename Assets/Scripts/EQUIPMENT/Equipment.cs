@@ -34,7 +34,7 @@ namespace HyukinKwon
         //Idx 주위
         public static void ToogleWeapon(CharacterControl character)
         {
-            if(character.isBattleModeOne)
+            if(character.isBattleModeOn)
             {
                 character.drawedWeapon[(int)character.weapon].SetActive(true);
                 character.undrawedWeapon[(int)character.weapon].SetActive(false);

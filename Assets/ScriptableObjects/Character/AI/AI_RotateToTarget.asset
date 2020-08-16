@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33c93f3493fffdf42ad0d855a25a111c, type: 3}
-  m_Name: TurnLeft
+  m_Script: {fileID: 11500000, guid: 86b7532eca1be2245843200aa93a9594, type: 3}
+  m_Name: AI_RotateToTarget
   m_EditorClassIdentifier: 
-  duration: 0.667
-  direction: 0
-  speed: 150
+  duration: 0
+  rotSpeed: 10

@@ -8,48 +8,69 @@
 */
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace HyukinKwon
 {
     public class AI_Input : MonoBehaviour
     {
-        //캐릭터 Gameobject의 CharacterControl 스크립트
-        private CharacterControl character;
-
-        //행동을 한번만 선택한다.
-        private bool statePicked = false;
+        private CharacterControl character; //캐릭터 Gameobject의 CharacterControl 스크립트
+        private NavMeshAgent nav;
+        private bool statePicked = false; //행동을 한번만 선택한다.
 
         private void Awake()
         {
             character = GetComponent<CharacterControl>();
+            nav = GetComponent<NavMeshAgent>();
             //자기 자신으로 기준
             character.facingStandardTransfom = character.transform;
         }
 
         private void Update()
         {
-            DodgeInput();
-
-            if(statePicked)
+            if (character.targetEnemy != null)
             {
-                StartCoroutine(ResetPickedState(1.5f));
+
+                if (character.isBattleModeOn && character.isDrawingWeapon) //전투중인지 먼저 체크 후 
+                {
+                    DodgeInput();
+                    AttackInput();
+                    if (statePicked)
+                    {
+                        StartCoroutine(ResetPickedState(1.5f));
+                    }
+                }
             }
         }
 
         private void DodgeInput()
         {
-            if (character.targetEnemy.GetComponent<CharacterControl>().isAttacking && !statePicked)
+            CharacterControl targetScript = character.targetEnemy.GetComponent<CharacterControl>();
+            if (Vector3.Distance(transform.position, character.targetEnemy.transform.position) < targetScript.chargeDis)
             {
-                statePicked = true;
-
-                if(Random.Range(0, 3) == 0)
+                if (targetScript.isAttacking && !statePicked)
                 {
-                    if (character.isBattleModeOne) //전투중인지 먼저 체크 후 
+                    statePicked = true;
+
+                    if (Random.Range(0, 3) == 0) // 1/3 확률도 피하기
                     {
-                        if (character.isDrawingWeapon) //무기를 들고 있는지 체크
-                        {
-                            StartCoroutine(PlayDodgeDelay());
-                        }
+                        StartCoroutine(PlayDodgeDelay());
+                    }
+                }
+            }
+        }
+
+        private void AttackInput()
+        {
+            CharacterControl targetScript = character.targetEnemy.GetComponent<CharacterControl>();
+            if (Vector3.Distance(transform.position, character.targetEnemy.transform.position) < character.chargeDis)
+            {
+                if (!statePicked)
+                {
+                    if (Random.Range(0, 5) == 0) // 1/5 확률도 공격
+                    {
+                        character.curUndetectedTimer = 0; //공격 -> 전투 해제 타이머 리셋
+                        character.isAttacking = true;
                     }
                 }
             }

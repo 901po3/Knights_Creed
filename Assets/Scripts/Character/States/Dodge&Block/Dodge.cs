@@ -48,17 +48,28 @@ namespace HyukinKwon
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
+
+            if (character.targetEnemy != null)
+            {
+                //적과 거리가 짧고 중단 공격이면 피해를 받는다 
+                if (Vector3.Distance(character.transform.position, character.targetEnemy.transform.position) < 0.5f
+                    && character.attacker.medAttackType == MED_ATTACK_TYPE.MIDDLE)
+                {
+                    character.isDodging = false;
+                    character.GetAnimator().SetBool("Dodge", false);
+                    return;
+                }
+            }
+
+            //자연스러운 애니메이션을 위한 속도 조정
             character.dodgeTimer += Time.deltaTime;
-
-
             if (character.curAnimSpeed > 0)
             {
                 character.curAnimSpeed -= (speed * 4) * Time.deltaTime;
             }
 
-
+            //뒤로 이동
             character.GetRigidbody().MovePosition(character.transform.position - character.transform.forward * character.curAnimSpeed * Time.fixedDeltaTime);
-
 
             //dodgeDuration 이후에 피하기 상태 해제
             if (character.dodgeTimer >= character.curAimTime - Time.deltaTime)

@@ -38,11 +38,27 @@ namespace HyukinKwon
             }
             animator.SetFloat("RandomAttack", (float)character.medAttackType);
             character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().isTrigger = false;
+
+            character.attackChargeDes = new Vector3(0, 10000, 0);
+            if (character.targetEnemy != null)
+            {
+                float dis = Vector3.Distance(character.transform.position, character.targetEnemy.transform.position);
+                if (dis < character.chargeDis && dis > character.attackRange)
+                {
+                    Vector3 dir = (character.targetEnemy.transform.position - character.transform.position).normalized;
+                    character.attackChargeDes = character.transform.position + dir * (dis - character.attackRange - 0.2f);
+                }
+            }
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
+
+            if(character.attackChargeDes != new Vector3(0, 10000, 0))
+            {
+                character.transform.position = Vector3.Slerp(character.transform.position, character.attackChargeDes, 1f * Time.fixedDeltaTime);
+            }
 
             character.attackTimer += Time.deltaTime;
             if (character.isAttacking)

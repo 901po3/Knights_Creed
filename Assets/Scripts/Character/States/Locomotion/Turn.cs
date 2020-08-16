@@ -59,7 +59,7 @@ namespace HyukinKwon
                 animator.SetBool("TurnRight", false);
             }
 
-            Debug.Log(character.curAnimSpeed);
+            //Debug.Log(character.curAnimSpeed);
 
             if (Vector3.Angle(character.transform.forward, targetDirection) > 2.5f) //제안두기
             {

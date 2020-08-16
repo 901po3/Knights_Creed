@@ -18,7 +18,7 @@ namespace HyukinKwon
             character.isChangingMode = false;
 
             //전투 비전투 모드에 따라 다른 애니메이션 재생
-            if(!character.isBattleModeOne)
+            if(!character.isBattleModeOn)
             {
                 animator.SetFloat("RandomIdle", (float)character.NormalIdleType);
             }
@@ -36,7 +36,7 @@ namespace HyukinKwon
             Vector3 targetDirection = character.runVelocity.normalized;
             targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
             targetDirection.y = 0f;
-            if(!character.isBattleModeOne)
+            if(!character.isBattleModeOn)
             {
                 if (Vector3.Angle(character.transform.forward, targetDirection) > 160) //빠른 180도 회전
                 {
