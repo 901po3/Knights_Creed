@@ -21,6 +21,21 @@ namespace HyukinKwon
             //자기 자신으로 기준
             character.facingStandardTransfom = character.transform;
         }
+
+        private void Update()
+        {
+            if(character.targetEnemy.GetComponent<CharacterControl>().isAttacking)
+            {
+                if (character.isBattleModeOne) //전투중인지 먼저 체크 후 
+                {
+                    if (character.isDrawingWeapon) //무기를 들고 있는지 체크
+                    {
+                        character.isDodging = true;
+                        character.GetAnimator().SetBool("Dodge", true);
+                    }
+                }
+            }
+        }
     }
 
 }

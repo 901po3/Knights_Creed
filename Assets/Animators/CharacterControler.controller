@@ -493,7 +493,7 @@ AnimatorStateMachine:
     m_Position: {x: 600, y: -90, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -338898435551502224}
-    m_Position: {x: 790, y: 500, z: 0}
+    m_Position: {x: 800, y: 500, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: 3274618082766944854}
@@ -2306,7 +2306,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilityDataList:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 4b2ffe47e38a4c84d96fce2c36a9fd92, type: 2}
 --- !u!1102 &-2448737527264705663
 AnimatorState:
   serializedVersion: 5
@@ -3186,6 +3186,9 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: Dead
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: Dodge
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 837880074155000824}

@@ -22668,6 +22668,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1447682665}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1986254776 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7335592016086474026, guid: 0a215a1408157d74e8c7359bd2611733,
+    type: 3}
+  m_PrefabInstance: {fileID: 7335592017329743460}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1989112295
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25161,5 +25167,10 @@ PrefabInstance:
       propertyPath: facingStandardTransfom
       value: 
       objectReference: {fileID: 4700934884605281521}
+    - target: {fileID: 3990235860369611545, guid: 804844ba44afbe3459ff8f350d358899,
+        type: 3}
+      propertyPath: targetEnemy
+      value: 
+      objectReference: {fileID: 1986254776}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 804844ba44afbe3459ff8f350d358899, type: 3}

@@ -69,7 +69,7 @@ namespace HyukinKwon
             if (character.dodgeTimer >= character.curAimTime - Time.deltaTime)
             {
                 character.isDodging = false;
-                character.GetAnimator().SetBool("Dodging", false);
+                character.GetAnimator().SetBool("Dodge", false);
             }
         }
 
