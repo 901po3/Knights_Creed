@@ -31,6 +31,8 @@ namespace HyukinKwon
             attackerTrans.position = new Vector3(character.attacker.transform.position.x, 
                 character.transform.position.y, character.attacker.transform.position.z);
             character.transform.LookAt(attackerTrans);
+
+            character.GetDamaged(character.attacker.damage);
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -54,7 +56,6 @@ namespace HyukinKwon
             {
                 character.hurtTimer = 0f;
                 character.isHurt = false;
-                animator.SetBool("Hurt", false);
                 animator.SetBool("Dead", true);
             }
         }

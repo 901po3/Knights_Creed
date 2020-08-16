@@ -45,6 +45,8 @@ namespace HyukinKwon
         private Animator mAnimator;
         private Rigidbody mRigidbody;
 
+        public float curAimTime = 0; //현재 사용하는 애니메이션의 길이
+
         //레그돌
         private Collider[] colliders;
         private Rigidbody[] rigidbodies;
@@ -74,7 +76,6 @@ namespace HyukinKwon
 
         //공격 관련
         public bool isAttacking = false;
-        public float curAttackTime = 0;
         public MED_ATTACK_TYPE medAttackType;
         public MED_ATTACK_TYPE prevMedAttackType;
 
@@ -84,6 +85,10 @@ namespace HyukinKwon
         //공격 받음 관련
         public bool isHurt = false;
         public CharacterControl attacker; //자신을 때린 적
+        public GameObject bloodEffect;
+        private List<GameObject> blooodEffectList;
+        private int maxBloodNum = 3;
+        private int curBloodIndex = 0;
 
         //회전 관련
         public bool isTurning = false; //회전중
@@ -92,6 +97,7 @@ namespace HyukinKwon
         //타이머 변수들
         public float turnTimer = 0; //180도 급회전 변수 타이머
         public float hurtTimer = 0;
+        public float deathTimer = 0;
         public float curUndetectedTimer = 0; //undetectedTime 타이머
         public float attackTimer; //공격 타이머
         public float dodgeTimer = 0f; //파하기 타이머
@@ -108,6 +114,17 @@ namespace HyukinKwon
             mCollider = GetComponent<Collider>();
             mRigidbody = GetComponent<Rigidbody>();
             mAnimator = GetComponent<Animator>();
+
+            //파티클 이펙트
+            blooodEffectList = new List<GameObject>();
+            for (int i = 0; i < maxBloodNum; i++) //피 이펙트 3개
+            {
+                GameObject blood = Instantiate(bloodEffect);
+                blood.transform.parent = transform;
+                blooodEffectList.Add(blood);
+                blood.SetActive(false);
+            }
+            bloodEffect.SetActive(false);
 
             ToggleRagdoll(false);
         }
@@ -127,30 +144,47 @@ namespace HyukinKwon
             CheckHurt(collision);
         }
 
+
+        //피해 적용
         private void CheckHurt(Collision collision)
         {
-            //다치는 상태가 아니고
-            //적이 공격중이고
-            //다른팀이면 피격
-
-            /*레그돌
-             * 애니에미터 끄고, m콜라이더 끄고, navmesh있으면 끈다.
-             */
             if (collision.transform.tag == "Weapon" && !isHurt)
             {
-                CharacterControl character = collision.gameObject.GetComponentInParent<CharacterControl>();
-                if (character.isAttacking && character.team != team)
+                CharacterControl atk = collision.gameObject.GetComponentInParent<CharacterControl>();
+                if (atk.isAttacking && atk.team != team)
                 {
-                    attacker = character;
-                    isHurt = true;
-                    //공격 들어온 방향에 맞게 힘 적용
-                    Vector3 dir = collision.contacts[0].point - collision.gameObject.transform.position;
-                    mRigidbody.AddForce(dir * 100);
+                    //공격한 무기의 트리거를 끄고 충돌시 발생하는 힘을 제거한다
+                    collision.gameObject.GetComponent<Collider>().isTrigger = true; 
+                    mRigidbody.velocity = new Vector3(0, mRigidbody.velocity.y, 0);
+                    atk.GetRigidbody().velocity = new Vector3(0, atk.GetRigidbody().velocity.y, 0);
 
-                    GetDamaged(character.damage);
-                    GetComponent<Animator>().SetBool("Hurt", true);
+                    attacker = atk;
+                    isHurt = true;
+                    //공격 들어온 방향
+                    Vector3 dir = collision.contacts[0].point - collision.gameObject.transform.position;
+
+                    //피 생성
+                    foreach (GameObject b in blooodEffectList)
+                    {
+                        if (b.GetComponent<ParticleSystem>().time >= 0.3f - Time.deltaTime)
+                        {
+                            b.SetActive(false);
+                        }
+                    }
+                    GameObject blood = blooodEffectList[curBloodIndex];
+                    if (!blood.activeSelf)
+                    {
+                        curBloodIndex = (curBloodIndex + 1) % maxBloodNum;
+                        blood.transform.rotation = Quaternion.Euler(dir);
+                        blood.transform.position = collision.contacts[0].point;
+                        blood.SetActive(true);
+                    }
+
+                    mAnimator.SetBool("Hurt", true);
+                    mAnimator.SetBool("Dead", false);
                 }
             }
+           
         }
 
         private void ToggleRagdoll(bool b) //if b == true 레그돌 활성

@@ -24,15 +24,15 @@ namespace HyukinKwon
             {
                 case 0:
                     character.medAttackType = MED_ATTACK_TYPE.HIGH;
-                    character.curAttackTime = 1.783f;
+                    character.curAimTime = 1.783f;
                     break;
                 case 1:
                     character.medAttackType = MED_ATTACK_TYPE.MIDDLE;
-                    character.curAttackTime = 1.5f;
+                    character.curAimTime = 1.5f;
                     break;
                 case 2:
                     character.medAttackType = MED_ATTACK_TYPE.LOW;
-                    character.curAttackTime = 1.9f;
+                    character.curAimTime = 1.9f;
                     break;
             }
             if(character.prevMedAttackType == character.medAttackType)
@@ -43,6 +43,7 @@ namespace HyukinKwon
             }
             animator.SetFloat("RandomAttack", (float)character.medAttackType);
             character.prevMedAttackType = character.medAttackType;
+            character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().isTrigger = false;
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -60,7 +61,7 @@ namespace HyukinKwon
                 }            
             }
             
-            if(character.attackTimer > character.curAttackTime - Time.deltaTime)
+            if(character.attackTimer > character.curAimTime - Time.deltaTime)
             {
                 animator.SetBool("SwingSword", false);
             }           

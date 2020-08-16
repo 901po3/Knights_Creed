@@ -2487,21 +2487,34 @@ MonoBehaviour:
   drawedWeapon:
   - {fileID: 7335592016889827661}
   weapon: 0
+  curAimTime: 0
   facingStandardTransfom: {fileID: 0}
+  prevRunVelocity: {x: 0, y: 0, z: 0}
   runVelocity: {x: 0, y: 0, z: 0}
-  isTurning: 0
+  horizontalV: 0
+  NormalIdleType: 3
+  BattleIdleType: 2
   isBattleModeOne: 0
   isDrawingWeapon: 0
+  isChangingMode: 0
   isDetected: 0
   undetectedTime: 4
-  curUndetectedTime: 0
   isAttacking: 0
-  attackTimer: 0
+  medAttackType: 0
+  prevMedAttackType: 0
   isDodging: 0
-  dodgeTimer: 0
   isHurt: 0
+  attacker: {fileID: 0}
+  bloodEffect: {fileID: 5561698443439670171, guid: cd1f0591bc5af1b40970967f4d66aee6,
+    type: 3}
+  isTurning: 0
+  turning: 0
+  turnTimer: 0
   hurtTimer: 0
-  isChangingMode: 0
+  deathTimer: 0
+  curUndetectedTimer: 0
+  attackTimer: 0
+  dodgeTimer: 0
 --- !u!114 &7335592016086474036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4000,19 +4013,6 @@ SkinnedMeshRenderer:
     m_Center: {x: 0, y: 88.9231, z: -5.75329}
     m_Extent: {x: 102.45596, y: 99.17097, z: 29.848196}
   m_DirtyAABB: 0
---- !u!65 &1794517456
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7335592016889827661}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.12, y: 0.59, z: 0.05988264}
-  m_Center: {x: -0.000002912145, y: 0.49, z: -0.00000754102}
 --- !u!54 &1794517455
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4029,6 +4029,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &1794517456
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7335592016889827661}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.12, y: 0.59, z: 0.05988264}
+  m_Center: {x: -0.000002912145, y: 0.49, z: -0.00000754102}
 --- !u!1001 &7335592016889958593
 PrefabInstance:
   m_ObjectHideFlags: 0
