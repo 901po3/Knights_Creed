@@ -4545,6 +4545,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: TransitionIndex
     m_EventTreshold: 1
+  - m_ConditionMode: 2
+    m_ConditionEvent: Dodge
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -7914466176896099235}
   m_Solo: 0

@@ -28,9 +28,10 @@ namespace HyukinKwon
             MoveVerticalInput();
             StartBattleInput();
             AttackInput();
-            //DodgeInput();
+            DodgeInput();
 
-            Debug.Log(Vector3.Distance(transform.position, character.targetEnemy.transform.position));
+            if(character.targetEnemy != null)
+                Debug.Log(Vector3.Distance(transform.position, character.targetEnemy.transform.position));
         }
 
         private void MoveVerticalInput()

@@ -258,17 +258,17 @@ namespace HyukinKwon
                 case 0:
                     medAttackType = MED_ATTACK_TYPE.HIGH;
                     curAimTime = 1.783f;
-                    attackRange = 1.3f;
+                    attackRange = 1.2f;
                     break;
                 case 1:
                     medAttackType = MED_ATTACK_TYPE.MIDDLE;
                     curAimTime = 1.5f;
-                    attackRange = 0.6f;
+                    attackRange = 0.4f;
                     break;
                 case 2:
                     medAttackType = MED_ATTACK_TYPE.LOW;
                     curAimTime = 1.9f;
-                    attackRange = 1.3f;
+                    attackRange = 1.2f;
                     break;
             }
             if (prevMedAttackType == medAttackType)

@@ -25086,9 +25086,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraManObj: {fileID: 184823798}
-  distance: 4
-  minDistance: 1.5
-  maxDistance: 6
+  distance: 6
+  minDistance: 3
+  maxDistance: 8
   zoomSpeed: 10
   distanceSpeed: 10
   rotSpeed: 30

@@ -30,6 +30,8 @@ namespace HyukinKwon
                     character.curAimTime = 3.6f;
                     break;
             }
+
+            character.attacker.targetEnemy = null;
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)

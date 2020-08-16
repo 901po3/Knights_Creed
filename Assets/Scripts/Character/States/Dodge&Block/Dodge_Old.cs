@@ -71,11 +71,38 @@ namespace HyukinKwon
                 character.isDodging = false;
                 character.GetAnimator().SetBool("Dodge", false);
             }
+
+            RotateToForward(character, animator);
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
 
+        }
+
+        //기준 정면으로 회전 함수
+        private void RotateToForward(CharacterControl character, Animator animator)
+        {
+            Vector3 curRunVelocity = character.runVelocity;
+            //회전
+            Vector3 targetDirection = curRunVelocity.normalized;
+            targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
+            targetDirection.y = 0f;
+
+            //Debug.Log(Vector3.Angle(character.transform.forward, targetDirection));
+            float rotSpeed = turnSpeed;
+
+            //빠른 180도 회전
+            if (curRunVelocity.x > 0.5f || curRunVelocity.z < -0.5f)
+            {
+                animator.SetBool("TurnRight", true);
+            }
+            else if (curRunVelocity.x < -0.5f || curRunVelocity.z > 0.5f)
+            {
+                animator.SetBool("TurnLeft", true);
+            }
+            character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards
+                (character.transform.forward, targetDirection, rotSpeed * Time.fixedDeltaTime, 0f)));
         }
     }
 }

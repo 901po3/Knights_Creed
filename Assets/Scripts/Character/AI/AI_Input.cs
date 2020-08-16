@@ -8,20 +8,17 @@
 */
 using System.Collections;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace HyukinKwon
 {
     public class AI_Input : MonoBehaviour
     {
         private CharacterControl character; //캐릭터 Gameobject의 CharacterControl 스크립트
-        private NavMeshAgent nav;
         private bool statePicked = false; //행동을 한번만 선택한다.
 
         private void Awake()
         {
             character = GetComponent<CharacterControl>();
-            nav = GetComponent<NavMeshAgent>();
             //자기 자신으로 기준
             character.facingStandardTransfom = character.transform;
         }
@@ -30,13 +27,20 @@ namespace HyukinKwon
         {
             if (character.targetEnemy != null)
             {
-                SetDestination();
-
                 if (character.isBattleModeOn && character.isDrawingWeapon) //전투중인지 먼저 체크 후 
                 {
-                    DodgeInput();
-                    AttackInput();
-                    if (statePicked)
+                    if(!statePicked)
+                    {
+                        if (!character.isAttacking)
+                        {
+                            DodgeInput();
+                        }
+                        if (!character.isDodging)
+                        {
+                            AttackInput();
+                        }
+                    }
+                    else
                     {
                         StartCoroutine(ResetPickedState(1.5f));
                     }
@@ -44,21 +48,12 @@ namespace HyukinKwon
             }
         }
 
-        private void SetDestination()
-        {
-            if(character.isTargetChanged)
-            {
-                character.isTargetChanged = false;
-                nav.SetDestination(character.targetEnemy.transform.position);
-            }
-        }
-
         private void DodgeInput()
         {
             CharacterControl targetScript = character.targetEnemy.GetComponent<CharacterControl>();
-            if (Vector3.Distance(transform.position, character.targetEnemy.transform.position) < targetScript.chargeDis)
+            if (Vector3.Distance(transform.position, character.targetEnemy.transform.position) < targetScript.chargeDis - 0.3f)
             {
-                if (targetScript.isAttacking && !statePicked)
+                if (targetScript.isAttacking)
                 {
                     statePicked = true;
 
@@ -75,13 +70,10 @@ namespace HyukinKwon
             CharacterControl targetScript = character.targetEnemy.GetComponent<CharacterControl>();
             if (Vector3.Distance(transform.position, character.targetEnemy.transform.position) < character.chargeDis)
             {
-                if (!statePicked)
+                if (Random.Range(0, 5) == 0) // 1/5 확률도 공격
                 {
-                    if (Random.Range(0, 5) == 0) // 1/5 확률도 공격
-                    {
-                        character.curUndetectedTimer = 0; //공격 -> 전투 해제 타이머 리셋
-                        character.isAttacking = true;
-                    }
+                    character.curUndetectedTimer = 0; //공격 -> 전투 해제 타이머 리셋
+                    character.isAttacking = true;
                 }
             }
         }
