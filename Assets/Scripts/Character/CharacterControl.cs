@@ -46,6 +46,7 @@ namespace HyukinKwon
         private Rigidbody mRigidbody;
 
         public float curAimTime = 0; //현재 사용하는 애니메이션의 길이
+        public float curAnimSpeed = 0; //애니메이션 이동 관련에 사용되는 속도
         public GameObject targetEnemy; //타겟팅 된 적
 
         //레그돌
@@ -79,6 +80,7 @@ namespace HyukinKwon
         public bool isAttacking = false;
         public MED_ATTACK_TYPE medAttackType;
         public MED_ATTACK_TYPE prevMedAttackType;
+        public float attackEndTime = 0;
 
         //피하기 관련
         public bool isDodging = false;
@@ -171,7 +173,7 @@ namespace HyukinKwon
         //피해 적용
         private void CheckHurt(Collision collision)
         {
-            if (collision.transform.tag == "Weapon")
+            if (collision.transform.tag == "Weapon" && !isDodging)
             {
                 CharacterControl atk = collision.gameObject.GetComponentInParent<CharacterControl>();
                 if (atk.team != team)

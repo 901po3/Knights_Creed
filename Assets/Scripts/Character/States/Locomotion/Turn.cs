@@ -30,17 +30,18 @@ namespace HyukinKwon
             targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
             targetDirection.y = 0f;
 
-            //character.curAimTime 시간 이후에 회전 시간
+            //character.curAimTime 시간 이후에 회전 시작
             //용도: 자연스러운 애니메이션 재생    
             character.curAimTime = duration;
             if(duration == 1)
             {
-                character.startTurnTimer = 0.1f;
+                character.startTurnTimer = 0.13f;
             }
             else
             {
                 character.startTurnTimer = 0.3f;
             }
+            character.curAnimSpeed = speed;
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -58,22 +59,19 @@ namespace HyukinKwon
                 animator.SetBool("TurnRight", false);
             }
 
-            float curSpeed = speed;
+            Debug.Log(character.curAnimSpeed);
+
             if (Vector3.Angle(character.transform.forward, targetDirection) > 2.5f) //제안두기
             {
                 if(character.turnTimer > character.startTurnTimer)
                 {
-                    if(curSpeed > speed * 0.5f)
-                    {
-                        curSpeed = Mathf.Lerp(curSpeed, speed * 0.5f, Time.fixedDeltaTime * 3); //점진적 속도 변화
-                    }
                     if (direction == DIRECTION.LEFT)
                     {
-                        character.transform.Rotate(Vector3.up * curSpeed * Time.fixedDeltaTime);
+                        character.transform.Rotate(Vector3.up * character.curAnimSpeed * Time.fixedDeltaTime);
                     }
                     else
                     {
-                        character.transform.Rotate(Vector3.up * -curSpeed * Time.fixedDeltaTime);
+                        character.transform.Rotate(Vector3.up * -character.curAnimSpeed * Time.fixedDeltaTime);
                     }
                 }
             }

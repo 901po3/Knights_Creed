@@ -42,12 +42,22 @@ namespace HyukinKwon
             character.transform.LookAt(attackerTrans);
 
             character.dodgeTimer = 0;
+            character.curAnimSpeed = speed;
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
             character.dodgeTimer += Time.deltaTime;
+
+
+            if (character.curAnimSpeed > 0)
+            {
+                character.curAnimSpeed -= (speed * 4) * Time.deltaTime;
+            }
+
+
+            character.GetRigidbody().MovePosition(character.transform.position - character.transform.forward * character.curAnimSpeed * Time.fixedDeltaTime);
 
 
             //dodgeDuration 이후에 피하기 상태 해제

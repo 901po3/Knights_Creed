@@ -25,12 +25,15 @@ namespace HyukinKwon
             {
                 case MED_ATTACK_TYPE.HIGH:
                     character.curAimTime = 1.783f;
+                    character.attackEndTime = 1f;
                     break;
                 case MED_ATTACK_TYPE.MIDDLE:
                     character.curAimTime = 1.5f;
+                    character.attackEndTime = 0.5f;
                     break;
                 case MED_ATTACK_TYPE.LOW:
                     character.curAimTime = 1.9f;
+                    character.attackEndTime = 1f;
                     break;
             }
             animator.SetFloat("RandomAttack", (float)character.medAttackType);
@@ -49,7 +52,12 @@ namespace HyukinKwon
                 if(character.attackTimer > attackEnableTime) //무기 공격 활성화
                 {
                     character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = true;
-                }            
+                }
+                if(character.attackTimer >= character.attackEndTime)
+                {
+                    character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = false;
+                    character.isAttacking = false;
+                }
             }
             
             if(character.attackTimer > character.curAimTime - Time.deltaTime)

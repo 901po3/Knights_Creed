@@ -26,15 +26,20 @@ namespace HyukinKwon
         [SerializeField] float maxAngle;
         float prevX = 0;
 
+        public bool lockCursor = false;
+
         private void Awake()
         {
-            transform.position = cameraManObj.transform.position;
-            //Cursor.lockState = CursorLockMode.Locked; //회전을 위해 마우스커서 잠금
+            transform.position = cameraManObj.transform.position;          
         }
 
         private void Update()
         {
             Rotate();
+            if(lockCursor)
+            {
+                Cursor.lockState = CursorLockMode.Locked; //회전을 위해 마우스커서 잠금
+            }
         }
 
         private void FixedUpdate()

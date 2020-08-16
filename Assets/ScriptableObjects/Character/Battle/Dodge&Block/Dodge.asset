@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   duration: 0
   turnSpeed: 5000
-  speed: 4
+  speed: 8
