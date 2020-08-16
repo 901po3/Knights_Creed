@@ -46,6 +46,7 @@ namespace HyukinKwon
         private Rigidbody mRigidbody;
 
         public float curAimTime = 0; //현재 사용하는 애니메이션의 길이
+        public GameObject targetEnemy; //타겟팅 된 적
 
         //레그돌
         private Collider[] colliders;
@@ -144,14 +145,18 @@ namespace HyukinKwon
             CheckHurt(collision);
         }
 
+        private void OnTriggerStay(Collider other)
+        {
+
+        }
 
         //피해 적용
         private void CheckHurt(Collision collision)
         {
-            if (collision.transform.tag == "Weapon" && !isHurt)
+            if (collision.transform.tag == "Weapon")
             {
                 CharacterControl atk = collision.gameObject.GetComponentInParent<CharacterControl>();
-                if (atk.isAttacking && atk.team != team)
+                if (atk.team != team)
                 {
                     //공격한 무기의 트리거를 끄고 충돌시 발생하는 힘을 제거한다
                     collision.gameObject.GetComponent<Collider>().isTrigger = true; 
@@ -203,9 +208,15 @@ namespace HyukinKwon
             mRigidbody.isKinematic = b;
         }
 
+        public void PickTargetEnemy()
+        { 
+
+        }
+
         public void GetDamaged(int damage)
         {
             health -= damage;
+            targetEnemy = attacker.gameObject;
             Debug.Log(gameObject + "'s health: " + health);
         }
     }
