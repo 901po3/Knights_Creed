@@ -48,6 +48,7 @@ namespace HyukinKwon
         public float curAimTime = 0; //현재 사용하는 애니메이션의 길이
         public float curAnimSpeed = 0; //애니메이션 이동 관련에 사용되는 속도
         public GameObject targetEnemy; //타겟팅 된 적
+        public bool isTargetChanged = false;
 
         //레그돌
         private Collider[] colliders;

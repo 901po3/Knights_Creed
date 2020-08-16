@@ -38,6 +38,7 @@ namespace HyukinKwon
                 if(character.targetEnemy == null)
                 {
                     character.targetEnemy = character.attacker.gameObject;
+                    character.isTargetChanged = true;
                 }
             }
         }

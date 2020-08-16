@@ -30,6 +30,7 @@ namespace HyukinKwon
         {
             if (character.targetEnemy != null)
             {
+                SetDestination();
 
                 if (character.isBattleModeOn && character.isDrawingWeapon) //전투중인지 먼저 체크 후 
                 {
@@ -40,6 +41,15 @@ namespace HyukinKwon
                         StartCoroutine(ResetPickedState(1.5f));
                     }
                 }
+            }
+        }
+
+        private void SetDestination()
+        {
+            if(character.isTargetChanged)
+            {
+                character.isTargetChanged = false;
+                nav.SetDestination(character.targetEnemy.transform.position);
             }
         }
 

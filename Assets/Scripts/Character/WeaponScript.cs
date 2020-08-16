@@ -25,7 +25,11 @@ namespace HyukinKwon
             {
                 if(collision.gameObject.GetComponent<CharacterControl>().team != owner.team)
                 {
-                    owner.targetEnemy = collision.gameObject;
+                    if(owner.targetEnemy == null || owner.targetEnemy != collision.gameObject)
+                    {
+                        owner.targetEnemy = collision.gameObject;
+                        owner.isTargetChanged = true;
+                    }
                     GetComponent<Collider>().enabled = false;
                     collision.gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero; //충돌 반동 초기화
                 }

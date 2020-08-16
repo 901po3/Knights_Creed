@@ -30,14 +30,17 @@ namespace HyukinKwon
                 {
                     if (character.isBattleModeOn)
                     {
-                        //회전
-                        Vector3 targetDirection = (character.targetEnemy.transform.position - character.transform.position).normalized;
-                       // targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
-                        targetDirection.y = 0f;
+                        // //회전
+                        // Vector3 targetDirection = (character.targetEnemy.transform.position - character.transform.position).normalized;
+                        //// targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
+                        // targetDirection.y = 0f;
 
-                        character.transform.rotation = Quaternion.Lerp(character.transform.rotation, Quaternion.Euler(targetDirection), rotSpeed * Time.deltaTime);
-                        //character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards
-                        //    (character.transform.forward, targetDirection, rotSpeed * Time.fixedDeltaTime, 0f)));
+                        // character.transform.rotation = Quaternion.Lerp(character.transform.rotation, Quaternion.Euler(targetDirection), rotSpeed * Time.deltaTime);
+                        // //character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards
+                        // //    (character.transform.forward, targetDirection, rotSpeed * Time.fixedDeltaTime, 0f)));
+                        Vector3 target = character.targetEnemy.transform.position;
+                        target.y = 0;
+                        character.transform.LookAt(target);
                     }
                 }
             }           
