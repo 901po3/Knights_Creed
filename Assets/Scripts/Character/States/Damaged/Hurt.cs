@@ -32,7 +32,10 @@ namespace HyukinKwon
                 character.transform.position.y, character.attacker.transform.position.z);
             character.transform.LookAt(attackerTrans);
 
-            character.GetDamaged(character.attacker.damage);
+            if(!character.isDodging)
+            {
+                character.GetDamaged(character.attacker.damage);
+            }
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -58,11 +61,19 @@ namespace HyukinKwon
                 character.isHurt = false;
                 animator.SetBool("Dead", true);
             }
+
+            //회전 //나중에 다른 State로 분리
+            Vector3 targetDirection = (character.attacker.transform.position - character.transform.position).normalized;
+            targetDirection.y = 0f;
+
+            character.transform.rotation = Quaternion.RotateTowards(character.transform.rotation, Quaternion.LookRotation(targetDirection), Time.fixedDeltaTime);
+            //character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards
+            //   (character.transform.forward, targetDirection,  0.1f  * Time.fixedDeltaTime, 0f)));
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
-           
+
         }
     }
 

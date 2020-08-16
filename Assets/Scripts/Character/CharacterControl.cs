@@ -86,6 +86,8 @@ namespace HyukinKwon
         //공격 받음 관련
         public bool isHurt = false;
         public CharacterControl attacker; //자신을 때린 적
+        private Vector3 contactPoint = new Vector3(0, 10000, 0);
+        private Vector3 contactDir = Vector3.zero;
         public GameObject bloodEffect;
         private List<GameObject> blooodEffectList;
         private int maxBloodNum = 3;
@@ -97,6 +99,7 @@ namespace HyukinKwon
 
         //타이머 변수들
         public float turnTimer = 0; //180도 급회전 변수 타이머
+        public float startTurnTimer = 0;
         public float hurtTimer = 0;
         public float deathTimer = 0;
         public float curUndetectedTimer = 0; //undetectedTime 타이머
@@ -165,25 +168,8 @@ namespace HyukinKwon
 
                     attacker = atk;
                     isHurt = true;
-                    //공격 들어온 방향
-                    Vector3 dir = collision.contacts[0].point - collision.gameObject.transform.position;
-
-                    //피 생성
-                    foreach (GameObject b in blooodEffectList)
-                    {
-                        if (b.GetComponent<ParticleSystem>().time >= 0.3f - Time.deltaTime)
-                        {
-                            b.SetActive(false);
-                        }
-                    }
-                    GameObject blood = blooodEffectList[curBloodIndex];
-                    if (!blood.activeSelf)
-                    {
-                        curBloodIndex = (curBloodIndex + 1) % maxBloodNum;
-                        blood.transform.rotation = Quaternion.Euler(dir);
-                        blood.transform.position = collision.contacts[0].point;
-                        blood.SetActive(true);
-                    }
+                    contactDir = collision.contacts[0].point - collision.gameObject.transform.position;
+                    contactPoint = collision.contacts[0].point;
 
                     mAnimator.SetBool("Hurt", true);
                     mAnimator.SetBool("Dead", false);
@@ -217,6 +203,31 @@ namespace HyukinKwon
         {
             health -= damage;
             targetEnemy = attacker.gameObject;
+
+            //피 생성
+            foreach (GameObject b in blooodEffectList)
+            {
+                if (b.GetComponent<ParticleSystem>().time >= 0.3f - Time.deltaTime)
+                {
+                    b.SetActive(false);
+                }
+            }
+            if(contactPoint != new Vector3(0, 10000, 0))
+            {
+                GameObject blood = blooodEffectList[curBloodIndex];
+                if (!blood.activeSelf)
+                {
+                    curBloodIndex = (curBloodIndex + 1) % maxBloodNum;
+                    blood.transform.rotation = Quaternion.Euler(contactDir);
+                    blood.transform.position = contactPoint;
+                    blood.SetActive(true);
+                }
+
+                contactPoint = new Vector3(0, 10000, 0);
+                contactDir = Vector3.zero;
+            }
+
+
             Debug.Log(gameObject + "'s health: " + health);
         }
     }

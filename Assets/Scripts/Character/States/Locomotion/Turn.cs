@@ -29,6 +29,18 @@ namespace HyukinKwon
             targetDirection = targetDirection = character.runVelocity.normalized;
             targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
             targetDirection.y = 0f;
+
+            //character.curAimTime 시간 이후에 회전 시간
+            //용도: 자연스러운 애니메이션 재생    
+            character.curAimTime = duration;
+            if(duration == 1)
+            {
+                character.startTurnTimer = 0.1f;
+            }
+            else
+            {
+                character.startTurnTimer = 0.3f;
+            }
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -36,26 +48,39 @@ namespace HyukinKwon
             //천천히 목표 방향값으로 회전
             CharacterControl character = characterState.GetCharacterControl(animator);
             character.turnTimer += Time.deltaTime;
-            if(character.turnTimer > duration)
+
+            //회전 시간이 끝나면 아웃
+            if(character.turnTimer > character.curAimTime - Time.deltaTime)
             {
+                character.GetRigidbody().rotation = Quaternion.LookRotation(targetDirection);
                 character.turning = false;
                 animator.SetBool("TurnLeft", false);
                 animator.SetBool("TurnRight", false);
             }
 
+            float curSpeed = speed;
             if (Vector3.Angle(character.transform.forward, targetDirection) > 2.5f) //제안두기
             {
-                if (direction == DIRECTION.LEFT)
+                if(character.turnTimer > character.startTurnTimer)
                 {
-                    character.transform.Rotate(Vector3.up * speed * Time.fixedDeltaTime);
-                }
-                else
-                {
-                    character.transform.Rotate(Vector3.up * -speed * Time.fixedDeltaTime);
+                    if(curSpeed > speed * 0.5f)
+                    {
+                        curSpeed = Mathf.Lerp(curSpeed, speed * 0.5f, Time.fixedDeltaTime * 3); //점진적 속도 변화
+                    }
+                    if (direction == DIRECTION.LEFT)
+                    {
+                        character.transform.Rotate(Vector3.up * curSpeed * Time.fixedDeltaTime);
+                    }
+                    else
+                    {
+                        character.transform.Rotate(Vector3.up * -curSpeed * Time.fixedDeltaTime);
+                    }
                 }
             }
             else
             {
+                //시간이 끝나기전에 회전이 끝나면 아웃
+                character.GetRigidbody().rotation = Quaternion.LookRotation(targetDirection);
                 character.turning = false;
                 animator.SetBool("TurnLeft", false);
                 animator.SetBool("TurnRight", false);
@@ -64,9 +89,6 @@ namespace HyukinKwon
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
-            //목표 방향값으로 회전
-            CharacterControl character = characterState.GetCharacterControl(animator);
-            character.GetRigidbody().rotation = Quaternion.LookRotation(targetDirection);
         }
     }
 
