@@ -60,7 +60,7 @@ namespace HyukinKwon
                     curAttackTime = 0f;
                 }
             }
-            if (character.isAttacking) //일정 시간 마우스를 누르지 않으면 콤보공격 X
+            if (character.isAttacking) //일정 시간 마우스를 누르지 공격 취소
             {
                 curAttackTime += Time.deltaTime;
                 if (curAttackTime >= attackInputOffTime)
@@ -80,7 +80,7 @@ namespace HyukinKwon
                     if(Input.GetKeyDown(KeyCode.Space))
                     {
                         character.isDodging = true;
-                        character.GetAnimator().SetBool("Dodging", true);
+                        character.GetAnimator().SetBool("Dodge", true);
                     }
                 }
             }

@@ -20,29 +20,20 @@ namespace HyukinKwon
             CharacterControl character = characterState.GetCharacterControl(animator);
             character.damage = damage;
             
-            switch(Random.Range(0, 3))
+            //공격 타입에 맞게 시간 설정 
+            switch(character.medAttackType)
             {
-                case 0:
-                    character.medAttackType = MED_ATTACK_TYPE.HIGH;
+                case MED_ATTACK_TYPE.HIGH:
                     character.curAimTime = 1.783f;
                     break;
-                case 1:
-                    character.medAttackType = MED_ATTACK_TYPE.MIDDLE;
+                case MED_ATTACK_TYPE.MIDDLE:
                     character.curAimTime = 1.5f;
                     break;
-                case 2:
-                    character.medAttackType = MED_ATTACK_TYPE.LOW;
+                case MED_ATTACK_TYPE.LOW:
                     character.curAimTime = 1.9f;
                     break;
             }
-            if(character.prevMedAttackType == character.medAttackType)
-            {
-                character.medAttackType = (character.medAttackType + 1);
-                if ((int)character.medAttackType == 3)
-                    character.medAttackType = 0;
-            }
             animator.SetFloat("RandomAttack", (float)character.medAttackType);
-            character.prevMedAttackType = character.medAttackType;
             character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().isTrigger = false;
         }
 
@@ -53,7 +44,7 @@ namespace HyukinKwon
             character.attackTimer += Time.deltaTime;
             if (character.isAttacking)
             {
-                animator.SetBool("SwingSword", true);
+                animator.SetBool("Attack", true);
 
                 if(character.attackTimer > attackEnableTime) //무기 공격 활성화
                 {
@@ -63,17 +54,19 @@ namespace HyukinKwon
             
             if(character.attackTimer > character.curAimTime - Time.deltaTime)
             {
-                animator.SetBool("SwingSword", false);
+                animator.SetBool("Attack", false);
             }           
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
+            character.PickNextAttack(); //미리 다음 공격 타입을 정한다
             character.attackTimer = 0;
             character.isAttacking = false;
             character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = false;
         }
+
 
 
         //private void OldAtttackFunc(CharacterState characterState, Animator animator)

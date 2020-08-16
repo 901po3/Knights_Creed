@@ -325,6 +325,11 @@ PrefabInstance:
       propertyPath: BattleIdleType
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7335592016990176568, guid: 0a215a1408157d74e8c7359bd2611733,
+        type: 3}
+      propertyPath: targetEnemy
+      value: 
+      objectReference: {fileID: 4700934883863258403}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a215a1408157d74e8c7359bd2611733, type: 3}
 --- !u!1001 &23179465
@@ -1235,6 +1240,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: soldier (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 7335592016990176568, guid: 0a215a1408157d74e8c7359bd2611733,
+        type: 3}
+      propertyPath: targetEnemy
+      value: 
+      objectReference: {fileID: 4700934883863258403}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a215a1408157d74e8c7359bd2611733, type: 3}
 --- !u!4 &73080001 stripped
@@ -2251,6 +2261,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: soldier (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 7335592016990176568, guid: 0a215a1408157d74e8c7359bd2611733,
+        type: 3}
+      propertyPath: targetEnemy
+      value: 
+      objectReference: {fileID: 4700934883863258403}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a215a1408157d74e8c7359bd2611733, type: 3}
 --- !u!4 &164259438 stripped
@@ -4886,6 +4901,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: soldier (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 7335592016990176568, guid: 0a215a1408157d74e8c7359bd2611733,
+        type: 3}
+      propertyPath: targetEnemy
+      value: 
+      objectReference: {fileID: 4700934883863258403}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a215a1408157d74e8c7359bd2611733, type: 3}
 --- !u!4 &383470067 stripped
@@ -6657,6 +6677,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: soldier (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 7335592016990176568, guid: 0a215a1408157d74e8c7359bd2611733,
+        type: 3}
+      propertyPath: targetEnemy
+      value: 
+      objectReference: {fileID: 4700934883863258403}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a215a1408157d74e8c7359bd2611733, type: 3}
 --- !u!4 &553629545 stripped
@@ -11281,6 +11306,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: soldier (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 7335592016990176568, guid: 0a215a1408157d74e8c7359bd2611733,
+        type: 3}
+      propertyPath: targetEnemy
+      value: 
+      objectReference: {fileID: 4700934883863258403}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a215a1408157d74e8c7359bd2611733, type: 3}
 --- !u!4 &983084378 stripped
@@ -11691,6 +11721,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: soldier (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 7335592016990176568, guid: 0a215a1408157d74e8c7359bd2611733,
+        type: 3}
+      propertyPath: targetEnemy
+      value: 
+      objectReference: {fileID: 4700934883863258403}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a215a1408157d74e8c7359bd2611733, type: 3}
 --- !u!1001 &1012594463
@@ -11941,6 +11976,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: soldier (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7335592016990176568, guid: 0a215a1408157d74e8c7359bd2611733,
+        type: 3}
+      propertyPath: targetEnemy
+      value: 
+      objectReference: {fileID: 4700934883863258403}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a215a1408157d74e8c7359bd2611733, type: 3}
 --- !u!1001 &1026832331
@@ -16980,6 +17020,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: soldier (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 7335592016990176568, guid: 0a215a1408157d74e8c7359bd2611733,
+        type: 3}
+      propertyPath: targetEnemy
+      value: 
+      objectReference: {fileID: 4700934883863258403}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a215a1408157d74e8c7359bd2611733, type: 3}
 --- !u!4 &1408801284 stripped
@@ -22143,6 +22188,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: soldier (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 7335592016990176568, guid: 0a215a1408157d74e8c7359bd2611733,
+        type: 3}
+      propertyPath: targetEnemy
+      value: 
+      objectReference: {fileID: 4700934883863258403}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a215a1408157d74e8c7359bd2611733, type: 3}
 --- !u!4 &1915811279 stripped
@@ -25032,6 +25082,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: soldier
       objectReference: {fileID: 0}
+    - target: {fileID: 7335592016990176568, guid: 0a215a1408157d74e8c7359bd2611733,
+        type: 3}
+      propertyPath: targetEnemy
+      value: 
+      objectReference: {fileID: 4700934883863258403}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a215a1408157d74e8c7359bd2611733, type: 3}
 --- !u!1001 &8529035947165462641

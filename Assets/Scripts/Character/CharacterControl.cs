@@ -131,6 +131,21 @@ namespace HyukinKwon
             bloodEffect.SetActive(false);
 
             ToggleRagdoll(false);
+
+            //처음 공격 예약
+            switch(Random.Range(0, 3))
+            {
+                case 0:
+                    prevMedAttackType = MED_ATTACK_TYPE.HIGH;
+                    break;
+                case 1:
+                    prevMedAttackType = MED_ATTACK_TYPE.MIDDLE;
+                    break;
+                case 2:
+                    prevMedAttackType = MED_ATTACK_TYPE.LOW;
+                    break;
+            }
+            PickNextAttack();
         }
 
         public Animator GetAnimator()
@@ -229,6 +244,34 @@ namespace HyukinKwon
 
 
             Debug.Log(gameObject + "'s health: " + health);
+        }
+
+        //미리 다음 공격을 정해둔다
+        //미라 정하는 이유: 상대방이 옳바른 Dodge와 Parry 애니메이션을 재생
+        public void PickNextAttack()
+        {
+            switch (Random.Range(0, 3))
+            {
+                case 0:
+                    medAttackType = MED_ATTACK_TYPE.HIGH;
+                    curAimTime = 1.783f;
+                    break;
+                case 1:
+                    medAttackType = MED_ATTACK_TYPE.MIDDLE;
+                    curAimTime = 1.5f;
+                    break;
+                case 2:
+                    medAttackType = MED_ATTACK_TYPE.LOW;
+                    curAimTime = 1.9f;
+                    break;
+            }
+            if (prevMedAttackType == medAttackType)
+            {
+                medAttackType = (medAttackType + 1);
+                if ((int)medAttackType == 3)
+                    medAttackType = 0;
+            }
+            prevMedAttackType = medAttackType;
         }
     }
 }

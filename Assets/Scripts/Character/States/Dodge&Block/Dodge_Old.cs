@@ -9,8 +9,8 @@ using UnityEngine;
 
 namespace HyukinKwon
 {
-    [CreateAssetMenu(fileName = "New State", menuName = "HyukinKwon/AbilityData/Dodge")]
-    public class Dodge : StateData
+    [CreateAssetMenu(fileName = "New State", menuName = "HyukinKwon/AbilityData/Dodge_Old")]
+    public class Dodge_Old : StateData
     {
         public enum DODGE_TPYE
         {

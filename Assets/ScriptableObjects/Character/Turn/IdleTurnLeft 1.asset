@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33c93f3493fffdf42ad0d855a25a111c, type: 3}
   m_Name: IdleTurnLeft 1
   m_EditorClassIdentifier: 
-  duration: 0.3
+  duration: 1
   direction: 0
   speed: 200
