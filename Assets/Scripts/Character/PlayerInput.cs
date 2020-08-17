@@ -69,19 +69,19 @@ namespace HyukinKwon
 
         private void DodgeInput()
         {
-            if (character.targetEnemy != null && character.isBattleModeOn) //전투중인지 먼저 체크 후 
+            if (character.isBattleModeOn) //전투중인지 먼저 체크 후 
             {
                 if(character.isDrawingWeapon) //무기를 들고 있는지 체크
                 {
                     if(Input.GetKeyDown(KeyCode.Space))
                     {
-                        if(character.runVelocity.magnitude < 0.1f)
+                        if(character.runVelocity.magnitude < 0.1f && character.targetEnemy != null)
                         {
                             character.isDodging = true;
                             character.GetAnimator().SetBool("Dodge", true);
                            
                         }
-                        else
+                        else if(character.runVelocity.magnitude > 0.1f)
                         {
                             character.GetAnimator().SetBool("MoveDodge", true);
                         }
