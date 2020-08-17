@@ -89,6 +89,7 @@ namespace HyukinKwon
         //피하기 관련
         public bool isDodging = false;
         public float dodgeEndTime = 0; //Dodge 애니메이션의 피하기 모션 파트가 끝나는 시간. 용도: 자연스러운 피하기 연출
+        public Vector3 moveDodgeVec = Vector3.zero;
 
         //공격 받음 관련
         public CharacterControl attacker; //자신을 때린 적
@@ -253,7 +254,7 @@ namespace HyukinKwon
                 case 1:
                     medAttackType = MED_ATTACK_TYPE.MIDDLE;
                     curAimTime = 1.5f;
-                    attackRange = 0.4f;
+                    attackRange = 0.3f;
                     break;
                 case 2:
                     medAttackType = MED_ATTACK_TYPE.LOW;

@@ -31,6 +31,7 @@ namespace HyukinKwon
             }
             character.dodgeTimer = 0;
             character.isDodging = true;
+            character.moveDodgeVec = new Vector3(character.runVelocity.x, 0, character.runVelocity.z);
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -48,19 +49,26 @@ namespace HyukinKwon
             forward.Normalize();
             right.Normalize();
 
-            Vector3 dir = forward * curRunVelocity.z + right * curRunVelocity.x;
+            Vector3 dir = forward * character.moveDodgeVec.z + right * character.moveDodgeVec.x;
 
-            if (character.dodgeTimer < character.curAimTime - 0.2f)
+            if (character.dodgeTimer < character.curAimTime - 0.6f)
             {
                 if(character.dodgeTimer > 0.3f)
                 {
                     character.isDodging = false;
                 }
-                character.GetRigidbody().MovePosition(character.transform.position + dir * speed * Time.fixedDeltaTime);
+                if(character.moveDodgeVec.z == 0 && character.moveDodgeVec.x != 0)
+                {
+                    character.GetRigidbody().MovePosition(character.transform.position + dir * speed * 1.5f * Time.fixedDeltaTime);
+                }
+                else
+                {
+                    character.GetRigidbody().MovePosition(character.transform.position + dir * speed * Time.fixedDeltaTime);
+                }
             }
 
-            animator.SetFloat("BattleMoveHorizontal", curRunVelocity.x);
-            animator.SetFloat("BattleMoveVertical", curRunVelocity.z);
+            animator.SetFloat("BattleMoveHorizontal", character.moveDodgeVec.x);
+            animator.SetFloat("BattleMoveVertical", character.moveDodgeVec.z);
 
             //dodgeDuration 이후에 피하기 상태 해제
             if (character.dodgeTimer >= character.curAimTime - Time.deltaTime)
@@ -72,7 +80,8 @@ namespace HyukinKwon
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
-
+            CharacterControl character = characterState.GetCharacterControl(animator);
+            character.moveDodgeVec = Vector3.zero;
         }
     }
 }
