@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86b7532eca1be2245843200aa93a9594, type: 3}
-  m_Name: AI_RotateToTarget
+  m_Script: {fileID: 11500000, guid: b199c05a3197e2c4d8bb48a73b45eefe, type: 3}
+  m_Name: Dash
   m_EditorClassIdentifier: 
-  duration: 0
-  rotSpeed: 10
+  duration: 0.125
+  turnSpeed: 5000
+  speed: 3

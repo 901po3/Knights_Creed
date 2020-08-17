@@ -54,6 +54,7 @@ namespace HyukinKwon
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
+            character.GetRigidbody().velocity = new Vector3(0, character.GetRigidbody().velocity.y, 0);
 
             if(character.attackChargeDes != new Vector3(0, 10000, 0))
             {

@@ -14,6 +14,7 @@ namespace HyukinKwon
     {
         public float runSpeed;
         public float turnSpeed;
+        public float battleRoteEnableDis;
 
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
@@ -59,11 +60,8 @@ namespace HyukinKwon
             Vector3 dir = forward * curRunVelocity.z + right * curRunVelocity.x;
             character.GetRigidbody().MovePosition(character.transform.position + dir * power * runSpeed * Time.fixedDeltaTime);
 
-            if (character.targetEnemy != null && Vector3.Distance(character.transform.position, character.targetEnemy.transform.position) <= 5)
+            if (character.targetEnemy != null && Vector3.Distance(character.transform.position, character.targetEnemy.transform.position) <= battleRoteEnableDis)
             {
-                Vector3 newDir = (character.targetEnemy.transform.position - character.transform.position).normalized;
-                newDir.y = 0;
-                targetDirection = newDir;
                 dir = character.transform.forward * curRunVelocity.z + character.transform.right * curRunVelocity.x;
                 animator.SetFloat("BattleMoveHorizontal", dir.x);
                 animator.SetFloat("BattleMoveVertical", dir.z);
@@ -72,16 +70,12 @@ namespace HyukinKwon
             {
                 animator.SetFloat("BattleMoveHorizontal", curRunVelocity.x);
                 animator.SetFloat("BattleMoveVertical", curRunVelocity.z);
+
+                //회전
+                targetDirection.y = 0f;
+                character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards
+                    (character.transform.forward, targetDirection, turnSpeed * Time.fixedDeltaTime, 0f)));
             }
-
-
-            //회전
-            targetDirection.y = 0f;
-            float rotSpeed = turnSpeed;
-            character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards
-                (character.transform.forward, targetDirection, rotSpeed * Time.fixedDeltaTime, 0f)));
-
-
             character.prevRunVelocity = curRunVelocity;
         }
     }

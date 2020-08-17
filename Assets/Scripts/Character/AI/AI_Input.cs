@@ -80,6 +80,8 @@ namespace HyukinKwon
                 {
                     character.curUndetectedTimer = 0; //공격 -> 전투 해제 타이머 리셋
                     character.isAttacking = true;
+                    character.isDodging = false;
+                    character.GetAnimator().SetBool("Dodge", false);
                 }
             }
         }
@@ -90,6 +92,7 @@ namespace HyukinKwon
             if(character.targetEnemy.GetComponent<CharacterControl>().isAttacking) //아직까지 공격중인지 체크
             {
                 yield return new WaitForSeconds(0.3f);
+                character.isAttacking = false;
                 character.isDodging = true;
                 character.GetAnimator().SetBool("Dodge", true);
             }

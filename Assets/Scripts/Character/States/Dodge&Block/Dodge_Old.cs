@@ -12,14 +12,8 @@ namespace HyukinKwon
     [CreateAssetMenu(fileName = "New State", menuName = "HyukinKwon/AbilityData/Dodge_Old")]
     public class Dodge_Old : StateData
     {
-        public enum DODGE_TPYE
-        {
-            DASH, ATTACK, BACK
-        }
-
         public float turnSpeed;
         public float speed;
-        private DODGE_TPYE dodgeType;
 
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
@@ -28,23 +22,14 @@ namespace HyukinKwon
             //피하기 종류 선택
             if (character.isAttacking)
             {
-                character.curAimTime = 0.8f;
-                dodgeType = DODGE_TPYE.BACK;
-
                 character.isAttacking = false;
                 animator.SetBool("SwingSword", false);
             }
-            else if (character.runVelocity.normalized.magnitude < 0.1f && !character.isAttacking)
-            {
-                character.curAimTime = 0.8f;
-                dodgeType = DODGE_TPYE.BACK;
-            }
-            else if(character.runVelocity.normalized.magnitude >= 0.1f)
+            if(character.runVelocity.normalized.magnitude >= 0.1f)
             {
                 character.curAimTime = 1.2f;
-                dodgeType = DODGE_TPYE.DASH;
             }
-            character.dodgeTimer = 0;
+            character.dodgeTimer = 0;           
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -54,15 +39,11 @@ namespace HyukinKwon
 
             if (character.dodgeTimer < character.curAimTime - 0.3f)
             {
-                switch (dodgeType) //타입에 맞게 이동
+                if(character.dodgeTimer < 0.2f)
                 {
-                    case DODGE_TPYE.DASH:
-                        character.GetRigidbody().MovePosition(character.transform.position + character.transform.forward * speed * 1.3f * Time.fixedDeltaTime);
-                        break;
-                    case DODGE_TPYE.BACK:
-                        character.GetRigidbody().MovePosition(character.transform.position - character.transform.forward * speed * 0.3f * Time.fixedDeltaTime);
-                        break;
+                    RotateToForward(character, animator);
                 }
+                character.GetRigidbody().MovePosition(character.transform.position + character.transform.forward * speed * 1.3f * Time.fixedDeltaTime);
             }
 
             //dodgeDuration 이후에 피하기 상태 해제
@@ -71,8 +52,6 @@ namespace HyukinKwon
                 character.isDodging = false;
                 character.GetAnimator().SetBool("Dodge", false);
             }
-
-            RotateToForward(character, animator);
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)

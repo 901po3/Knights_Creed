@@ -15,3 +15,4 @@ MonoBehaviour:
   duration: 0
   runSpeed: 2.5
   turnSpeed: 5
+  battleRoteEnableDis: 5

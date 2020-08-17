@@ -24,7 +24,7 @@ namespace HyukinKwon
             switch (character.targetEnemy.GetComponent<CharacterControl>().medAttackType)
             {
                 case MED_ATTACK_TYPE.HIGH:
-                    character.curAimTime = 1.5f;
+                    character.curAimTime = 1.3f;
                     character.dodgeEndTime = 0.75f;
                     animator.SetFloat("RandomHit", 0);
                     break;
