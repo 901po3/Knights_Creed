@@ -92,7 +92,7 @@ namespace HyukinKwon
         public Vector3 moveDodgeVec = Vector3.zero;
 
         //공격 받음 관련
-        public CharacterControl attacker; //자신을 때린 적
+        public List<CharacterControl> attackerList; //자신을 때린 적
         private Vector3 contactPoint = new Vector3(0, 10000, 0);
         private Vector3 contactDir = Vector3.zero;
         public GameObject bloodEffect;
@@ -137,6 +137,8 @@ namespace HyukinKwon
                 blood.SetActive(false);
             }
             bloodEffect.SetActive(false);
+
+            attackerList = new List<CharacterControl>();
 
             ToggleRagdoll(false);
 
@@ -184,7 +186,24 @@ namespace HyukinKwon
                     mRigidbody.velocity = new Vector3(0, mRigidbody.velocity.y, 0);
                     atk.GetRigidbody().velocity = new Vector3(0, atk.GetRigidbody().velocity.y, 0);
 
-                    attacker = atk;
+                    //공격한 대상 등록
+                    bool isAttackerExist = false;
+                    for(int i = 0; i < attackerList.Count; i++)
+                    {
+                        if(attackerList[i] == atk) //우선순위 변경
+                        {
+                            isAttackerExist = true;
+                            CharacterControl swap = attackerList[0];
+                            attackerList[0] = atk;
+                            attackerList[i] = swap;
+                            break;
+                        }
+                    }
+                    if(!isAttackerExist)
+                    {
+                        attackerList.Insert(0, atk);
+                    }
+
                     contactDir = collision.contacts[0].point - collision.gameObject.transform.position;
                     contactPoint = collision.contacts[0].point;
                     mAnimator.SetBool("Hurt", true);
@@ -212,7 +231,7 @@ namespace HyukinKwon
         public void GetDamaged(int damage)
         {
             health -= damage;
-            targetEnemy = attacker.gameObject;
+            targetEnemy = attackerList[0].gameObject;
 
             //피 생성
             foreach (GameObject b in blooodEffectList)

@@ -15,7 +15,7 @@ namespace HyukinKwon
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            switch (character.attacker.medAttackType)
+            switch (character.attackerList[0].medAttackType)
             {
                 case MED_ATTACK_TYPE.HIGH:
                     animator.SetFloat("RandomHit", 0);
@@ -31,8 +31,13 @@ namespace HyukinKwon
                     break;
             }
 
-            character.attacker.targetEnemy = null;
-            character.isDead = true;
+            foreach(CharacterControl c in character.attackerList)
+            {
+                if(c.targetEnemy == character.gameObject)
+                {
+                    c.targetEnemy = null; //자신을 타겟으로 갖고 있는 모든 적을 null로 해야함 
+                }
+            }
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -50,7 +55,7 @@ namespace HyukinKwon
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            character.attacker.targetEnemy = null;
+            character.attackerList[0].targetEnemy = null;
         }
     }
 
