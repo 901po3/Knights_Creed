@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Dash
   m_EditorClassIdentifier: 
   duration: 0.125
-  turnSpeed: 5000
+  turnSpeed: 200
   speed: 3
