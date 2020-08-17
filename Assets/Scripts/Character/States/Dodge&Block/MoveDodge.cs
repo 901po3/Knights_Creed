@@ -73,7 +73,6 @@ namespace HyukinKwon
             //dodgeDuration 이후에 피하기 상태 해제
             if (character.dodgeTimer >= character.curAimTime - Time.deltaTime)
             {
-                character.isDodging = false;
                 character.GetAnimator().SetBool("MoveDodge", false);
             }
         }

@@ -99,6 +99,7 @@ namespace HyukinKwon
         private List<GameObject> blooodEffectList;
         private int maxBloodNum = 3;
         private int curBloodIndex = 0;
+        public bool isDead = false;
 
         //회전 관련
         public bool isTurning = false; //회전중
@@ -173,7 +174,7 @@ namespace HyukinKwon
         //피해 적용
         private void CheckHurt(Collision collision)
         {
-            if (collision.transform.tag == "Weapon" && !isDodging)
+            if (collision.transform.tag == "Weapon" && !isDodging && !isDead)
             {
                 CharacterControl atk = collision.gameObject.GetComponentInParent<CharacterControl>();
                 if (atk.team != team)

@@ -31,14 +31,18 @@ namespace HyukinKwon
                 {
                     if(!statePicked)
                     {
-                        if (!character.isAttacking)
+                        if(character.runVelocity == Vector3.zero)
                         {
-                            DodgeInput();
+                            if (!character.isAttacking)
+                            {
+                                DodgeInput();
+                            }
+                            if (!character.isDodging)
+                            {
+                                AttackInput();
+                            }
                         }
-                        if (!character.isDodging)
-                        {
-                            AttackInput();
-                        }
+                        MoveToTarget();
                     }
                     else
                     {
@@ -46,6 +50,45 @@ namespace HyukinKwon
                     }
                 }
             }
+        }
+
+        private void MoveToTarget() //에비 함수
+        {
+            if (!character.isAttacking && !character.isDodging)
+            {
+                float dis = Vector3.Distance(character.transform.position, character.targetEnemy.transform.position);
+                if (dis >= character.chargeDis)
+                {
+                    Vector3 dir = (character.targetEnemy.transform.position - character.transform.position).normalized;
+                    dir.y = 0;
+
+                    if (dir.z > 0)
+                    {
+                        character.runVelocity.z += Time.deltaTime;
+                    }
+                    else if (dir.z < 0)
+                    {
+                        character.runVelocity.z -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        if (character.runVelocity.z > 0)
+                        {
+                            character.runVelocity.z -= Time.deltaTime;
+                            if (character.runVelocity.z < 0)
+                                character.runVelocity.z = 0;
+                        }
+                        else if (character.runVelocity.z < 0)
+                        {
+                            character.runVelocity.z += Time.deltaTime;
+                            if (character.runVelocity.z > 0)
+                                character.runVelocity.z = 0;
+                        }
+                    }
+                    character.runVelocity.z = Mathf.Clamp(character.runVelocity.z, 0, 1);
+                }           
+            }
+
         }
 
         private void DodgeInput()

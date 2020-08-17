@@ -74,7 +74,7 @@ namespace HyukinKwon
                 if(character.isDrawingWeapon) //무기를 들고 있는지 체크
                 {
                     if(Input.GetKeyDown(KeyCode.Space))
-                    {
+                    { 
                         if(character.runVelocity.magnitude < 0.1f && character.targetEnemy != null)
                         {
                             character.isDodging = true;

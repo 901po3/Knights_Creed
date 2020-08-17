@@ -32,6 +32,7 @@ namespace HyukinKwon
             }
 
             character.attacker.targetEnemy = null;
+            character.isDead = true;
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -48,6 +49,8 @@ namespace HyukinKwon
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
+            CharacterControl character = characterState.GetCharacterControl(animator);
+            character.attacker.targetEnemy = null;
         }
     }
 

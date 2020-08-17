@@ -29,7 +29,7 @@ namespace HyukinKwon
                     break;
                 case MED_ATTACK_TYPE.MIDDLE:
                     character.curAimTime = 1.5f;
-                    character.attackEndTime = 0.5f;
+                    character.attackEndTime = 0.75f;
                     break;
                 case MED_ATTACK_TYPE.LOW:
                     character.curAimTime = 1.9f;
