@@ -42,12 +42,15 @@ namespace HyukinKwon
         private void Move(CharacterControl character, Animator animator)
         {
             Vector3 curRunVelocity = character.runVelocity;
+            Vector3 targetDirection = character.facingStandardTransfom.forward;
+            Vector3 forward = character.facingStandardTransfom.transform.forward;
+            Vector3 right = character.facingStandardTransfom.transform.right;
+
             //속도 적용
             float power = curRunVelocity.normalized.magnitude;
             animator.SetFloat("RunningVeritical", power);
-            //지정된 방향 기준을 중심으로 이동 
-            Vector3 forward = character.facingStandardTransfom.transform.forward;
-            Vector3 right = character.facingStandardTransfom.transform.right;
+ 
+            //지정된 방향 기준을 중심으로 이동 ;
             forward.y = 0;
             right.y = 0;
             forward.Normalize();
@@ -55,15 +58,26 @@ namespace HyukinKwon
 
             Vector3 dir = forward * curRunVelocity.z + right * curRunVelocity.x;
             character.GetRigidbody().MovePosition(character.transform.position + dir * power * runSpeed * Time.fixedDeltaTime);
-            animator.SetFloat("BattleMoveHorizontal", curRunVelocity.x);
-            animator.SetFloat("BattleMoveVertical", curRunVelocity.z);
+
+            if (character.targetEnemy != null && Vector3.Distance(character.transform.position, character.targetEnemy.transform.position) <= 5)
+            {
+                Vector3 newDir = (character.targetEnemy.transform.position - character.transform.position).normalized;
+                newDir.y = 0;
+                targetDirection = newDir;
+                dir = character.transform.forward * curRunVelocity.z + character.transform.right * curRunVelocity.x;
+                animator.SetFloat("BattleMoveHorizontal", dir.x);
+                animator.SetFloat("BattleMoveVertical", dir.z);
+            }
+            else
+            {
+                animator.SetFloat("BattleMoveHorizontal", curRunVelocity.x);
+                animator.SetFloat("BattleMoveVertical", curRunVelocity.z);
+            }
+
 
             //회전
-            Vector3 targetDirection = character.facingStandardTransfom.forward;
             targetDirection.y = 0f;
-
             float rotSpeed = turnSpeed;
-
             character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards
                 (character.transform.forward, targetDirection, rotSpeed * Time.fixedDeltaTime, 0f)));
 

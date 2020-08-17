@@ -55,17 +55,33 @@ namespace HyukinKwon
             if (curRunVelocity.x != 0 && curRunVelocity.z != 0)
             {
                 Vector3 cross = Vector3.Cross(curRunVelocity.normalized, character.prevRunVelocity.normalized);
-                if(curRunVelocity.x == curRunVelocity.z)
-                {
-                    character.horizontalV = Mathf.Lerp(character.horizontalV, 0, 0.5f);
-                }
-                else if (cross.y < 0) //오른쪽 회전 중이면서 이동
+                Debug.Log(cross);
+                if (cross.y < 0) //오른쪽 회전 중이면서 이동
                 {
                     character.horizontalV += Time.deltaTime * dampSpeed;
                 }
                 else if (cross.y > 0) //왼쪽 회전 중이면서 이동
                 {
                     character.horizontalV -= Time.deltaTime * dampSpeed;
+                }
+                else
+                {
+                    if(character.horizontalV > 0)
+                    {
+                        character.horizontalV -= Time.deltaTime * dampSpeed;
+                        if(character.horizontalV < 0)
+                        {
+                            character.horizontalV = 0;
+                        }
+                    }
+                    else if(character.horizontalV < 0)
+                    {
+                        character.horizontalV += Time.deltaTime * dampSpeed;
+                        if(character.horizontalV > 0)
+                        {
+                            character.horizontalV = 0;
+                        }
+                    }
                 }
                 character.horizontalV = Mathf.Clamp(character.horizontalV, -1, 1);
             }

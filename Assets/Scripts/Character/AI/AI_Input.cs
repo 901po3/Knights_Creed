@@ -51,6 +51,12 @@ namespace HyukinKwon
         private void DodgeInput()
         {
             CharacterControl targetScript = character.targetEnemy.GetComponent<CharacterControl>();
+            if (!character.targetEnemy.GetComponent<CharacterControl>().isAttacking && character.isDodging)
+            {
+                character.isDodging = false;
+                character.GetAnimator().SetBool("Dodge", false);
+            }
+
             if (Vector3.Distance(transform.position, character.targetEnemy.transform.position) < targetScript.chargeDis - 0.3f)
             {
                 if (targetScript.isAttacking)
@@ -61,7 +67,7 @@ namespace HyukinKwon
                     {
                         StartCoroutine(PlayDodgeDelay());
                     }
-                }
+                }               
             }
         }
 

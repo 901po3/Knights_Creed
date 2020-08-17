@@ -30,8 +30,8 @@ namespace HyukinKwon
             AttackInput();
             DodgeInput();
 
-            if(character.targetEnemy != null)
-                Debug.Log(Vector3.Distance(transform.position, character.targetEnemy.transform.position));
+            //if(character.targetEnemy != null)
+            //    Debug.Log(Vector3.Distance(transform.position, character.targetEnemy.transform.position));
         }
 
         private void MoveVerticalInput()
@@ -52,19 +52,22 @@ namespace HyukinKwon
 
         private void AttackInput()
         {
-            if (character.isDrawingWeapon) //무기를 들고있을때
+            if(!character.isDodging)
             {
-                if (Input.GetMouseButton(0))
+                if (character.isDrawingWeapon) //무기를 들고있을때
                 {
-                    character.curUndetectedTimer = 0; //공격 -> 전투 해제 타이머 리셋
-                    character.isAttacking = true;
+                    if (Input.GetMouseButton(0))
+                    {
+                        character.curUndetectedTimer = 0; //공격 -> 전투 해제 타이머 리셋
+                        character.isAttacking = true;
+                    }
                 }
             }
         }
 
         private void DodgeInput()
         {
-            if(character.isBattleModeOn) //전투중인지 먼저 체크 후 
+            if (character.targetEnemy != null && character.isBattleModeOn) //전투중인지 먼저 체크 후 
             {
                 if(character.isDrawingWeapon) //무기를 들고 있는지 체크
                 {

@@ -1,7 +1,7 @@
 ﻿/*
  * Class: CharacterControl
  * Date: 2020.8.10
- * Last Modified : 2020.8.11
+ * Last Modified : 2020.8.17
  * Author: Hyukin Kwon 
  * Description: 캐릭터(플레이어, AI)의 상태 클래스 
  *              플레이어면 인풋 클래스와 함께 사용
@@ -84,10 +84,11 @@ namespace HyukinKwon
         public float attackEndTime = 0;
         public float attackRange = 0;
         public Vector3 attackChargeDes = new Vector3(0, 10000, 0); //공격시 위치 보정 용도
-        public float chargeDis = 4;
+        public float chargeDis = 2.2f;
 
         //피하기 관련
         public bool isDodging = false;
+        public float dodgeEndTime = 0; //Dodge 애니메이션의 피하기 모션 파트가 끝나는 시간. 용도: 자연스러운 피하기 연출
 
         //공격 받음 관련
         public CharacterControl attacker; //자신을 때린 적
@@ -168,11 +169,6 @@ namespace HyukinKwon
             CheckHurt(collision);
         }
 
-        private void OnTriggerStay(Collider other)
-        {
-
-        }
-
         //피해 적용
         private void CheckHurt(Collision collision)
         {
@@ -192,8 +188,7 @@ namespace HyukinKwon
                     mAnimator.SetBool("Hurt", true);
                     mAnimator.SetBool("Dead", false);
                 }
-            }
-           
+            }           
         }
 
         private void ToggleRagdoll(bool b) //if b == true 레그돌 활성
@@ -210,11 +205,6 @@ namespace HyukinKwon
             mAnimator.enabled = !b;
             mCollider.enabled = !b;
             mRigidbody.isKinematic = b;
-        }
-
-        public void PickTargetEnemy()
-        { 
-
         }
 
         public void GetDamaged(int damage)
@@ -274,7 +264,7 @@ namespace HyukinKwon
             if (prevMedAttackType == medAttackType)
             {
                 medAttackType = (medAttackType + 1);
-                if ((int)medAttackType == 3)
+                if ((int)medAttackType >= 3)
                     medAttackType = 0;
             }
             prevMedAttackType = medAttackType;
