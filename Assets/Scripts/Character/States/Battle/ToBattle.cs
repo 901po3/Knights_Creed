@@ -21,7 +21,7 @@ namespace HyukinKwon
         {
             //전투모드로 돌입하고 무기 뽑기 애니메이션으로 이동
             CharacterControl character = characterState.GetCharacterControl(animator);
-            if (character.isBattleModeOne)
+            if (character.isBattleModeOn)
             {
                 if(!character.isDrawingWeapon)
                 {
@@ -36,7 +36,6 @@ namespace HyukinKwon
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            Debug.Log("Drawing Weapon");
             Equipment.ToogleWeapon(character);
         }
     }

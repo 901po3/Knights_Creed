@@ -14,21 +14,24 @@ namespace HyukinKwon
     {
         //캐릭터 Gameobject의 CharacterControl 스크립트
         private CharacterControl character;
-        public float attackInputOffTime = 0.5f;
-        private float curAttackTime = 0f;
 
         private void Awake()
         {
             character = GetComponent<CharacterControl>();
-            character.facingStandardTransfom = Camera.main.transform;  //플레이어의 이동 방향 기준을 카매라로 설정  
+            //플레이어의 이동 방향 기준을 카매라로 설정  
+            character.facingStandardTransfom = Camera.main.transform;  
         }
 
         private void Update()
         {
+            if (character.isChangingMode) return;
             MoveVerticalInput();
             StartBattleInput();
             AttackInput();
             DodgeInput();
+
+            //if(character.targetEnemy != null)
+            //    Debug.Log(Vector3.Distance(transform.position, character.targetEnemy.transform.position));
         }
 
         private void MoveVerticalInput()
@@ -40,44 +43,49 @@ namespace HyukinKwon
 
         private void StartBattleInput()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && !character.isBattleModeOn)
             {
-                character.isBattleModeOne = true;
+                character.isBattleModeOn = true;
+                character.isChangingMode = true;
             }
         }
 
         private void AttackInput()
         {
-            if (character.isDrawingWeapon) //무기를 들고있을때
+            if(!character.isDodging)
             {
-                if (Input.GetMouseButton(0))
+                if (character.isDrawingWeapon) //무기를 들고있을때
                 {
-                    character.curUndetectedTime = 0; //공격 -> 전투 해제 타이머 리셋
-                    character.isAttacking = true;
-                    curAttackTime = 0f;
-                }
-            }
-            if (character.isAttacking) //일정 시간 마우스를 누르지 않으면 콤보공격 X
-            {
-                curAttackTime += Time.deltaTime;
-                if (curAttackTime >= attackInputOffTime)
-                {
-                    curAttackTime = 0f;
-                    character.isAttacking = false;
+                    if (Input.GetMouseButton(0))
+                    {
+                        character.curUndetectedTimer = 0; //공격 -> 전투 해제 타이머 리셋
+                        character.isAttacking = true;
+                        character.isDodging = false;
+                        character.GetAnimator().SetBool("Dodge", false);
+                    }
                 }
             }
         }
 
         private void DodgeInput()
         {
-            if(character.isBattleModeOne) //전투중인지 먼저 체크 후 
+            if (character.isBattleModeOn) //전투중인지 먼저 체크 후 
             {
                 if(character.isDrawingWeapon) //무기를 들고 있는지 체크
                 {
                     if(Input.GetKeyDown(KeyCode.Space))
-                    {
-                        character.isDodging = true;
-                        character.GetAnimator().SetBool("Dodging", true);
+                    { 
+                        if(character.runVelocity.magnitude < 0.1f && character.targetEnemy != null)
+                        {
+                            character.isDodging = true;
+                            character.GetAnimator().SetBool("Dodge", true);
+                           
+                        }
+                        else if(character.runVelocity.magnitude > 0.1f)
+                        {
+                            character.GetAnimator().SetBool("MoveDodge", true);
+                        }
+                        character.isAttacking = false;
                     }
                 }
             }

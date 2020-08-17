@@ -7,6 +7,8 @@ TagManager:
   - Item
   - Equipment
   - AI
+  - Weapon
+  - Ground
   layers:
   - Default
   - TransparentFX
@@ -16,13 +18,13 @@ TagManager:
   - UI
   - 
   - 
+  - map
+  - BlueWeapon
+  - YellowWeapon
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - BlueTeam
+  - YellowTeam
+  - Camera
   - 
   - 
   - 
