@@ -30,6 +30,22 @@ namespace HyukinKwon
                         owner.targetEnemy = collision.gameObject;
                         owner.isTargetChanged = true;
                     }
+
+                    //공격한 적
+                    bool isAlreadyAdded = false;
+                    foreach(CharacterControl c in owner.gameObject.GetComponent<CharacterControl>().attackList)
+                    {
+                        if(c == collision.gameObject.GetComponent<CharacterControl>())
+                        {
+                            isAlreadyAdded = true;
+                            break;
+                        }
+                    }
+                    if(!isAlreadyAdded)
+                    {
+                        owner.gameObject.GetComponent<CharacterControl>().attackList.Add(collision.gameObject.GetComponent<CharacterControl>());
+                    }
+
                     GetComponent<Collider>().enabled = false;
                     collision.gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero; //충돌 반동 초기화
                 }

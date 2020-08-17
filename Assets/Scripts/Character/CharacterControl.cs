@@ -7,6 +7,7 @@
  *              플레이어면 인풋 클래스와 함께 사용
  *              적이면 AI 클래스와 함께 사용
 */
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -78,6 +79,7 @@ namespace HyukinKwon
         public float undetectedTime; //undetectedTime초 이후에 전투모드 Off
 
         //공격 관련
+        public List<CharacterControl> attackList; //자신이 때린 적
         public bool isAttacking = false;
         public MED_ATTACK_TYPE medAttackType;
         public MED_ATTACK_TYPE prevMedAttackType;
@@ -92,7 +94,8 @@ namespace HyukinKwon
         public Vector3 moveDodgeVec = Vector3.zero;
 
         //공격 받음 관련
-        public List<CharacterControl> attackerList; //자신을 때린 적
+        public bool hurtAnimOnce = false;
+        public CharacterControl attacker; //자신을 때린 적
         private Vector3 contactPoint = new Vector3(0, 10000, 0);
         private Vector3 contactDir = Vector3.zero;
         public GameObject bloodEffect;
@@ -138,7 +141,7 @@ namespace HyukinKwon
             }
             bloodEffect.SetActive(false);
 
-            attackerList = new List<CharacterControl>();
+            attackList = new List<CharacterControl>();
 
             ToggleRagdoll(false);
 
@@ -181,35 +184,36 @@ namespace HyukinKwon
                 CharacterControl atk = collision.gameObject.GetComponentInParent<CharacterControl>();
                 if (atk.team != team)
                 {
-                    //공격한 무기의 트리거를 끄고 충돌시 발생하는 힘을 제거한다
-                    collision.gameObject.GetComponent<Collider>().isTrigger = true; 
-                    mRigidbody.velocity = new Vector3(0, mRigidbody.velocity.y, 0);
-                    atk.GetRigidbody().velocity = new Vector3(0, atk.GetRigidbody().velocity.y, 0);
-
-                    //공격한 대상 등록
-                    bool isAttackerExist = false;
-                    for(int i = 0; i < attackerList.Count; i++)
-                    {
-                        if(attackerList[i] == atk) //우선순위 변경
-                        {
-                            isAttackerExist = true;
-                            CharacterControl swap = attackerList[0];
-                            attackerList[0] = atk;
-                            attackerList[i] = swap;
-                            break;
-                        }
-                    }
-                    if(!isAttackerExist)
-                    {
-                        attackerList.Insert(0, atk);
-                    }
-
+                    //데미지 적용 -> WeaponScript로 옮겨야함
                     contactDir = collision.contacts[0].point - collision.gameObject.transform.position;
                     contactPoint = collision.contacts[0].point;
-                    mAnimator.SetBool("Hurt", true);
-                    mAnimator.SetBool("Dead", false);
+                    GetDamaged(atk.damage);
+
+                    if (!hurtAnimOnce)
+                    {
+                        hurtAnimOnce = true;
+                        StartCoroutine(HurtPlayFrequency());
+                        //공격한 무기의 트리거를 끄고 충돌시 발생하는 힘을 제거한다
+                        collision.gameObject.GetComponent<Collider>().isTrigger = true;
+                        mRigidbody.velocity = new Vector3(0, mRigidbody.velocity.y, 0);
+                        atk.GetRigidbody().velocity = new Vector3(0, atk.GetRigidbody().velocity.y, 0);
+
+                        //공격한 대상 등록
+                        attacker = atk;
+                        targetEnemy = attacker.gameObject;
+                        isTargetChanged = true;
+
+                        mAnimator.SetBool("Hurt", true);
+                        mAnimator.SetBool("Dead", false);
+                    }
                 }
             }           
+        }
+
+        IEnumerator HurtPlayFrequency()
+        {
+            yield return new WaitForSeconds(2f);
+            hurtAnimOnce = false;
         }
 
         private void ToggleRagdoll(bool b) //if b == true 레그돌 활성
@@ -231,7 +235,6 @@ namespace HyukinKwon
         public void GetDamaged(int damage)
         {
             health -= damage;
-            targetEnemy = attackerList[0].gameObject;
 
             //피 생성
             foreach (GameObject b in blooodEffectList)
@@ -256,8 +259,7 @@ namespace HyukinKwon
                 contactDir = Vector3.zero;
             }
 
-
-            Debug.Log(gameObject + "'s health: " + health);
+           //Debug.Log(gameObject + "'s health: " + health);
         }
 
         //미리 다음 공격을 정해둔다
