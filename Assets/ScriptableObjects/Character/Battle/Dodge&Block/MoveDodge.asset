@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b199c05a3197e2c4d8bb48a73b45eefe, type: 3}
-  m_Name: Dash
+  m_Name: MoveDodge
   m_EditorClassIdentifier: 
   duration: 0.125
   turnSpeed: 200
-  speed: 3
+  speed: 4.5

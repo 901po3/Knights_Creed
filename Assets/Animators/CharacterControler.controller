@@ -1635,7 +1635,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Dash & Roll
+  m_Name: Dash
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -2621,7 +2621,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: Dodge
+    m_ConditionEvent: MoveDodge
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 4608147461275876405}
@@ -2950,8 +2950,8 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 6
-    m_ConditionEvent: TransitionIndex
+  - m_ConditionMode: 1
+    m_ConditionEvent: MoveDodge
     m_EventTreshold: 2
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -3938947299298953812}
@@ -3045,6 +3045,12 @@ AnimatorController:
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
   - m_Name: Dodge
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
+  - m_Name: MoveDodge
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -3845,8 +3851,8 @@ BlendTree:
     m_CycleOffset: 0
     m_DirectBlendParameter: RunningVeritical
     m_Mirror: 0
-  m_BlendParameter: RandomNum
-  m_BlendParameterY: RandomNum
+  m_BlendParameter: BattleMoveHorizontal
+  m_BlendParameterY: BattleMoveVertical
   m_MinThreshold: 0
   m_MaxThreshold: 1
   m_UseAutomaticThresholds: 1

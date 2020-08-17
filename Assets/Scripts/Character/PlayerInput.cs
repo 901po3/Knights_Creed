@@ -75,8 +75,16 @@ namespace HyukinKwon
                 {
                     if(Input.GetKeyDown(KeyCode.Space))
                     {
-                        character.isDodging = true;
-                        character.GetAnimator().SetBool("Dodge", true);
+                        if(character.runVelocity.magnitude < 0.1f)
+                        {
+                            character.isDodging = true;
+                            character.GetAnimator().SetBool("Dodge", true);
+                           
+                        }
+                        else
+                        {
+                            character.GetAnimator().SetBool("MoveDodge", true);
+                        }
                         character.isAttacking = false;
                     }
                 }

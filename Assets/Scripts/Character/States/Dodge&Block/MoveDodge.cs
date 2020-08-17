@@ -29,7 +29,8 @@ namespace HyukinKwon
             {
                 character.curAimTime = 1.2f;
             }
-            character.dodgeTimer = 0;           
+            character.dodgeTimer = 0;
+            character.isDodging = true;
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -38,7 +39,7 @@ namespace HyukinKwon
             //시간 업데이트
             character.dodgeTimer += Time.deltaTime;
 
-            //지정된 방향 기준을 중심으로 이동 ;
+            //지정된 방향 기준을 중심으로 이동
             Vector3 curRunVelocity = character.runVelocity;
             Vector3 forward = character.transform.forward;
             Vector3 right = character.transform.right;
@@ -49,10 +50,13 @@ namespace HyukinKwon
 
             Vector3 dir = forward * curRunVelocity.z + right * curRunVelocity.x;
 
-            if (character.dodgeTimer < character.curAimTime - 0.3f)
+            if (character.dodgeTimer < character.curAimTime - 0.2f)
             {
+                if(character.dodgeTimer > 0.3f)
+                {
+                    character.isDodging = false;
+                }
                 character.GetRigidbody().MovePosition(character.transform.position + dir * speed * Time.fixedDeltaTime);
-
             }
 
             animator.SetFloat("BattleMoveHorizontal", curRunVelocity.x);
@@ -62,7 +66,7 @@ namespace HyukinKwon
             if (character.dodgeTimer >= character.curAimTime - Time.deltaTime)
             {
                 character.isDodging = false;
-                character.GetAnimator().SetBool("Dodge", false);
+                character.GetAnimator().SetBool("MoveDodge", false);
             }
         }
 
@@ -70,30 +74,5 @@ namespace HyukinKwon
         {
 
         }
-
-        //기준 정면으로 회전 함수
-        //private void RotateToForward(CharacterControl character, Animator animator)
-        //{
-        //    Vector3 curRunVelocity = character.runVelocity;
-        //    //회전
-        //    Vector3 targetDirection = curRunVelocity.normalized;
-        //    targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
-        //    targetDirection.y = 0f;
-
-        //    //Debug.Log(Vector3.Angle(character.transform.forward, targetDirection));
-        //    float rotSpeed = turnSpeed;
-
-        //    //빠른 180도 회전
-        //    if (curRunVelocity.x > 0.5f || curRunVelocity.z < -0.5f)
-        //    {
-        //        animator.SetBool("TurnRight", true);
-        //    }
-        //    else if (curRunVelocity.x < -0.5f || curRunVelocity.z > 0.5f)
-        //    {
-        //        animator.SetBool("TurnLeft", true);
-        //    }
-        //    character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards
-        //        (character.transform.forward, targetDirection, rotSpeed * Time.fixedDeltaTime, 0f)));
-        //}
     }
 }
