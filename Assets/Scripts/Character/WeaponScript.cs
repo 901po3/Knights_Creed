@@ -49,6 +49,7 @@ namespace HyukinKwon
 
         private void OnCollisionEnter(Collision collision)
         {
+            //막기 성공 했는지 판별
             if(collision.transform.tag == "Weapon" && owner.isParrying && !parryOnce)
             {
                 parryOnce = true;
@@ -57,6 +58,7 @@ namespace HyukinKwon
                 obj.transform.position = collision.contacts[0].point;
                 owner.attacker = collision.gameObject.GetComponentInParent<CharacterControl>();
                 owner.attacker.isBlocked = true;
+                owner.attacker.attacker = owner;
                 owner.attacker.GetAnimator().SetBool("Blocked", true);
             }
 

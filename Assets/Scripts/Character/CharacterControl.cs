@@ -79,6 +79,7 @@ namespace HyukinKwon
         //공격 관련
         public List<CharacterControl> attackList; //자신이 때린 적
         public bool isAttacking = false;
+        public bool isComboAttacking = false; //용도: 콤보 어텍 한번만 시전
         public MED_ATTACK_TYPE medAttackType;
         public MED_ATTACK_TYPE prevMedAttackType;
         public float attackEnableTime = 0;
@@ -228,6 +229,7 @@ namespace HyukinKwon
 
                             mAnimator.SetBool("Hurt", true);
                             mAnimator.SetBool("Dead", false);
+                            mAnimator.SetTrigger("HurtEnterOnce");
                         }
                     }
                 }

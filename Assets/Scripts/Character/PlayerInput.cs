@@ -58,8 +58,9 @@ namespace HyukinKwon
                 {
                     if (Input.GetMouseButton(0))
                     {
-                        if(character.attacker != null && character.attacker.isBlocked && character.medAttackType != MED_ATTACK_TYPE.COMBO)
+                        if(character.attacker != null && character.attacker.isBlocked && character.isComboAttacking)
                         {
+                            character.isComboAttacking = false;
                             character.isAttacking = true;
                             character.PickNextAttack(true);
                             character.GetAnimator().SetTrigger("ComboAttack");

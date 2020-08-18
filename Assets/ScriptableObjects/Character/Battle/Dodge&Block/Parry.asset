@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Parry
   m_EditorClassIdentifier: 
   duration: 0
-  speed: 2
+  speed: 4

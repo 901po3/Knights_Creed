@@ -46,7 +46,7 @@ namespace HyukinKwon
             character.curAnimSpeed = speed;
             character.blockedTimer = 0f;
             character.isAttacking = false;
-            character.hurtAnimOnce = false;
+            character.attacker.isComboAttacking = true;
             animator.SetBool("Attack", false);
         }
 

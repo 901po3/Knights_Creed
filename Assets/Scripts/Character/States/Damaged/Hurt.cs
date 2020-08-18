@@ -19,15 +19,19 @@ namespace HyukinKwon
             {
                 case MED_ATTACK_TYPE.HIGH:
                     animator.SetFloat("RandomHit", 0);
+                    character.curAimTime = 1.45f;
                     break;
                 case MED_ATTACK_TYPE.MIDDLE:
                     animator.SetFloat("RandomHit", 1);
+                    character.curAimTime = 1f;
                     break;
                 case MED_ATTACK_TYPE.LOW:
                     animator.SetFloat("RandomHit", 2);
+                    character.curAimTime = 1.1f;
                     break;
                 case MED_ATTACK_TYPE.COMBO:
                     animator.SetFloat("RandomHit", 3);
+                    character.curAimTime = 3.1f;
                     break;
             }
             Transform attackerTrans = character.attacker.transform;
@@ -42,10 +46,8 @@ namespace HyukinKwon
 
             if(character.health > 0) //체력이 0 Hurt 재생
             {
-                if (character.hurtTimer < duration)
-                {
-                    character.hurtTimer += Time.deltaTime;
-                    if (character.hurtTimer >= duration) //애니메이션 시간이 끝나면 나간다
+                character.hurtTimer += Time.deltaTime;
+               if (character.hurtTimer >= character.curAimTime) //애니메이션 시간이 끝나면 나간다
                     {
                         character.hurtTimer = 0f;
                         animator.SetBool("Hurt", false);
@@ -55,7 +57,6 @@ namespace HyukinKwon
                         character.isDodging = false;
                         animator.SetBool("Dodge", false);
                     }
-                }
             }
             else //체력이 0 이하면 죽음
             {
