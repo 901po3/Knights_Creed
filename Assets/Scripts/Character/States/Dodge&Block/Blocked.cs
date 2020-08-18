@@ -1,16 +1,16 @@
 ﻿/*
- * Class: Parry
+ * Class: Blocked
  * Date: 2020.8.18
  * Last Modified : 2020.8.18
  * Author: Hyukin Kwon 
- * Description: 막기 애니메이션 조정
+ * Description: 공격막힘 애니메이션 조정
 */
 using UnityEngine;
 
 namespace HyukinKwon
 {
-    [CreateAssetMenu(fileName = "New State", menuName = "HyukinKwon/AbilityData/Parry")]
-    public class Parry : StateData
+    [CreateAssetMenu(fileName = "New State", menuName = "HyukinKwon/AbilityData/Blocked")]
+    public class Blocked : StateData
     {
         public float speed;
 
@@ -19,51 +19,41 @@ namespace HyukinKwon
             CharacterControl character = characterState.GetCharacterControl(animator);
             character.curUndetectedTimer = 0; //피하기 시도하면-> 전투 해제 시간 리셋
 
-            if (character.targetEnemy == null)
-            {
-                character.isParrying = false;
-                character.GetAnimator().SetBool("Parry", false);
-                return;
-            }
-
-            //피하기 종류 선택
-            switch (character.targetEnemy.GetComponent<CharacterControl>().medAttackType)
+            // 종류 선택
+            switch (character.medAttackType)
             {
                 case MED_ATTACK_TYPE.HIGH:
-                    character.curAimTime = 1.2f;
-                    character.parryDodgeEndTime = 1f;
+                    character.curAimTime = 1.3f;
                     animator.SetFloat("RandomHit", 0);
                     break;
                 case MED_ATTACK_TYPE.MIDDLE:
-                    character.curAimTime = 0.9f;
-                    character.parryDodgeEndTime = 0.8f;
+                    character.curAimTime = 1.8f;
                     animator.SetFloat("RandomHit", 1);
                     break;
                 case MED_ATTACK_TYPE.LOW:
-                    character.curAimTime = 1.2f;
-                    character.parryDodgeEndTime = 0.9f;
+                    character.curAimTime = 1.8f;
                     animator.SetFloat("RandomHit", 2);
                     break;
             }
             //공격에서 넘어왔을때를 대비 무기 콜라이더 비활성
             character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().ToggleCollision(false);
+            character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().FixTransform();
 
             Transform attackerTrans = character.targetEnemy.transform;
             attackerTrans.position = new Vector3(attackerTrans.transform.position.x,
                 character.transform.position.y, attackerTrans.transform.position.z);
             character.transform.LookAt(attackerTrans);
 
-            character.parryDodgeTimer = 0;
             character.curAnimSpeed = speed;
-
-            //무기 콜리션 킨다
-            character.drawedWeapon[(int)character.weapon].GetComponent<CapsuleCollider>().isTrigger = false;
-            character.drawedWeapon[(int)character.weapon].GetComponent<CapsuleCollider>().enabled = true;
+            character.blockedTimer = 0f;
+            character.isAttacking = false;
+            animator.SetBool("Attack", false);
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
+
 
             //자연스러운 애니메이션을 위한 속도 조정
             if (character.curAnimSpeed > 0)
@@ -75,18 +65,13 @@ namespace HyukinKwon
             character.GetRigidbody().MovePosition(character.transform.position - character.transform.forward * character.curAnimSpeed * Time.fixedDeltaTime);
 
             //dodgeDuration 이후에 피하기 상태 해제
-            character.parryDodgeTimer += Time.deltaTime;
-            if (character.parryDodgeTimer >= character.parryDodgeEndTime)
+            character.blockedTimer += Time.deltaTime;
+            if (character.blockedTimer >= character.parryDodgeEndTime)
             {
-                //막기 비활성화
-                character.isParrying = false;
-                character.drawedWeapon[(int)character.weapon].GetComponent<CapsuleCollider>().isTrigger = true;
-                character.drawedWeapon[(int)character.weapon].GetComponent<CapsuleCollider>().enabled = false;
-
-                if (character.parryDodgeTimer >= character.curAimTime - Time.deltaTime)
-                {                
-                    character.GetAnimator().SetBool("Parry", false);
-                    character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().parryOnce = false;
+                if (character.blockedTimer >= character.curAimTime - Time.deltaTime)
+                {                                  
+                    character.isBlocked = false;
+                    character.GetAnimator().SetBool("Blocked", false);
                 }
             }
         }

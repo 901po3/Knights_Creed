@@ -38,6 +38,12 @@ namespace HyukinKwon
             transform.localRotation = originalRot;
         }
 
+        public void ToggleCollision(bool b)
+        {
+            GetComponent<BoxCollider>().isTrigger = !b;
+            GetComponent<BoxCollider>().enabled = b;
+        }
+
         private void OnCollisionEnter(Collision collision)
         {
             if(collision.transform.tag == "Weapon" && owner.isParrying && !parryOnce)
@@ -47,7 +53,8 @@ namespace HyukinKwon
                 GameObject obj = Instantiate(flashParticle);
                 obj.transform.position = collision.contacts[0].point;
                 owner.attacker = collision.gameObject.GetComponentInParent<CharacterControl>();
-                //owner.attacker.GetAnimator().SetBool("Blocked", true);
+                owner.isBlocked = true;
+                owner.attacker.GetAnimator().SetBool("Blocked", true);
             }
 
             if(collision.gameObject.GetComponent<CharacterControl>() != null)

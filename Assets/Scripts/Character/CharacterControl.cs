@@ -121,6 +121,7 @@ namespace HyukinKwon
         public float curUndetectedTimer = 0; //undetectedTime 타이머
         public float attackTimer; //공격 타이머
         public float parryDodgeTimer = 0f; //파하기 타이머
+        public float blockedTimer = 0f; //공격막힘 타이머
 
         private void Awake()
         {

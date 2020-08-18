@@ -46,7 +46,7 @@ namespace HyukinKwon
                     break;
             }
             //공격에서 넘어왔을때를 대비 무기 콜라이더 비활성
-            character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = false; 
+            character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().ToggleCollision(false);
 
             //공격한 대상 처다보기
             Transform attackerTrans = character.targetEnemy.transform;
@@ -65,13 +65,13 @@ namespace HyukinKwon
             if (character.targetEnemy != null)
             {
                 //적과 거리가 짧고 중단 공격이면 피해를 받는다 
-                if (Vector3.Distance(character.transform.position, character.targetEnemy.transform.position) < character.attackRange
+                if (Vector3.Distance(character.transform.position, character.targetEnemy.transform.position) < character.attackRange / 2
                     && character.GetComponent<CharacterControl>().medAttackType == MED_ATTACK_TYPE.MIDDLE)
                 {
                     character.isDodging = false;
                     character.GetAnimator().SetBool("Dodge", false);
                     character.targetEnemy.GetComponentInChildren<WeaponScript>().damageOnce = false;
-                    character.targetEnemy.GetComponentInChildren<WeaponScript>().GetComponent<BoxCollider>().isTrigger = false;
+                    character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().ToggleCollision(true);
                     return;
                 }
             }

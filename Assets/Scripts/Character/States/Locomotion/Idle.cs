@@ -31,7 +31,6 @@ namespace HyukinKwon
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-
             //제자리 회전 시작
             Vector3 targetDirection = character.runVelocity.normalized;
             targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);

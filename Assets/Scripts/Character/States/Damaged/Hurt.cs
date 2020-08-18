@@ -47,6 +47,10 @@ namespace HyukinKwon
                         character.hurtTimer = 0f;
                         animator.SetBool("Hurt", false);
                         character.isBattleModeOn = true;
+
+                        //이미 맞았으므로 피하기 취소
+                        character.isDodging = false;
+                        animator.SetBool("Dodge", false);
                     }
                 }
             }
