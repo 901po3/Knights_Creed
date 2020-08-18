@@ -182,7 +182,6 @@ namespace HyukinKwon
                 blooodEffectList.Add(blood);
                 blood.SetActive(false);
             }
-            bloodEffect.SetActive(false);
         }
 
         //피해 적용
@@ -203,7 +202,7 @@ namespace HyukinKwon
                         contactDir = (gameObject.transform.position - collision.contacts[0].point).normalized;
                         contactPoint = collision.contacts[0].point;
 
-                        //피 이팩트 생성
+                        //피 이팩트 재생
                         if (contactPoint != new Vector3(0, 10000, 0))
                         {
                             GameObject blood = blooodEffectList[curBloodIndex];

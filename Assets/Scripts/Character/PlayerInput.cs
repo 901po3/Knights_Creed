@@ -6,6 +6,7 @@
  * Description: 플레이어의 인풋을 받는 클래스
  *              플레이어의 인풋으로 CharacterControl 상태 변수를 제어한다.
 */
+using System.Collections;
 using UnityEngine;
 
 namespace HyukinKwon
@@ -56,7 +57,7 @@ namespace HyukinKwon
             {
                 if (character.isDrawingWeapon) //무기를 들고있을때
                 {
-                    if (Input.GetMouseButton(0))
+                    if (Input.GetMouseButton(0) && !character.isDodging && !character.isParrying && !character.isBlocked)
                     {
                         if(character.attacker != null && character.attacker.isBlocked && character.isComboAttacking)
                         {
@@ -70,8 +71,6 @@ namespace HyukinKwon
                             character.curUndetectedTimer = 0; //공격 -> 전투 해제 타이머 리셋
                             character.isAttacking = true;
                         }
-                        character.isDodging = false;
-                        character.GetAnimator().SetBool("Dodge", false);
                     }
                 }
             }
@@ -85,13 +84,13 @@ namespace HyukinKwon
                 {
                     if(Input.GetKeyDown(KeyCode.Space)) //피하기 시도
                     { 
-                        if(character.runVelocity.magnitude < 0.1f && character.targetEnemy != null)
+                        if(character.runVelocity.magnitude < 0.1f && character.targetEnemy != null && !character.isParrying)
                         {
                             character.isDodging = true;
                             character.GetAnimator().SetBool("Dodge", true);
                            
                         }
-                        else if(character.runVelocity.magnitude > 0.1f)
+                        else if(character.runVelocity.magnitude > 0.1f && !character.isParrying)
                         {
                             character.GetAnimator().SetBool("MoveDodge", true);
                         }
@@ -99,7 +98,7 @@ namespace HyukinKwon
                     }
                     else if(Input.GetKeyDown(KeyCode.Q)) //막기 시도
                     {
-                        if (character.runVelocity.magnitude < 0.1f && character.targetEnemy != null)
+                        if (character.runVelocity.magnitude < 0.1f && character.targetEnemy != null && !character.isDodging)
                         {
                             character.isParrying = true;
                             character.GetAnimator().SetBool("Parry", true);
@@ -109,6 +108,5 @@ namespace HyukinKwon
                 }
             }
         }
-
     }
 }

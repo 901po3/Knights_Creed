@@ -41,7 +41,7 @@ namespace HyukinKwon
                     break;
                 case MED_ATTACK_TYPE.LOW:
                     character.curAimTime = 1.2f;
-                    character.parryDodgeEndTime = 0.9f;
+                    character.parryDodgeEndTime = 0.7f;
                     animator.SetFloat("RandomHit", 2);
                     break;
             }

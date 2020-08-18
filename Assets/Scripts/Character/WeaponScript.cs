@@ -6,6 +6,8 @@
  * Description:  무기에 들어가는 스크립트
  *             
 */
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace HyukinKwon
@@ -22,7 +24,12 @@ namespace HyukinKwon
         private Vector3 originalPos;
         private Quaternion originalRot;
 
+        //검 마찰 이펙트
         public GameObject flashParticle;
+        private List<GameObject> flashEffectList;
+        private int maxFlashNum = 5;
+        private int curFlashNum = 0;
+
         public bool parryOnce = false;
 
         private void Start()
@@ -32,6 +39,16 @@ namespace HyukinKwon
             {
                 originalPos = new Vector3(8.1f, 5.5f, -1.9f);
                 originalRot = Quaternion.Euler(69.806f, -1.447f, 196.297f);
+            }
+
+            //파티클 초기화
+            flashEffectList = new List<GameObject>();
+            for (int i = 0; i < maxFlashNum; i++) //피 이펙트 3개
+            {
+                GameObject flash = Instantiate(flashParticle);
+                flash.transform.parent = transform;
+                flashEffectList.Add(flash);
+                flash.SetActive(false);
             }
         }
 
@@ -47,6 +64,12 @@ namespace HyukinKwon
             GetComponent<BoxCollider>().enabled = b;
         }
 
+        IEnumerator TurnOffFlashEffect(GameObject flash)
+        {
+            yield return new WaitForSeconds(0.6f);
+            flash.SetActive(false);
+        }
+
         private void OnCollisionEnter(Collision collision)
         {
             //막기 성공 했는지 판별
@@ -54,12 +77,21 @@ namespace HyukinKwon
             {
                 parryOnce = true;
                 Debug.Log(collision.transform.tag);
-                GameObject obj = Instantiate(flashParticle);
-                obj.transform.position = collision.contacts[0].point;
                 owner.attacker = collision.gameObject.GetComponentInParent<CharacterControl>();
                 owner.attacker.isBlocked = true;
                 owner.attacker.attacker = owner;
                 owner.attacker.GetAnimator().SetBool("Blocked", true);
+
+                //막기 이팩트 재생
+                GameObject flash = flashEffectList[curFlashNum];
+                if (!flash.activeSelf)
+                {
+                    curFlashNum = (curFlashNum + 1) % maxFlashNum;
+                    flash.transform.position = collision.contacts[0].point;
+                    flash.SetActive(true);
+                    StartCoroutine(TurnOffFlashEffect(flash)); //일정 시간후 비활성
+                }
+
             }
 
             if(collision.gameObject.GetComponent<CharacterControl>() != null)
