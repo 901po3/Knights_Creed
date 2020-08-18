@@ -49,7 +49,6 @@ namespace HyukinKwon
                             if (owner.targetEnemy != collision.gameObject)
                             {
                                 owner.targetEnemy = collision.gameObject;
-                                owner.isTargetChanged = true;
                             }
 
                             //공격한 적이 이미 전에 떄린적이 아니면 AttackList에 추가한다
@@ -62,6 +61,7 @@ namespace HyukinKwon
                                     isAlreadyAdded = true;
                                     break;
                                 }
+
                             }
                             if (!isAlreadyAdded)
                             {

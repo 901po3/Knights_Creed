@@ -1,7 +1,7 @@
 ﻿/*
  * Class: Death
  * Date: 2020.8.16
- * Last Modified : 2020.8.16
+ * Last Modified : 2020.8.17
  * Author: Hyukin Kwon 
  * Description:  피해 애니메이션
 */
@@ -48,9 +48,12 @@ namespace HyukinKwon
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
+
+            //애니메이션이 끝나면 캐릭터 비활성화
             character.deathTimer += Time.deltaTime;
             if(character.deathTimer >= character.curAimTime - Time.deltaTime)
             {
+                character.attacker.targetEnemy = null;
                 animator.enabled = false;
                 character.GetRigidbody().isKinematic = true;
                 character.GetComponent<Collider>().isTrigger = true;
@@ -59,8 +62,7 @@ namespace HyukinKwon
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
-            CharacterControl character = characterState.GetCharacterControl(animator);
-            character.attacker.targetEnemy = null;
+
         }
     }
 
