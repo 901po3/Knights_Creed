@@ -18,7 +18,6 @@ namespace HyukinKwon
         private float statePickFrequency;
         private bool stateFrequencyOnce = false;
         private float disToTarget;
-        private float angleToTarget;
         private float dampSpeed = 4;
 
         private void Awake()
@@ -33,7 +32,6 @@ namespace HyukinKwon
             if (character.targetEnemy != null)
             {
                 disToTarget = Vector3.Distance(character.transform.position, character.targetEnemy.transform.position);
-                angleToTarget = Vector3.Angle(character.transform.position, character.targetEnemy.transform.position);
 
                 if (character.runVelocity != Vector3.zero)
                 {
@@ -61,7 +59,7 @@ namespace HyukinKwon
                                 character.GetAnimator().SetBool("Dodge", true);
                             }
                         }
-                        else if (disToTarget > character.chargeDis - 0.25)
+                        else if (disToTarget > character.chargeDis)
                         {
                             character.runVelocity.z = 0;
                         }

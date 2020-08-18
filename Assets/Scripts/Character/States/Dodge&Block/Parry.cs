@@ -86,6 +86,7 @@ namespace HyukinKwon
                 if (character.parryDodgeTimer >= character.curAimTime - Time.deltaTime)
                 {                
                     character.GetAnimator().SetBool("Parry", false);
+                    character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().parryOnce = false;
                 }
             }
         }

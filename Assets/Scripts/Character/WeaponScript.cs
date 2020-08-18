@@ -23,6 +23,7 @@ namespace HyukinKwon
         private Quaternion originalRot;
 
         public GameObject flashParticle;
+        public bool parryOnce = false;
 
         private void Start()
         {
@@ -31,15 +32,22 @@ namespace HyukinKwon
             originalRot = transform.localRotation;
         }
 
+        public void FixTransform()
+        {
+            transform.localPosition = originalPos;
+            transform.localRotation = originalRot;
+        }
+
         private void OnCollisionEnter(Collision collision)
         {
-            if(collision.transform.tag == "Weapon" && owner.isParrying)
+            if(collision.transform.tag == "Weapon" && owner.isParrying && !parryOnce)
             {
+                parryOnce = true;
                 Debug.Log(collision.transform.tag);
                 GameObject obj = Instantiate(flashParticle);
                 obj.transform.position = collision.contacts[0].point;
                 owner.attacker = collision.gameObject.GetComponentInParent<CharacterControl>();
-                owner.attacker.GetAnimator().SetTrigger("KnockDown");
+                //owner.attacker.GetAnimator().SetBool("Blocked", true);
             }
 
             if(collision.gameObject.GetComponent<CharacterControl>() != null)
@@ -93,8 +101,7 @@ namespace HyukinKwon
                         }
                     }
                 }
-                transform.localPosition = originalPos;
-                transform.localRotation = originalRot;
+                FixTransform();
             }              
         }
     }

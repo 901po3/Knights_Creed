@@ -93,7 +93,7 @@ namespace HyukinKwon
 
         //막기 관련
         public bool isParrying = false;
-
+        public bool isBlocked = false;
 
         //공격 받음 관련
         public bool hurtAnimOnce = false;

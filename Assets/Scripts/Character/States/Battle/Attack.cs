@@ -54,6 +54,7 @@ namespace HyukinKwon
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
+            character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().FixTransform();
             character.GetRigidbody().velocity = Vector3.zero;
 
             //적의 앞으로 이동하며 공격
