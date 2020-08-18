@@ -44,31 +44,34 @@ namespace HyukinKwon
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
 
-            if(character.health > 0) //체력이 0 Hurt 재생
+            if (character.health > 0) //체력이 0 Hurt 재생
             {
                 character.hurtTimer += Time.deltaTime;
-               if (character.hurtTimer >= character.curAimTime) //애니메이션 시간이 끝나면 나간다
-                    {
-                        character.hurtTimer = 0f;
-                        animator.SetBool("Hurt", false);
-                        character.isBattleModeOn = true;
+                if (character.hurtTimer >= character.curAimTime) //애니메이션 시간이 끝나면 나간다
+                {
+                    character.currentState = CURRENT_STATE.NONE;
+                    character.hurtTimer = 0f;
+                    animator.SetBool("Hurt", false);
+                    character.isBattleModeOn = true;
 
-                        //이미 맞았으므로 피하기 취소
-                        character.isDodging = false;
-                        animator.SetBool("Dodge", false);
-                    }
+                    //이미 맞았으므로 피하기 취소
+                    animator.SetBool("Dodge", false);
+                }
             }
             else //체력이 0 이하면 죽음
             {
                 character.hurtTimer = 0f;
-                character.isDead = true;
+                character.currentState = CURRENT_STATE.DEAD;
                 animator.SetBool("Dead", true);               
             }
 
             //회전 //나중에 다른 State로 분리
-            Vector3 targetDirection = (character.attacker.transform.position - character.transform.position).normalized;
-            targetDirection.y = 0f;
-            character.transform.rotation = Quaternion.RotateTowards(character.transform.rotation, Quaternion.LookRotation(targetDirection), Time.fixedDeltaTime);
+            if(character.attacker != null)
+            {
+                Vector3 targetDirection = (character.attacker.transform.position - character.transform.position).normalized;
+                targetDirection.y = 0f;
+                character.transform.rotation = Quaternion.RotateTowards(character.transform.rotation, Quaternion.LookRotation(targetDirection), Time.fixedDeltaTime);
+            }
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)

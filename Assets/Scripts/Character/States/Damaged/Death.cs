@@ -43,6 +43,7 @@ namespace HyukinKwon
             }
 
             character.gameObject.layer = 15;
+            character.invincible = true;
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -53,9 +54,6 @@ namespace HyukinKwon
             character.deathTimer += Time.deltaTime;
             if(character.deathTimer >= character.curAimTime - Time.deltaTime)
             {
-                character.isDodging = false;
-                character.isAttacking = false;
-                character.isParrying = false;
                 character.attacker.targetEnemy = null;
                 animator.enabled = false;
                 character.GetRigidbody().isKinematic = true;

@@ -73,13 +73,14 @@ namespace HyukinKwon
         private void OnCollisionEnter(Collision collision)
         {
             //막기 성공 했는지 판별
-            if(collision.transform.tag == "Weapon" && owner.isParrying && !parryOnce)
+            if(collision.transform.tag == "Weapon" && owner.currentState == CURRENT_STATE.PARRY && !parryOnce)
             {
                 parryOnce = true;
                 Debug.Log(collision.transform.tag);
                 owner.attacker = collision.gameObject.GetComponentInParent<CharacterControl>();
-                owner.attacker.isBlocked = true;
+                owner.attacker.currentState = CURRENT_STATE.BLOCKED;
                 owner.attacker.attacker = owner;
+                owner.canComboAttacking = true;
                 owner.attacker.GetAnimator().SetBool("Blocked", true);
 
                 //막기 이팩트 재생
@@ -91,7 +92,7 @@ namespace HyukinKwon
                     flash.SetActive(true);
                     StartCoroutine(TurnOffFlashEffect(flash)); //일정 시간후 비활성
                 }
-
+                return;
             }
 
             if(collision.gameObject.GetComponent<CharacterControl>() != null)
@@ -106,7 +107,7 @@ namespace HyukinKwon
                 if(targetScript.tag == "Player" || targetScript.tag == "AI")
                 {
                     //적이고, 적이 피하는중이 아니고, 내가 막는중이 아니면 공격 적용
-                    if (targetScript.team != owner.team && !targetScript.isDodging && !targetScript.isDead && !owner.isParrying)
+                    if (targetScript.team != owner.team && !targetScript.invincible)
                     {
                         //충돌 직후 콜라이더 비활성
                         //한명만 떄린다

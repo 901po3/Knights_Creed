@@ -6,7 +6,6 @@
  * Description: 플레이어의 인풋을 받는 클래스
  *              플레이어의 인풋으로 CharacterControl 상태 변수를 제어한다.
 */
-using System.Collections;
 using UnityEngine;
 
 namespace HyukinKwon
@@ -26,13 +25,33 @@ namespace HyukinKwon
         private void Update()
         {
             if (character.isChangingMode) return;
+
             MoveVerticalInput();
             StartBattleInput();
             AttackInput();
             ParryDodgeInput();
 
-            //if(character.targetEnemy != null)
-            //    Debug.Log(Vector3.Distance(transform.position, character.targetEnemy.transform.position));
+            switch(character.currentState)
+            {
+                case CURRENT_STATE.COMBO_ATTACK:
+                    character.canComboAttacking = false;
+                    character.GetAnimator().SetBool("ComboAttack", true);
+                    character.GetAnimator().SetBool("Attack", true);
+                    break;
+                case CURRENT_STATE.ATTACK:
+                    character.GetAnimator().SetBool("ComboAttack", false);
+                    character.GetAnimator().SetBool("Attack", true);
+                    break;
+                case CURRENT_STATE.DODGE:
+                    character.GetAnimator().SetBool("Dodge", true);
+                    break;
+                case CURRENT_STATE.MOVE_DODGE:
+                    character.GetAnimator().SetBool("MoveDodge", true);
+                    break;
+                case CURRENT_STATE.PARRY:
+                    character.GetAnimator().SetBool("Parry", true);
+                    break;
+            }
         }
 
         private void MoveVerticalInput()
@@ -53,56 +72,51 @@ namespace HyukinKwon
 
         private void AttackInput()
         {
-            if(!character.isDodging)
+            if (Input.GetMouseButton(0))
             {
-                if (character.isDrawingWeapon) //무기를 들고있을때
+                character.curUndetectedTimer = 0; //공격 -> 전투 해제 타이머 리셋
+
+                if (character.attacker != null && character.attacker.currentState == CURRENT_STATE.BLOCKED && character.canComboAttacking &&
+                    (character.isDrawingWeapon && character.currentState == CURRENT_STATE.NONE || character.isDrawingWeapon && character.currentState == CURRENT_STATE.PARRY))
                 {
-                    if (Input.GetMouseButton(0) && !character.isDodging && !character.isParrying && !character.isBlocked)
-                    {
-                        if(character.attacker != null && character.attacker.isBlocked && character.isComboAttacking)
-                        {
-                            character.isComboAttacking = false;
-                            character.isAttacking = true;
-                            character.PickNextAttack(true);
-                            character.GetAnimator().SetTrigger("ComboAttack");
-                        }
-                        else
-                        {
-                            character.curUndetectedTimer = 0; //공격 -> 전투 해제 타이머 리셋
-                            character.isAttacking = true;
-                        }
-                    }
+                    character.currentState = CURRENT_STATE.COMBO_ATTACK;
+                    character.PickNextAttack(true); //true면 다음 공격으로 콤보어택 석택
+                }
+                else if(character.isDrawingWeapon && character.currentState == CURRENT_STATE.NONE)
+                {
+                    character.currentState = CURRENT_STATE.ATTACK;
                 }
             }
         }
 
         private void ParryDodgeInput()
         {
-            if (character.isBattleModeOn) //전투중인지 먼저 체크 후 
+            if (character.isDrawingWeapon) //무기를 들고 있는지 체크
             {
-                if(character.isDrawingWeapon) //무기를 들고 있는지 체크
+                if (character.currentState != CURRENT_STATE.HURT && character.currentState != CURRENT_STATE.ATTACK && character.currentState != CURRENT_STATE.COMBO_ATTACK)
                 {
-                    if(Input.GetKeyDown(KeyCode.Space)) //피하기 시도
-                    { 
-                        if(character.runVelocity.magnitude < 0.1f && character.targetEnemy != null && !character.isParrying)
-                        {
-                            character.isDodging = true;
-                            character.GetAnimator().SetBool("Dodge", true);
-                           
-                        }
-                        else if(character.runVelocity.magnitude > 0.1f && !character.isParrying)
-                        {
-                            character.GetAnimator().SetBool("MoveDodge", true);
-                        }
-                        character.isAttacking = false;
-                    }
-                    else if(Input.GetKeyDown(KeyCode.Q)) //막기 시도
+                    if (Input.GetKeyDown(KeyCode.Space)) //피하기 시도
                     {
-                        if (character.runVelocity.magnitude < 0.1f && character.targetEnemy != null && !character.isDodging)
+                        if (character.currentState != CURRENT_STATE.PARRY) //막기 시도중이면 피하기 불가능
                         {
-                            character.isParrying = true;
-                            character.GetAnimator().SetBool("Parry", true);
-
+                            if (character.runVelocity.magnitude < 0.1f && character.targetEnemy != null)                            
+                            {
+                                character.currentState = CURRENT_STATE.DODGE;
+                            }
+                            else if (character.runVelocity.magnitude > 0.1f)                            
+                            {
+                                character.currentState = CURRENT_STATE.MOVE_DODGE;
+                            }
+                        }
+                    }
+                    else if (Input.GetKeyDown(KeyCode.Q)) //막기 시도
+                    {
+                        if (character.currentState != CURRENT_STATE.DODGE && character.currentState != CURRENT_STATE.MOVE_DODGE)
+                        {
+                            if (character.runVelocity.magnitude < 0.1f && character.targetEnemy != null)
+                            {
+                                character.currentState = CURRENT_STATE.PARRY;
+                            }
                         }
                     }
                 }

@@ -18,6 +18,11 @@ namespace HyukinKwon
         BLUE, YELLOW, BLACK
     }
 
+    public enum CURRENT_STATE
+    {
+        NONE, DODGE, MOVE_DODGE, PARRY, ATTACK, COMBO_ATTACK, BLOCKED, HURT, DEAD
+    }
+
     public enum NORMAL_IDLE_TYPE
     {
         IDLE = 0, RELAXED_IDLE, GUARD_IDLE_1, GUARD_IDLE_2
@@ -37,6 +42,7 @@ namespace HyukinKwon
     {
         public TEAM team;
         public int health;
+        public CURRENT_STATE currentState = CURRENT_STATE.NONE;
 
         public List<GameObject> undrawedWeapon;
         public List<GameObject> drawedWeapon;
@@ -78,8 +84,9 @@ namespace HyukinKwon
 
         //공격 관련
         public List<CharacterControl> attackList; //자신이 때린 적
-        public bool isAttacking = false;
-        public bool isComboAttacking = false; //용도: 콤보 어텍 한번만 시전
+        public bool cancelAttackAvailable = false; //공격 취소 가능한지 판단
+        public bool wasComboAttack = false;
+        public bool canComboAttacking = false; //용도: 콤보 어텍 한번만 시전
         public MED_ATTACK_TYPE medAttackType;
         public MED_ATTACK_TYPE prevMedAttackType;
         public float attackEnableTime = 0;
@@ -89,18 +96,13 @@ namespace HyukinKwon
         public float chargeDis = 2.2f;
 
         //피하기 관련
-        public bool isDodging = false;
         public float parryDodgeEndTime = 0; //Dodge와 Parry 애니메이션의 피하기 모션 파트가 끝나는 시간. 용도: 자연스러운 피하기 연출
         public Vector3 moveParryDodgeVec = Vector3.zero;
 
-        //막기 관련
-        public bool isParrying = false;
-        public bool isBlocked = false;
-
         //공격 받음 관련
         public bool hurtAnimOnce = false;
+        public bool invincible = false; //true면 무적
         public CharacterControl attacker; //자신을 때린 적
-        public bool isDead = false;
         //피 이펙트 관련 변수
         public GameObject bloodEffect;
         private List<GameObject> blooodEffectList;
@@ -193,9 +195,9 @@ namespace HyukinKwon
                 attacker = collision.gameObject.GetComponentInParent<CharacterControl>();
                 targetEnemy = attacker.gameObject;
 
-                if (!isDodging && !isDead && !isParrying)
+                if (!invincible)
                 {                               //Parrying떄 콜라이더가 쳐지기 떄문에 예외처리 필요
-                    if (attacker.team != team && (!attacker.isParrying || attacker.medAttackType == MED_ATTACK_TYPE.COMBO)) //적이 막는중이 아니면 다친다
+                    if (attacker.team != team && attacker.currentState != CURRENT_STATE.PARRY) //적이 막는중이 아니면 다친다
                     {
                         //충돌 위치 저장
                         //용도: 옳바른 위치에 파티클 이팩트 생성
@@ -226,14 +228,22 @@ namespace HyukinKwon
                             //일정 시간마다 Hurt 애니메이션 재생
                             StartCoroutine(HurtPlayFrequency());
 
+                            //공격중에 피해를 받으면 미리 다음 공격을 정해둔다
+                            if (medAttackType == MED_ATTACK_TYPE.COMBO)
+                            {
+                                PickFirstNextAttack();
+                            }
+                            else if (currentState == CURRENT_STATE.ATTACK)
+                            {
+                                PickNextAttack(false);
+                            }
+                            currentState = CURRENT_STATE.HURT;
                             mAnimator.SetBool("Hurt", true);
-                            mAnimator.SetBool("Dead", false);
                             mAnimator.SetTrigger("HurtEnterOnce");
                         }
                     }
                 }
-            }
-            
+            }           
         }
 
         IEnumerator TurnOffBloodEffect(GameObject blood)

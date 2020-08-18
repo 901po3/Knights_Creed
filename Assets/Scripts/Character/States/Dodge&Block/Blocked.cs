@@ -27,11 +27,11 @@ namespace HyukinKwon
                     animator.SetFloat("RandomHit", 0);
                     break;
                 case MED_ATTACK_TYPE.MIDDLE:
-                    character.curAimTime = 1.8f;
+                    character.curAimTime = 1.7f;
                     animator.SetFloat("RandomHit", 1);
                     break;
                 case MED_ATTACK_TYPE.LOW:
-                    character.curAimTime = 1.8f;
+                    character.curAimTime = 1.7f;
                     animator.SetFloat("RandomHit", 2);
                     break;
             }
@@ -45,8 +45,6 @@ namespace HyukinKwon
 
             character.curAnimSpeed = speed;
             character.blockedTimer = 0f;
-            character.isAttacking = false;
-            character.attacker.isComboAttacking = true;
             animator.SetBool("Attack", false);
         }
 
@@ -66,19 +64,19 @@ namespace HyukinKwon
 
             //dodgeDuration 이후에 피하기 상태 해제
             character.blockedTimer += Time.deltaTime;
-            if (character.blockedTimer >= character.parryDodgeEndTime)
+            if (character.blockedTimer >= character.curAimTime - Time.deltaTime)
             {
-                if (character.blockedTimer >= character.curAimTime - Time.deltaTime)
-                {                                  
-                    character.isBlocked = false;
-                    character.GetAnimator().SetBool("Blocked", false);
-                }
+                character.currentState = CURRENT_STATE.NONE;
+                character.attacker.canComboAttacking = false;
+                character.GetAnimator().SetBool("Blocked", false);
             }
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
-;
+            CharacterControl character = characterState.GetCharacterControl(animator);
+            character.attacker.canComboAttacking = false;
+            character.GetAnimator().SetBool("Blocked", false);
         }
     }
 

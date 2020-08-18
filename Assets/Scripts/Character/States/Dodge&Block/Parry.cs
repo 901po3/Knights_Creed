@@ -19,13 +19,6 @@ namespace HyukinKwon
             CharacterControl character = characterState.GetCharacterControl(animator);
             character.curUndetectedTimer = 0; //피하기 시도하면-> 전투 해제 시간 리셋
 
-            if (character.targetEnemy == null)
-            {
-                character.isParrying = false;
-                character.GetAnimator().SetBool("Parry", false);
-                return;
-            }
-
             //피하기 종류 선택
             switch (character.targetEnemy.GetComponent<CharacterControl>().medAttackType)
             {
@@ -53,10 +46,11 @@ namespace HyukinKwon
                 character.transform.position.y, attackerTrans.transform.position.z);
             character.transform.LookAt(attackerTrans);
 
+            character.invincible = true;
             character.parryDodgeTimer = 0;
             character.curAnimSpeed = speed;
 
-            //무기 콜리션 킨다
+            //무기의 막기 전용 콜리션 킨다
             character.drawedWeapon[(int)character.weapon].GetComponent<CapsuleCollider>().isTrigger = false;
             character.drawedWeapon[(int)character.weapon].GetComponent<CapsuleCollider>().enabled = true;
         }
@@ -75,17 +69,17 @@ namespace HyukinKwon
             //뒤로 이동
             character.GetRigidbody().MovePosition(character.transform.position - character.transform.forward * character.curAnimSpeed * Time.fixedDeltaTime);
 
-            //dodgeDuration 이후에 피하기 상태 해제
+            //parryDodgeTimer 이후에 피하기 상태 해제
             character.parryDodgeTimer += Time.deltaTime;
             if (character.parryDodgeTimer >= character.parryDodgeEndTime)
             {
-                //막기 비활성화
-                character.isParrying = false;
                 weapon.GetComponent<CapsuleCollider>().isTrigger = true;
                 weapon.GetComponent<CapsuleCollider>().enabled = false;
+                character.invincible = false;
 
                 if (character.parryDodgeTimer >= character.curAimTime - Time.deltaTime)
-                {                
+                {
+                    character.currentState = CURRENT_STATE.NONE;
                     character.GetAnimator().SetBool("Parry", false);
                     weapon.parryOnce = false;
                 }
@@ -94,7 +88,11 @@ namespace HyukinKwon
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
-;
+            CharacterControl character = characterState.GetCharacterControl(animator);
+            WeaponScript weapon = character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>();
+            weapon.GetComponent<CapsuleCollider>().isTrigger = true;
+            weapon.GetComponent<CapsuleCollider>().enabled = false;
+            character.invincible = false;
         }
     }
 

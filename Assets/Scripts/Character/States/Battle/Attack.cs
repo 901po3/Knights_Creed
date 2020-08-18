@@ -1,7 +1,7 @@
 ﻿/*
  * Class: Attack
  * Date: 2020.8.12
- * Last Modified : 2020.8.17
+ * Last Modified : 2020.8.19
  * Author: Hyukin Kwon 
  * Description: 공격 
 */
@@ -18,6 +18,7 @@ namespace HyukinKwon
             
             //공격 타입에 맞게 시간 설정 
             animator.SetFloat("RandomAttack", (float)character.medAttackType);
+            animator.SetBool("Parry", false);
 
             //공격 시도시 타겟과의 거리를 계산에둔다
             character.attackChargeDes = new Vector3(0, 10000, 0);
@@ -31,6 +32,13 @@ namespace HyukinKwon
                 }
             }
             character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().damageOnce = false;
+            character.attackTimer = 0;
+                     
+            if(character.currentState == CURRENT_STATE.COMBO_ATTACK)
+            {
+                character.wasComboAttack = true;
+            }
+            character.cancelAttackAvailable = true; 
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -46,13 +54,11 @@ namespace HyukinKwon
             }
 
             character.attackTimer += Time.deltaTime;
-            if (character.isAttacking)
+            if (character.currentState == CURRENT_STATE.ATTACK || character.currentState == CURRENT_STATE.COMBO_ATTACK)
             {
-                animator.SetBool("Attack", true);
-
                 if(character.attackTimer > character.attackEnableTime) //공격 포인트에 돌입시 무기 공격 활성화
                 {
-                    if(!weapon.damageOnce && !character.isBlocked)
+                    if (!weapon.damageOnce)
                     {
                         weapon.ToggleCollision(true);
                     }
@@ -63,32 +69,50 @@ namespace HyukinKwon
                 }
                 if(character.attackTimer >= character.attackEndTime) //공격 포인트를 지나면 무기 공격 비활성화
                 {
-                    weapon.ToggleCollision(false);
-                    character.isAttacking = false;
+                    weapon.ToggleCollision(false);                    
                 }
+            }          
+
+            if(character.currentState != CURRENT_STATE.ATTACK && character.currentState != CURRENT_STATE.COMBO_ATTACK)
+            {
+                if(character.currentState == CURRENT_STATE.DODGE)
+                {
+                    animator.SetBool("Dodge", true);
+                }
+                else if(character.currentState == CURRENT_STATE.PARRY)
+                {
+                    animator.SetBool("Parry", true);
+                }
+                else if(character.currentState == CURRENT_STATE.BLOCKED)
+                {
+                    animator.SetBool("Blocked", true);
+                }
+                animator.SetBool("Attack", false);
             }
-            
-            //애니메이션 끝
-            if(character.attackTimer > character.curAimTime - Time.deltaTime)
+
+            //애니메이션 시간 끝
+            if (character.attackTimer > character.curAimTime - Time.deltaTime)
             {
                 animator.SetBool("Attack", false);
-            }           
+                if (character.currentState == CURRENT_STATE.ATTACK || character.currentState == CURRENT_STATE.COMBO_ATTACK)
+                {
+                    character.currentState = CURRENT_STATE.NONE;
+                }
+            }
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            //미리 다음 공격 타입을 정한다
-            if (character.medAttackType == MED_ATTACK_TYPE.COMBO)
+            if (character.wasComboAttack)
             {
+                character.wasComboAttack = false;
                 character.PickFirstNextAttack();
             }
             else
-            { 
+            {
                 character.PickNextAttack(false);
             }
-            character.attackTimer = 0;
-            character.isAttacking = false;
         }
     }
 }

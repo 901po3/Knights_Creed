@@ -1,7 +1,7 @@
 ﻿/*
  * Class: MoveDodge
  * Date: 2020.8.13
- * Last Modified : 2020.8.17
+ * Last Modified : 2020.8.19
  * Author: Hyukin Kwon 
  * Description: Dodge 상태 조정
 */
@@ -20,18 +20,10 @@ namespace HyukinKwon
             CharacterControl character = characterState.GetCharacterControl(animator);
 
             character.curUndetectedTimer = 0; //피하기 시도하면-> 전투 해제 시간 리셋
-            //피하기 종류 선택
-            if (character.isAttacking)
-            {
-                character.isAttacking = false;
-                animator.SetBool("SwingSword", false);
-            }
-            if(character.runVelocity.normalized.magnitude >= 0.1f)
-            {
-                character.curAimTime = 1.2f;
-            }
+
+            character.curAimTime = 1.2f;
             character.parryDodgeTimer = 0;
-            character.isDodging = true;
+            character.invincible = true;
             character.moveParryDodgeVec = new Vector3(character.runVelocity.x, 0, character.runVelocity.z);
         }
 
@@ -56,8 +48,9 @@ namespace HyukinKwon
             {
                 if(character.parryDodgeTimer > 0.3f)
                 {
-                    character.isDodging = false;
+                    character.invincible = false;
                 }
+
                 if(character.moveParryDodgeVec.z == 0 && character.moveParryDodgeVec.x != 0)
                 {
                     character.GetRigidbody().MovePosition(character.transform.position + dir * speed * 1.5f * Time.fixedDeltaTime);
@@ -71,17 +64,18 @@ namespace HyukinKwon
             animator.SetFloat("BattleMoveHorizontal", character.moveParryDodgeVec.x);
             animator.SetFloat("BattleMoveVertical", character.moveParryDodgeVec.z);
 
-            //dodgeDuration 이후에 피하기 상태 해제
+            //parryDodgeTimer 이후에 피하기 상태 해제
             if (character.parryDodgeTimer >= character.curAimTime - Time.deltaTime)
             {
+                character.currentState = CURRENT_STATE.NONE;
                 character.GetAnimator().SetBool("MoveDodge", false);
+                character.moveParryDodgeVec = Vector3.zero;
             }
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
-            CharacterControl character = characterState.GetCharacterControl(animator);
-            character.moveParryDodgeVec = Vector3.zero;
+
         }
     }
 }
