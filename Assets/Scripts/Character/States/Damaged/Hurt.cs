@@ -26,6 +26,9 @@ namespace HyukinKwon
                 case MED_ATTACK_TYPE.LOW:
                     animator.SetFloat("RandomHit", 2);
                     break;
+                case MED_ATTACK_TYPE.COMBO:
+                    animator.SetFloat("RandomHit", 3);
+                    break;
             }
             Transform attackerTrans = character.attacker.transform;
             attackerTrans.position = new Vector3(character.attacker.transform.position.x, 

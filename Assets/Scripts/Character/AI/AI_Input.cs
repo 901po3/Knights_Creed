@@ -56,6 +56,7 @@ namespace HyukinKwon
                             if (character.runVelocity.z <= 0)
                             {
                                 character.runVelocity = Vector3.zero;
+                                character.isDodging = true;
                                 character.GetAnimator().SetBool("Dodge", true);
                             }
                         }
@@ -191,7 +192,7 @@ namespace HyukinKwon
             if (Vector3.Distance(transform.position, character.targetEnemy.transform.position) < character.chargeDis)
             {
                                             //적도 공격중이라면 일정 확률로 피하기 
-                if (Random.Range(0, 4) == 0 && !DodgeInput(0.15f)) // 1/4 확률도 공격
+                if (Random.Range(0, 10) <= 7 && !DodgeInput(0.15f)) // 1/4 확률도 공격
                 {
                     if (character.runVelocity.z < 0)
                     {
@@ -203,6 +204,7 @@ namespace HyukinKwon
                     statePickFrequency = 2.5f;
                     character.isDodging = false;
                     character.GetAnimator().SetBool("Dodge", false);
+                    statePicked = true;
                 }
             }
         }

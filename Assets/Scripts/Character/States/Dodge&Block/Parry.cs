@@ -64,6 +64,7 @@ namespace HyukinKwon
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
+            WeaponScript weapon = character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>();
 
             //자연스러운 애니메이션을 위한 속도 조정
             if (character.curAnimSpeed > 0)
@@ -80,13 +81,13 @@ namespace HyukinKwon
             {
                 //막기 비활성화
                 character.isParrying = false;
-                character.drawedWeapon[(int)character.weapon].GetComponent<CapsuleCollider>().isTrigger = true;
-                character.drawedWeapon[(int)character.weapon].GetComponent<CapsuleCollider>().enabled = false;
+                weapon.GetComponent<CapsuleCollider>().isTrigger = true;
+                weapon.GetComponent<CapsuleCollider>().enabled = false;
 
                 if (character.parryDodgeTimer >= character.curAimTime - Time.deltaTime)
                 {                
                     character.GetAnimator().SetBool("Parry", false);
-                    character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().parryOnce = false;
+                    weapon.parryOnce = false;
                 }
             }
         }

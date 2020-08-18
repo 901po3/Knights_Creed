@@ -12,30 +12,12 @@ namespace HyukinKwon
     [CreateAssetMenu(fileName = "New State", menuName = "HyukinKwon/AbilityData/Attack")]
     public class Attack : StateData
     {
-        public float attackEnableTime;
-
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
             
             //공격 타입에 맞게 시간 설정 
-            switch(character.medAttackType)
-            {
-                case MED_ATTACK_TYPE.HIGH:
-                    character.curAimTime = 1.783f;
-                    character.attackEndTime = 1f;
-                    break;
-                case MED_ATTACK_TYPE.MIDDLE:
-                    character.curAimTime = 1.5f;
-                    character.attackEndTime = 0.75f;
-                    break;
-                case MED_ATTACK_TYPE.LOW:
-                    character.curAimTime = 1.9f;
-                    character.attackEndTime = 1f;
-                    break;
-            }
             animator.SetFloat("RandomAttack", (float)character.medAttackType);
-
 
             //공격 시도시 타겟과의 거리를 계산에둔다
             character.attackChargeDes = new Vector3(0, 10000, 0);
@@ -55,7 +37,6 @@ namespace HyukinKwon
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
             WeaponScript weapon = character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>();
-            weapon.FixTransform();
             character.GetRigidbody().velocity = Vector3.zero;
 
             //적의 앞으로 이동하며 공격
@@ -69,7 +50,7 @@ namespace HyukinKwon
             {
                 animator.SetBool("Attack", true);
 
-                if(character.attackTimer > attackEnableTime) //공격 포인트에 돌입시 무기 공격 활성화
+                if(character.attackTimer > character.attackEnableTime) //공격 포인트에 돌입시 무기 공격 활성화
                 {
                     if(!weapon.damageOnce && !character.isBlocked)
                     {
@@ -97,7 +78,15 @@ namespace HyukinKwon
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            character.PickNextAttack(); //미리 다음 공격 타입을 정한다
+            //미리 다음 공격 타입을 정한다
+            if (character.medAttackType == MED_ATTACK_TYPE.COMBO)
+            {
+                character.PickFirstNextAttack();
+            }
+            else
+            { 
+                character.PickNextAttack(false);
+            }
             character.attackTimer = 0;
             character.isAttacking = false;
         }

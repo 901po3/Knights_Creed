@@ -37,7 +37,6 @@ namespace HyukinKwon
             }
             //공격에서 넘어왔을때를 대비 무기 콜라이더 비활성
             character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().ToggleCollision(false);
-            character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().FixTransform();
 
             Transform attackerTrans = character.targetEnemy.transform;
             attackerTrans.position = new Vector3(attackerTrans.transform.position.x,
@@ -47,6 +46,7 @@ namespace HyukinKwon
             character.curAnimSpeed = speed;
             character.blockedTimer = 0f;
             character.isAttacking = false;
+            character.hurtAnimOnce = false;
             animator.SetBool("Attack", false);
         }
 

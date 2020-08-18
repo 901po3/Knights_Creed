@@ -30,7 +30,7 @@ namespace HyukinKwon
 
     public enum MED_ATTACK_TYPE
     {
-        HIGH, MIDDLE, LOW
+        HIGH, MIDDLE, LOW, COMBO
     }
 
     public class CharacterControl : MonoBehaviour
@@ -81,6 +81,7 @@ namespace HyukinKwon
         public bool isAttacking = false;
         public MED_ATTACK_TYPE medAttackType;
         public MED_ATTACK_TYPE prevMedAttackType;
+        public float attackEnableTime = 0;
         public float attackEndTime = 0;
         public float attackRange = 0;
         public Vector3 attackChargeDes = new Vector3(0, 10000, 0); //공격시 위치 보정 용도
@@ -140,22 +141,18 @@ namespace HyukinKwon
             attackList = new List<CharacterControl>();
 
             //처음 공격 예약
-            switch(Random.Range(0, 3))
-            {
-                case 0:
-                    prevMedAttackType = MED_ATTACK_TYPE.HIGH;
-                    break;
-                case 1:
-                    prevMedAttackType = MED_ATTACK_TYPE.MIDDLE;
-                    break;
-                case 2:
-                    prevMedAttackType = MED_ATTACK_TYPE.LOW;
-                    break;
-            }
-            PickNextAttack();
+            PickFirstNextAttack();
 
             //파티클 이펙트
             SetupParticleEffects();
+        }
+
+        private void Update()
+        {
+            if(isDrawingWeapon)
+            {
+                drawedWeapon[(int)weapon].GetComponent<WeaponScript>().FixTransform();
+            }
         }
 
         public Animator GetAnimator()
@@ -197,8 +194,8 @@ namespace HyukinKwon
                 targetEnemy = attacker.gameObject;
 
                 if (!isDodging && !isDead && !isParrying)
-                {
-                    if (attacker.team != team && !attacker.isParrying) //적이 막는중이 아니면 다친다
+                {                               //Parrying떄 콜라이더가 쳐지기 떄문에 예외처리 필요
+                    if (attacker.team != team && (!attacker.isParrying || attacker.medAttackType == MED_ATTACK_TYPE.COMBO)) //적이 막는중이 아니면 다친다
                     {
                         //충돌 위치 저장
                         //용도: 옳바른 위치에 파티클 이팩트 생성
@@ -252,33 +249,67 @@ namespace HyukinKwon
 
         //미리 다음 공격을 정해둔다
         //미라 정하는 이유: 상대방이 옳바른 Dodge와 Parry 애니메이션을 재생
-        public void PickNextAttack()
+        public void PickFirstNextAttack()
         {
             switch (Random.Range(0, 3))
             {
                 case 0:
-                    medAttackType = MED_ATTACK_TYPE.HIGH;
-                    curAimTime = 1.783f;
-                    attackRange = 1.2f;
+                    prevMedAttackType = MED_ATTACK_TYPE.HIGH;
                     break;
                 case 1:
-                    medAttackType = MED_ATTACK_TYPE.MIDDLE;
-                    curAimTime = 1.5f;
-                    attackRange = 0.3f;
+                    prevMedAttackType = MED_ATTACK_TYPE.MIDDLE;
                     break;
                 case 2:
-                    medAttackType = MED_ATTACK_TYPE.LOW;
-                    curAimTime = 1.9f;
-                    attackRange = 1.2f;
+                    prevMedAttackType = MED_ATTACK_TYPE.LOW;
                     break;
             }
-            if (prevMedAttackType == medAttackType)
+            PickNextAttack(false);
+        }
+
+        public void PickNextAttack(bool Combo)
+        {
+            if(!Combo)
             {
-                medAttackType = (medAttackType + 1);
-                if ((int)medAttackType >= 3)
-                    medAttackType = 0;
+                switch (Random.Range(0, 3))
+                {
+                    case 0:
+                        medAttackType = MED_ATTACK_TYPE.HIGH;
+                        curAimTime = 1.783f;
+                        attackEndTime = 1f;
+                        attackEnableTime = 0.3f;
+                        attackRange = 1.2f;
+                        break;
+                    case 1:
+                        medAttackType = MED_ATTACK_TYPE.MIDDLE;
+                        curAimTime = 1.5f;
+                        attackEndTime = 0.75f;
+                        attackEnableTime = 0.3f;
+                        attackRange = 0.7f;
+                        break;
+                    case 2:
+                        medAttackType = MED_ATTACK_TYPE.LOW;
+                        curAimTime = 1.9f;
+                        attackEndTime = 1f;
+                        attackEnableTime = 0.3f;
+                        attackRange = 1.2f;
+                        break;
+                }
+                if (prevMedAttackType == medAttackType)
+                {
+                    medAttackType = (medAttackType + 1);
+                    if ((int)medAttackType >= 3)
+                        medAttackType = 0;
+                }
+                prevMedAttackType = medAttackType;
             }
-            prevMedAttackType = medAttackType;
+            else
+            {
+                medAttackType = MED_ATTACK_TYPE.COMBO;
+                curAimTime = 1.4f;
+                attackEndTime = 0.55f;
+                attackEnableTime = 0.45f;
+                attackRange = 0.75f;
+            }
         }
     }
 }

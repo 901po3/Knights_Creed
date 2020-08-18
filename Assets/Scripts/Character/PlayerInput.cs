@@ -58,8 +58,17 @@ namespace HyukinKwon
                 {
                     if (Input.GetMouseButton(0))
                     {
-                        character.curUndetectedTimer = 0; //공격 -> 전투 해제 타이머 리셋
-                        character.isAttacking = true;
+                        if(character.attacker != null && character.attacker.isBlocked && character.medAttackType != MED_ATTACK_TYPE.COMBO)
+                        {
+                            character.isAttacking = true;
+                            character.PickNextAttack(true);
+                            character.GetAnimator().SetTrigger("ComboAttack");
+                        }
+                        else
+                        {
+                            character.curUndetectedTimer = 0; //공격 -> 전투 해제 타이머 리셋
+                            character.isAttacking = true;
+                        }
                         character.isDodging = false;
                         character.GetAnimator().SetBool("Dodge", false);
                     }

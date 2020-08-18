@@ -28,8 +28,11 @@ namespace HyukinKwon
         private void Start()
         {
             owner = GetComponentInParent<CharacterControl>();
-            originalPos = transform.localPosition;
-            originalRot = transform.localRotation;
+            if(owner.weapon == Equipment.WEAPON.ONE_HANDED_SWORD)
+            {
+                originalPos = new Vector3(8.1f, 5.5f, -1.9f);
+                originalRot = Quaternion.Euler(69.806f, -1.447f, 196.297f);
+            }
         }
 
         public void FixTransform()
@@ -53,7 +56,7 @@ namespace HyukinKwon
                 GameObject obj = Instantiate(flashParticle);
                 obj.transform.position = collision.contacts[0].point;
                 owner.attacker = collision.gameObject.GetComponentInParent<CharacterControl>();
-                owner.isBlocked = true;
+                owner.attacker.isBlocked = true;
                 owner.attacker.GetAnimator().SetBool("Blocked", true);
             }
 
@@ -103,12 +106,19 @@ namespace HyukinKwon
                             }
 
                             //데미지 적용
-                            targetScript.health -= damage;
-                            //Debug.Log(targetScript.gameObject + "'s health: " + targetScript.health);
+                            if(owner.medAttackType == MED_ATTACK_TYPE.COMBO)
+                            {
+                                targetScript.health -= (damage * 2);
+                                Debug.Log("Combo!");
+                            }
+                            else
+                            {
+                                targetScript.health -= damage;
+                            }
+                            Debug.Log(targetScript.gameObject + "'s health: " + targetScript.health);
                         }
                     }
                 }
-                FixTransform();
             }              
         }
     }
