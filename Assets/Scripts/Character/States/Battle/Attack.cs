@@ -49,7 +49,7 @@ namespace HyukinKwon
                 }
             }
 
-            character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().isTrigger = false;
+            character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().isTrigger = false; 
             character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().damageOnce = false;
         }
 

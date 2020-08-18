@@ -36,6 +36,8 @@ namespace HyukinKwon
             {
                 if(c.targetEnemy == character.gameObject)
                 {
+                    if (c.attacker == character)
+                        c.attacker = null;
                     c.targetEnemy = null;
                 }
             }
