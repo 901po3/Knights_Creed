@@ -2481,7 +2481,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   team: 1
   health: 60
-  damage: 0
   undrawedWeapon:
   - {fileID: 7335592015905055597}
   drawedWeapon:
@@ -2496,12 +2495,13 @@ MonoBehaviour:
   runVelocity: {x: 0, y: 0, z: 0}
   horizontalV: 0
   NormalIdleType: 3
-  BattleIdleType: 2
-  isBattleModeOn: 0
+  BattleIdleType: 0
+  isBattleModeOn: 1
   isDrawingWeapon: 0
   isChangingMode: 0
   isDetected: 0
   undetectedTime: 8
+  attackList: []
   isAttacking: 0
   medAttackType: 0
   prevMedAttackType: 0
@@ -2512,10 +2512,11 @@ MonoBehaviour:
   isDodging: 0
   dodgeEndTime: 0
   moveDodgeVec: {x: 0, y: 0, z: 0}
+  hurtAnimOnce: 0
   attacker: {fileID: 0}
+  isDead: 0
   bloodEffect: {fileID: 5561698443439670171, guid: cd1f0591bc5af1b40970967f4d66aee6,
     type: 3}
-  isDead: 0
   isTurning: 0
   turning: 0
   turnTimer: 0
@@ -4064,6 +4065,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 301cf4f0b68e85a49aec0de23162c16a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 10
+  damageOnce: 0
 --- !u!1001 &7335592016889958593
 PrefabInstance:
   m_ObjectHideFlags: 0

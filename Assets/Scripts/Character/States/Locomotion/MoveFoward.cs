@@ -55,7 +55,6 @@ namespace HyukinKwon
             if (curRunVelocity.x != 0 && curRunVelocity.z != 0)
             {
                 Vector3 cross = Vector3.Cross(curRunVelocity.normalized, character.prevRunVelocity.normalized);
-                Debug.Log(cross);
                 if (cross.y < 0) //오른쪽 회전 중이면서 이동
                 {
                     character.horizontalV += Time.deltaTime * dampSpeed;

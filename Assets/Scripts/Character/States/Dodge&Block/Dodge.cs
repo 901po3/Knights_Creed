@@ -20,6 +20,13 @@ namespace HyukinKwon
             CharacterControl character = characterState.GetCharacterControl(animator);
             character.curUndetectedTimer = 0; //피하기 시도하면-> 전투 해제 시간 리셋
 
+            if (character.targetEnemy == null)
+            {
+                character.isDodging = false;
+                character.GetAnimator().SetBool("Dodge", false);
+                return;
+            }
+
             //피하기 종류 선택
             switch (character.targetEnemy.GetComponent<CharacterControl>().medAttackType)
             {

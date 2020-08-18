@@ -1,7 +1,7 @@
 ﻿/*
  * Class: WeaponScript
  * Date: 2020.8.16
- * Last Modified : 2020.8.16
+ * Last Modified : 2020.8.17
  * Author: Hyukin Kwon 
  * Description:  무기에 들어가는 스크립트
  *             
@@ -12,7 +12,11 @@ namespace HyukinKwon
 {
     public class WeaponScript : MonoBehaviour
     {
-        CharacterControl owner;
+        CharacterControl owner; //무기의 소유자
+
+        //무기의 공격력
+        public int damage;
+        public bool damageOnce = false;
 
         private void Start()
         {
@@ -23,33 +27,54 @@ namespace HyukinKwon
         {
             if(collision.gameObject.GetComponent<CharacterControl>() != null)
             {
-                if(collision.gameObject.GetComponent<CharacterControl>().team != owner.team)
-                {
-                    if(owner.targetEnemy == null || owner.targetEnemy != collision.gameObject)
-                    {
-                        owner.targetEnemy = collision.gameObject;
-                        owner.isTargetChanged = true;
-                    }
+                CharacterControl targetScript = collision.gameObject.GetComponent<CharacterControl>();
 
-                    //공격한 적
-                    bool isAlreadyAdded = false;
-                    foreach(CharacterControl c in owner.gameObject.GetComponent<CharacterControl>().attackList)
+                //충돌시 발생하는 힘을 제거한다;
+                owner.GetRigidbody().velocity = Vector3.zero;
+                collision.gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+
+                if(targetScript.tag == "Player" || targetScript.tag == "AI")
+                {
+                    if (targetScript.team != owner.team && !targetScript.isDodging && !targetScript.isDead)
                     {
-                        if(c == collision.gameObject.GetComponent<CharacterControl>())
+                        //충돌 직후 콜라이더 비활성
+                        //한명만 떄린다
+                        GetComponent<Collider>().enabled = false;
+
+                        //데미지 적용
+                        if (!damageOnce)
                         {
-                            isAlreadyAdded = true;
-                            break;
+                            damageOnce = true;
+                            //때린 대상의을 무기 타겟으로 변경
+                            if (owner.targetEnemy != collision.gameObject)
+                            {
+                                owner.targetEnemy = collision.gameObject;
+                                owner.isTargetChanged = true;
+                            }
+
+                            //공격한 적이 이미 전에 떄린적이 아니면 AttackList에 추가한다
+                            //옹도: 무기 소유자가 죽었을때 소유자를 타겟으로 갖고있는 대상의 타겟을 초기화
+                            bool isAlreadyAdded = false;
+                            foreach (CharacterControl c in owner.attackList)
+                            {
+                                if (c.gameObject == targetScript.gameObject)
+                                {
+                                    isAlreadyAdded = true;
+                                    break;
+                                }
+                            }
+                            if (!isAlreadyAdded)
+                            {
+                                owner.attackList.Add(targetScript);
+                            }
+
+                            //데미지 적용
+                            targetScript.health -= damage;
+                            Debug.Log(targetScript.gameObject + "'s health: " + targetScript.health);
                         }
                     }
-                    if(!isAlreadyAdded)
-                    {
-                        owner.gameObject.GetComponent<CharacterControl>().attackList.Add(collision.gameObject.GetComponent<CharacterControl>());
-                    }
-
-                    GetComponent<Collider>().enabled = false;
-                    collision.gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero; //충돌 반동 초기화
                 }
-            }
+            }              
         }
     }
 }

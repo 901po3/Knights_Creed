@@ -37,7 +37,6 @@ namespace HyukinKwon
     {
         public TEAM team;
         public int health;
-        public int damage;
 
         public List<GameObject> undrawedWeapon;
         public List<GameObject> drawedWeapon;
@@ -96,13 +95,16 @@ namespace HyukinKwon
         //공격 받음 관련
         public bool hurtAnimOnce = false;
         public CharacterControl attacker; //자신을 때린 적
-        private Vector3 contactPoint = new Vector3(0, 10000, 0);
-        private Vector3 contactDir = Vector3.zero;
+        public bool isDead = false;
+        //피 이펙트 관련 변수
         public GameObject bloodEffect;
         private List<GameObject> blooodEffectList;
         private int maxBloodNum = 3;
         private int curBloodIndex = 0;
-        public bool isDead = false;
+        //칼 충돌 위치 관련 변수
+        private Vector3 contactPoint = new Vector3(0, 10000, 0);
+        private Vector3 contactDir = Vector3.zero;
+
 
         //회전 관련
         public bool isTurning = false; //회전중
@@ -128,18 +130,7 @@ namespace HyukinKwon
 
             mCollider = GetComponent<Collider>();
             mRigidbody = GetComponent<Rigidbody>();
-            mAnimator = GetComponent<Animator>();
-
-            //파티클 이펙트
-            blooodEffectList = new List<GameObject>();
-            for (int i = 0; i < maxBloodNum; i++) //피 이펙트 3개
-            {
-                GameObject blood = Instantiate(bloodEffect);
-                blood.transform.parent = transform;
-                blooodEffectList.Add(blood);
-                blood.SetActive(false);
-            }
-            bloodEffect.SetActive(false);
+            mAnimator = GetComponent<Animator>();           
 
             attackList = new List<CharacterControl>();
 
@@ -159,6 +150,9 @@ namespace HyukinKwon
                     break;
             }
             PickNextAttack();
+
+            //파티클 이펙트
+            SetupParticleEffects();
         }
 
         public Animator GetAnimator()
@@ -176,6 +170,20 @@ namespace HyukinKwon
             CheckHurt(collision);
         }
 
+        //파티클 이펙트 초기 설정
+        private void SetupParticleEffects()
+        {
+            blooodEffectList = new List<GameObject>();
+            for (int i = 0; i < maxBloodNum; i++) //피 이펙트 3개
+            {
+                GameObject blood = Instantiate(bloodEffect);
+                blood.transform.parent = transform;
+                blooodEffectList.Add(blood);
+                blood.SetActive(false);
+            }
+            bloodEffect.SetActive(false);
+        }
+
         //피해 적용
         private void CheckHurt(Collision collision)
         {
@@ -184,19 +192,34 @@ namespace HyukinKwon
                 CharacterControl atk = collision.gameObject.GetComponentInParent<CharacterControl>();
                 if (atk.team != team)
                 {
-                    //데미지 적용 -> WeaponScript로 옮겨야함
-                    contactDir = collision.contacts[0].point - collision.gameObject.transform.position;
+                    //충돌 위치 저장
+                    //용도: 옳바른 위치에 파티클 이팩트 생성
+                    contactDir = (gameObject.transform.position - collision.contacts[0].point).normalized;
                     contactPoint = collision.contacts[0].point;
-                    GetDamaged(atk.damage);
+
+                    //피 이팩트 생성
+                    if (contactPoint != new Vector3(0, 10000, 0))
+                    {
+                        GameObject blood = blooodEffectList[curBloodIndex];
+                        if (!blood.activeSelf)
+                        {
+                            curBloodIndex = (curBloodIndex + 1) % maxBloodNum;
+                            blood.transform.rotation = Quaternion.Euler(contactDir);
+                            blood.transform.position = contactPoint;
+                            blood.SetActive(true);
+                            StartCoroutine(TurnOffBloodEffect(blood)); //일정 시간후 비활성
+                        }
+                        contactPoint = new Vector3(0, 10000, 0);
+                        contactDir = Vector3.zero;
+                    }
+                    collision.gameObject.GetComponent<Collider>().isTrigger = true;
 
                     if (!hurtAnimOnce)
                     {
                         hurtAnimOnce = true;
+
+                        //일정 시간마다 Hurt 애니메이션 재생
                         StartCoroutine(HurtPlayFrequency());
-                        //공격한 무기의 트리거를 끄고 충돌시 발생하는 힘을 제거한다
-                        collision.gameObject.GetComponent<Collider>().isTrigger = true;
-                        mRigidbody.velocity = new Vector3(0, mRigidbody.velocity.y, 0);
-                        atk.GetRigidbody().velocity = new Vector3(0, atk.GetRigidbody().velocity.y, 0);
 
                         //공격한 대상 등록
                         attacker = atk;
@@ -208,6 +231,12 @@ namespace HyukinKwon
                     }
                 }
             }           
+        }
+
+        IEnumerator TurnOffBloodEffect(GameObject blood)
+        {
+            yield return new WaitForSeconds(0.8f);
+            blood.SetActive(false);
         }
 
         IEnumerator HurtPlayFrequency()
@@ -230,37 +259,7 @@ namespace HyukinKwon
             mAnimator.enabled = !b;
             mCollider.enabled = !b;
             mRigidbody.isKinematic = b;
-        }
-
-        public void GetDamaged(int damage)
-        {
-            health -= damage;
-
-            //피 생성
-            foreach (GameObject b in blooodEffectList)
-            {
-                if (b.GetComponent<ParticleSystem>().time >= 0.3f - Time.deltaTime)
-                {
-                    b.SetActive(false);
-                }
-            }
-            if(contactPoint != new Vector3(0, 10000, 0))
-            {
-                GameObject blood = blooodEffectList[curBloodIndex];
-                if (!blood.activeSelf)
-                {
-                    curBloodIndex = (curBloodIndex + 1) % maxBloodNum;
-                    blood.transform.rotation = Quaternion.Euler(contactDir);
-                    blood.transform.position = contactPoint;
-                    blood.SetActive(true);
-                }
-
-                contactPoint = new Vector3(0, 10000, 0);
-                contactDir = Vector3.zero;
-            }
-
-           //Debug.Log(gameObject + "'s health: " + health);
-        }
+        }  
 
         //미리 다음 공격을 정해둔다
         //미라 정하는 이유: 상대방이 옳바른 Dodge와 Parry 애니메이션을 재생

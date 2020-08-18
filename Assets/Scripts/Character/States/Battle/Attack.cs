@@ -1,7 +1,7 @@
 ﻿/*
  * Class: Attack
  * Date: 2020.8.12
- * Last Modified : 2020.8.13
+ * Last Modified : 2020.8.17
  * Author: Hyukin Kwon 
  * Description: 공격 
 */
@@ -12,13 +12,11 @@ namespace HyukinKwon
     [CreateAssetMenu(fileName = "New State", menuName = "HyukinKwon/AbilityData/Attack")]
     public class Attack : StateData
     {
-        public int damage;
         public float attackEnableTime;
 
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            character.damage = damage;
             
             //공격 타입에 맞게 시간 설정 
             switch(character.medAttackType)
@@ -37,8 +35,9 @@ namespace HyukinKwon
                     break;
             }
             animator.SetFloat("RandomAttack", (float)character.medAttackType);
-            character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().isTrigger = false;
 
+
+            //공격 시도시 타겟과의 거리를 계산에둔다
             character.attackChargeDes = new Vector3(0, 10000, 0);
             if (character.targetEnemy != null)
             {
@@ -49,6 +48,9 @@ namespace HyukinKwon
                     character.attackChargeDes = character.transform.position + dir * (dis - character.attackRange - 0.2f);
                 }
             }
+
+            character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().isTrigger = false;
+            character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().damageOnce = false;
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
@@ -56,6 +58,7 @@ namespace HyukinKwon
             CharacterControl character = characterState.GetCharacterControl(animator);
             character.GetRigidbody().velocity = new Vector3(0, character.GetRigidbody().velocity.y, 0);
 
+            //적의 앞으로 이동하며 공격
             if(character.attackChargeDes != new Vector3(0, 10000, 0))
             {
                 character.transform.position = Vector3.Slerp(character.transform.position, character.attackChargeDes, 1f * Time.fixedDeltaTime);
@@ -66,17 +69,18 @@ namespace HyukinKwon
             {
                 animator.SetBool("Attack", true);
 
-                if(character.attackTimer > attackEnableTime) //무기 공격 활성화
+                if(character.attackTimer > attackEnableTime) //공격 포인트에 돌입시 무기 공격 활성화
                 {
                     character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = true;
                 }
-                if(character.attackTimer >= character.attackEndTime)
+                if(character.attackTimer >= character.attackEndTime) //공격 포인트를 지나면 무기 공격 비활성화
                 {
                     character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = false;
                     character.isAttacking = false;
                 }
             }
             
+            //애니메이션 끝
             if(character.attackTimer > character.curAimTime - Time.deltaTime)
             {
                 animator.SetBool("Attack", false);
@@ -89,34 +93,6 @@ namespace HyukinKwon
             character.PickNextAttack(); //미리 다음 공격 타입을 정한다
             character.attackTimer = 0;
             character.isAttacking = false;
-            character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = false;
         }
-
-
-
-        //private void OldAtttackFunc(CharacterState characterState, Animator animator)
-        //{
-        //    CharacterControl character = characterState.GetCharacterControl(animator);
-        //    if (character.isAttacking)
-        //    {
-        //        animator.SetBool("SwingSword", true);
-        //        if (character.attackTimer < duration)
-        //        {
-        //            character.attackTimer += Time.deltaTime;
-        //            //회전
-        //            Vector3 targetDirection = character.runVelocity.normalized;
-        //            targetDirection = character.facingStandardTransfom.TransformDirection(targetDirection);
-        //            targetDirection.y = 0f;
-        //            character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards(character.transform.forward,
-        //                targetDirection, turnSpeed * Time.fixedDeltaTime, 0f)));
-        //        }
-        //    }
-        //    else
-        //    {
-        //        animator.SetBool("SwingSword", false);
-        //    }
-        //}
-
     }
-
 }
