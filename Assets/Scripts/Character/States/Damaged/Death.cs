@@ -53,6 +53,9 @@ namespace HyukinKwon
             character.deathTimer += Time.deltaTime;
             if(character.deathTimer >= character.curAimTime - Time.deltaTime)
             {
+                character.isDodging = false;
+                character.isAttacking = false;
+                character.isParrying = false;
                 character.attacker.targetEnemy = null;
                 animator.enabled = false;
                 character.GetRigidbody().isKinematic = true;

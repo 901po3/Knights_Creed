@@ -48,15 +48,13 @@ namespace HyukinKwon
                     character.attackChargeDes = character.transform.position + dir * (dis - character.attackRange - 0.2f);
                 }
             }
-
-            character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().isTrigger = false; 
             character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().damageOnce = false;
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            character.GetRigidbody().velocity = new Vector3(0, character.GetRigidbody().velocity.y, 0);
+            character.GetRigidbody().velocity = Vector3.zero;
 
             //적의 앞으로 이동하며 공격
             if(character.attackChargeDes != new Vector3(0, 10000, 0))
@@ -72,10 +70,15 @@ namespace HyukinKwon
                 if(character.attackTimer > attackEnableTime) //공격 포인트에 돌입시 무기 공격 활성화
                 {
                     character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = true;
+                    if(!character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().damageOnce)
+                    {
+                        character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().isTrigger = false;
+                    }
                 }
                 if(character.attackTimer >= character.attackEndTime) //공격 포인트를 지나면 무기 공격 비활성화
                 {
                     character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().enabled = false;
+                    character.drawedWeapon[(int)character.weapon].GetComponent<BoxCollider>().isTrigger = true;
                     character.isAttacking = false;
                 }
             }

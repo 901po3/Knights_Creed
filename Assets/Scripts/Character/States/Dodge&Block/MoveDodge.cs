@@ -30,16 +30,16 @@ namespace HyukinKwon
             {
                 character.curAimTime = 1.2f;
             }
-            character.dodgeTimer = 0;
+            character.parryDodgeTimer = 0;
             character.isDodging = true;
-            character.moveDodgeVec = new Vector3(character.runVelocity.x, 0, character.runVelocity.z);
+            character.moveParryDodgeVec = new Vector3(character.runVelocity.x, 0, character.runVelocity.z);
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
             //시간 업데이트
-            character.dodgeTimer += Time.deltaTime;
+            character.parryDodgeTimer += Time.deltaTime;
 
             //지정된 방향 기준을 중심으로 이동
             Vector3 curRunVelocity = character.runVelocity;
@@ -50,15 +50,15 @@ namespace HyukinKwon
             forward.Normalize();
             right.Normalize();
 
-            Vector3 dir = forward * character.moveDodgeVec.z + right * character.moveDodgeVec.x;
+            Vector3 dir = forward * character.moveParryDodgeVec.z + right * character.moveParryDodgeVec.x;
 
-            if (character.dodgeTimer < character.curAimTime - 0.6f)
+            if (character.parryDodgeTimer < character.curAimTime - 0.6f)
             {
-                if(character.dodgeTimer > 0.3f)
+                if(character.parryDodgeTimer > 0.3f)
                 {
                     character.isDodging = false;
                 }
-                if(character.moveDodgeVec.z == 0 && character.moveDodgeVec.x != 0)
+                if(character.moveParryDodgeVec.z == 0 && character.moveParryDodgeVec.x != 0)
                 {
                     character.GetRigidbody().MovePosition(character.transform.position + dir * speed * 1.5f * Time.fixedDeltaTime);
                 }
@@ -68,11 +68,11 @@ namespace HyukinKwon
                 }
             }
 
-            animator.SetFloat("BattleMoveHorizontal", character.moveDodgeVec.x);
-            animator.SetFloat("BattleMoveVertical", character.moveDodgeVec.z);
+            animator.SetFloat("BattleMoveHorizontal", character.moveParryDodgeVec.x);
+            animator.SetFloat("BattleMoveVertical", character.moveParryDodgeVec.z);
 
             //dodgeDuration 이후에 피하기 상태 해제
-            if (character.dodgeTimer >= character.curAimTime - Time.deltaTime)
+            if (character.parryDodgeTimer >= character.curAimTime - Time.deltaTime)
             {
                 character.GetAnimator().SetBool("MoveDodge", false);
             }
@@ -81,7 +81,7 @@ namespace HyukinKwon
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            character.moveDodgeVec = Vector3.zero;
+            character.moveParryDodgeVec = Vector3.zero;
         }
     }
 }

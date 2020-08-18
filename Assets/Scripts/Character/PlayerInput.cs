@@ -28,7 +28,7 @@ namespace HyukinKwon
             MoveVerticalInput();
             StartBattleInput();
             AttackInput();
-            DodgeInput();
+            ParryDodgeInput();
 
             //if(character.targetEnemy != null)
             //    Debug.Log(Vector3.Distance(transform.position, character.targetEnemy.transform.position));
@@ -67,13 +67,13 @@ namespace HyukinKwon
             }
         }
 
-        private void DodgeInput()
+        private void ParryDodgeInput()
         {
             if (character.isBattleModeOn) //전투중인지 먼저 체크 후 
             {
                 if(character.isDrawingWeapon) //무기를 들고 있는지 체크
                 {
-                    if(Input.GetKeyDown(KeyCode.Space))
+                    if(Input.GetKeyDown(KeyCode.Space)) //피하기 시도
                     { 
                         if(character.runVelocity.magnitude < 0.1f && character.targetEnemy != null)
                         {
@@ -87,8 +87,18 @@ namespace HyukinKwon
                         }
                         character.isAttacking = false;
                     }
+                    else if(Input.GetKeyDown(KeyCode.Q)) //막기 시도
+                    {
+                        if (character.runVelocity.magnitude < 0.1f && character.targetEnemy != null)
+                        {
+                            character.isParrying = true;
+                            character.GetAnimator().SetBool("Parry", true);
+
+                        }
+                    }
                 }
             }
         }
+
     }
 }

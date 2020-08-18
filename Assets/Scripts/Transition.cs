@@ -16,7 +16,8 @@ namespace HyukinKwon
         public enum TRANSITION_TYPE
         {
             ATTACK,
-            DODGE
+            DODGE,
+            PARRY
         }
 
         public int index;
@@ -59,6 +60,12 @@ namespace HyukinKwon
                         break;
                     case TRANSITION_TYPE.DODGE:
                         if (!character.isDodging)
+                        {
+                            return false;
+                        }
+                        break;
+                    case TRANSITION_TYPE.PARRY:
+                        if(!character.isParrying)
                         {
                             return false;
                         }

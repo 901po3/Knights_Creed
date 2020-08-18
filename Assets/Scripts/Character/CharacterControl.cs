@@ -88,8 +88,12 @@ namespace HyukinKwon
 
         //피하기 관련
         public bool isDodging = false;
-        public float dodgeEndTime = 0; //Dodge 애니메이션의 피하기 모션 파트가 끝나는 시간. 용도: 자연스러운 피하기 연출
-        public Vector3 moveDodgeVec = Vector3.zero;
+        public float parryDodgeEndTime = 0; //Dodge와 Parry 애니메이션의 피하기 모션 파트가 끝나는 시간. 용도: 자연스러운 피하기 연출
+        public Vector3 moveParryDodgeVec = Vector3.zero;
+
+        //막기 관련
+        public bool isParrying = false;
+
 
         //공격 받음 관련
         public bool hurtAnimOnce = false;
@@ -116,7 +120,7 @@ namespace HyukinKwon
         public float deathTimer = 0;
         public float curUndetectedTimer = 0; //undetectedTime 타이머
         public float attackTimer; //공격 타이머
-        public float dodgeTimer = 0f; //파하기 타이머
+        public float parryDodgeTimer = 0f; //파하기 타이머
 
         private void Awake()
         {
@@ -124,6 +128,7 @@ namespace HyukinKwon
             Equipment.Clear(this);
             Equipment.ToogleWeapon(this);
             drawedWeapon[(int)weapon].GetComponent<BoxCollider>().enabled = false;
+            drawedWeapon[(int)weapon].GetComponent<CapsuleCollider>().enabled = false;
             colliders = GetComponentsInChildren<Collider>();
             rigidbodies = GetComponentsInChildren<Rigidbody>();
 
@@ -132,8 +137,6 @@ namespace HyukinKwon
             mAnimator = GetComponent<Animator>();           
 
             attackList = new List<CharacterControl>();
-
-            ToggleRagdoll(false);
 
             //처음 공격 예약
             switch(Random.Range(0, 3))
@@ -186,49 +189,52 @@ namespace HyukinKwon
         //피해 적용
         private void CheckHurt(Collision collision)
         {
-            if (collision.transform.tag == "Weapon" && !isDodging && !isDead)
+            if(collision.transform.tag == "Weapon")
             {
-                CharacterControl atk = collision.gameObject.GetComponentInParent<CharacterControl>();
-                if (atk.team != team)
+                //공격한 대상 등록
+                attacker = collision.gameObject.GetComponentInParent<CharacterControl>();
+                targetEnemy = attacker.gameObject;
+
+                if (!isDodging && !isDead && !isParrying)
                 {
-                    //충돌 위치 저장
-                    //용도: 옳바른 위치에 파티클 이팩트 생성
-                    contactDir = (gameObject.transform.position - collision.contacts[0].point).normalized;
-                    contactPoint = collision.contacts[0].point;
-
-                    //피 이팩트 생성
-                    if (contactPoint != new Vector3(0, 10000, 0))
+                    if (attacker.team != team && !attacker.isParrying) //적이 막는중이 아니면 다친다
                     {
-                        GameObject blood = blooodEffectList[curBloodIndex];
-                        if (!blood.activeSelf)
+                        //충돌 위치 저장
+                        //용도: 옳바른 위치에 파티클 이팩트 생성
+                        contactDir = (gameObject.transform.position - collision.contacts[0].point).normalized;
+                        contactPoint = collision.contacts[0].point;
+
+                        //피 이팩트 생성
+                        if (contactPoint != new Vector3(0, 10000, 0))
                         {
-                            curBloodIndex = (curBloodIndex + 1) % maxBloodNum;
-                            blood.transform.rotation = Quaternion.Euler(contactDir);
-                            blood.transform.position = contactPoint;
-                            blood.SetActive(true);
-                            StartCoroutine(TurnOffBloodEffect(blood)); //일정 시간후 비활성
+                            GameObject blood = blooodEffectList[curBloodIndex];
+                            if (!blood.activeSelf)
+                            {
+                                curBloodIndex = (curBloodIndex + 1) % maxBloodNum;
+                                blood.transform.rotation = Quaternion.Euler(contactDir);
+                                blood.transform.position = contactPoint;
+                                blood.SetActive(true);
+                                StartCoroutine(TurnOffBloodEffect(blood)); //일정 시간후 비활성
+                            }
+                            contactPoint = new Vector3(0, 10000, 0);
+                            contactDir = Vector3.zero;
                         }
-                        contactPoint = new Vector3(0, 10000, 0);
-                        contactDir = Vector3.zero;
-                    }
-                    collision.gameObject.GetComponent<Collider>().isTrigger = true;
+                        collision.gameObject.GetComponent<Collider>().isTrigger = true;
 
-                    if (!hurtAnimOnce)
-                    {
-                        hurtAnimOnce = true;
+                        if (!hurtAnimOnce)
+                        {
+                            hurtAnimOnce = true;
 
-                        //일정 시간마다 Hurt 애니메이션 재생
-                        StartCoroutine(HurtPlayFrequency());
+                            //일정 시간마다 Hurt 애니메이션 재생
+                            StartCoroutine(HurtPlayFrequency());
 
-                        //공격한 대상 등록
-                        attacker = atk;
-                        targetEnemy = attacker.gameObject;
-
-                        mAnimator.SetBool("Hurt", true);
-                        mAnimator.SetBool("Dead", false);
+                            mAnimator.SetBool("Hurt", true);
+                            mAnimator.SetBool("Dead", false);
+                        }
                     }
                 }
-            }           
+            }
+            
         }
 
         IEnumerator TurnOffBloodEffect(GameObject blood)
@@ -242,22 +248,6 @@ namespace HyukinKwon
             yield return new WaitForSeconds(2f);
             hurtAnimOnce = false;
         }
-
-        private void ToggleRagdoll(bool b) //if b == true 레그돌 활성
-        {
-            foreach (Collider c in colliders)
-            {
-                c.enabled = b;
-            }
-            foreach (Rigidbody r in rigidbodies)
-            {
-                r.isKinematic = !b;
-            }
-
-            mAnimator.enabled = !b;
-            mCollider.enabled = !b;
-            mRigidbody.isKinematic = b;
-        }  
 
         //미리 다음 공격을 정해둔다
         //미라 정하는 이유: 상대방이 옳바른 Dodge와 Parry 애니메이션을 재생

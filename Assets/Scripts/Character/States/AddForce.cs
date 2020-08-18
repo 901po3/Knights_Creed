@@ -23,6 +23,11 @@ namespace HyukinKwon
 
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
+
+        }
+
+        public override void UpdateAbility(CharacterState characterState, Animator animator)
+        {
             CharacterControl character = characterState.GetCharacterControl(animator);
 
             switch (direction) //방향에 맞게 포스 추가
@@ -40,11 +45,6 @@ namespace HyukinKwon
                     character.GetRigidbody().AddForce(character.transform.position + character.transform.right * power);
                     break;
             }
-        }
-
-        public override void UpdateAbility(CharacterState characterState, Animator animator)
-        {
-
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)

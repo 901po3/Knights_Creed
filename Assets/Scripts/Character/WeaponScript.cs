@@ -18,16 +18,34 @@ namespace HyukinKwon
         public int damage;
         public bool damageOnce = false;
 
+        //칼 위치가 벗어나면 고쳐주는 용도
+        private Vector3 originalPos;
+        private Quaternion originalRot;
+
+        public GameObject flashParticle;
+
         private void Start()
         {
             owner = GetComponentInParent<CharacterControl>();
+            originalPos = transform.localPosition;
+            originalRot = transform.localRotation;
         }
 
         private void OnCollisionEnter(Collision collision)
         {
+            if(collision.transform.tag == "Weapon" && owner.isParrying)
+            {
+                Debug.Log(collision.transform.tag);
+                GameObject obj = Instantiate(flashParticle);
+                obj.transform.position = collision.contacts[0].point;
+                owner.attacker = collision.gameObject.GetComponentInParent<CharacterControl>();
+                owner.attacker.GetAnimator().SetTrigger("KnockDown");
+            }
+
             if(collision.gameObject.GetComponent<CharacterControl>() != null)
             {
                 CharacterControl targetScript = collision.gameObject.GetComponent<CharacterControl>();
+                
 
                 //충돌시 발생하는 힘을 제거한다;
                 owner.GetRigidbody().velocity = Vector3.zero;
@@ -35,7 +53,8 @@ namespace HyukinKwon
 
                 if(targetScript.tag == "Player" || targetScript.tag == "AI")
                 {
-                    if (targetScript.team != owner.team && !targetScript.isDodging && !targetScript.isDead)
+                    //적이고, 적이 피하는중이 아니고, 내가 막는중이 아니면 공격 적용
+                    if (targetScript.team != owner.team && !targetScript.isDodging && !targetScript.isDead && !owner.isParrying)
                     {
                         //충돌 직후 콜라이더 비활성
                         //한명만 떄린다
@@ -70,10 +89,12 @@ namespace HyukinKwon
 
                             //데미지 적용
                             targetScript.health -= damage;
-                            Debug.Log(targetScript.gameObject + "'s health: " + targetScript.health);
+                            //Debug.Log(targetScript.gameObject + "'s health: " + targetScript.health);
                         }
                     }
                 }
+                transform.localPosition = originalPos;
+                transform.localRotation = originalRot;
             }              
         }
     }
