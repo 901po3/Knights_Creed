@@ -135,7 +135,7 @@ namespace HyukinKwon
             {         
                 if (disToTarget > character.chargeDis) //이동하기에 거리가 충분한지 체크
                 {
-                    if(Random.Range(0, 2) == 0) // 확률로 이동 실행
+                    if(Random.Range(0, 4) == 0) // 확률로 이동 실행
                     {
                         character.runVelocity.z = 1;
                         statePickFrequency = Random.Range(3f, 7f); //이동을 시작하면 3~7초간 이동한다.
@@ -187,7 +187,7 @@ namespace HyukinKwon
             CharacterControl targetScript = character.targetEnemy.GetComponent<CharacterControl>();
             if (disToTarget < character.chargeDis)
             {
-                if (Random.Range(0, 10) <= 7) 
+                if (Random.Range(0, 5) == 0) 
                 {
                     if (character.runVelocity.z < 0)
                     {
@@ -196,9 +196,10 @@ namespace HyukinKwon
 
                     character.curUndetectedTimer = 0; //공격 -> 전투 해제 타이머 리셋
                     character.currentState = CURRENT_STATE.ATTACK;
-                    statePickFrequency = 2.5f;
-                    statePicked = true;
+                    statePickFrequency = 3f;
                 }
+                statePickFrequency = 1.5f;
+                statePicked = true;
             }
         }
         
