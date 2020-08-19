@@ -73,6 +73,7 @@ namespace HyukinKwon
                 }
             }          
 
+            //공격중에 다른 상태로 변했으면 해당 상태로 바로 이동
             if(character.currentState != CURRENT_STATE.ATTACK && character.currentState != CURRENT_STATE.COMBO_ATTACK)
             {
                 if(character.currentState == CURRENT_STATE.DODGE)
