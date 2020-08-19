@@ -31,27 +31,7 @@ namespace HyukinKwon
             AttackInput();
             ParryDodgeInput();
 
-            switch(character.currentState)
-            {
-                case CURRENT_STATE.COMBO_ATTACK:
-                    character.canComboAttacking = false;
-                    character.GetAnimator().SetBool("ComboAttack", true);
-                    character.GetAnimator().SetBool("Attack", true);
-                    break;
-                case CURRENT_STATE.ATTACK:
-                    character.GetAnimator().SetBool("ComboAttack", false);
-                    character.GetAnimator().SetBool("Attack", true);
-                    break;
-                case CURRENT_STATE.DODGE:
-                    character.GetAnimator().SetBool("Dodge", true);
-                    break;
-                case CURRENT_STATE.MOVE_DODGE:
-                    character.GetAnimator().SetBool("MoveDodge", true);
-                    break;
-                case CURRENT_STATE.PARRY:
-                    character.GetAnimator().SetBool("Parry", true);
-                    break;
-            }
+            character.ApplyCurrentState();
         }
 
         private void MoveVerticalInput()

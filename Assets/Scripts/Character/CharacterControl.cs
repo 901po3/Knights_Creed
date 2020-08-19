@@ -55,11 +55,6 @@ namespace HyukinKwon
         public float curAnimSpeed = 0; //애니메이션 이동 관련에 사용되는 속도
         public GameObject targetEnemy; //타겟팅 된 적
 
-        //레그돌
-        private Collider[] colliders;
-        private Rigidbody[] rigidbodies;
-        private Collider mCollider;
-
         //이동 방향의 기준
         //플레이어면 카매라 - 카매라 정면이 기준
         public Transform facingStandardTransfom;
@@ -112,7 +107,6 @@ namespace HyukinKwon
         private Vector3 contactPoint = new Vector3(0, 10000, 0);
         private Vector3 contactDir = Vector3.zero;
 
-
         //회전 관련
         public bool isTurning = false; //회전중
         public bool turning = false; //180도 급회전 변수
@@ -134,10 +128,7 @@ namespace HyukinKwon
             Equipment.ToogleWeapon(this);
             drawedWeapon[(int)weapon].GetComponent<BoxCollider>().enabled = false;
             drawedWeapon[(int)weapon].GetComponent<CapsuleCollider>().enabled = false;
-            colliders = GetComponentsInChildren<Collider>();
-            rigidbodies = GetComponentsInChildren<Rigidbody>();
 
-            mCollider = GetComponent<Collider>();
             mRigidbody = GetComponent<Rigidbody>();
             mAnimator = GetComponent<Animator>();           
 
@@ -320,6 +311,31 @@ namespace HyukinKwon
                 attackEndTime = 0.55f;
                 attackEnableTime = 0.45f;
                 attackRange = 0.75f;
+            }
+        }
+
+        public void ApplyCurrentState()
+        {
+            switch (currentState)
+            {
+                case CURRENT_STATE.COMBO_ATTACK:
+                    canComboAttacking = false;
+                    GetAnimator().SetBool("ComboAttack", true);
+                    GetAnimator().SetBool("Attack", true);
+                    break;
+                case CURRENT_STATE.ATTACK:
+                    GetAnimator().SetBool("ComboAttack", false);
+                    GetAnimator().SetBool("Attack", true);
+                    break;
+                case CURRENT_STATE.DODGE:
+                    GetAnimator().SetBool("Dodge", true);
+                    break;
+                case CURRENT_STATE.MOVE_DODGE:
+                    GetAnimator().SetBool("MoveDodge", true);
+                    break;
+                case CURRENT_STATE.PARRY:
+                    GetAnimator().SetBool("Parry", true);
+                    break;
             }
         }
     }

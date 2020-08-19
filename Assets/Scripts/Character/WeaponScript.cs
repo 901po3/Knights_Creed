@@ -78,9 +78,9 @@ namespace HyukinKwon
                 parryOnce = true;
                 Debug.Log(collision.transform.tag);
                 owner.attacker = collision.gameObject.GetComponentInParent<CharacterControl>();
-                owner.attacker.currentState = CURRENT_STATE.BLOCKED;
                 owner.attacker.attacker = owner;
                 owner.canComboAttacking = true;
+                owner.attacker.currentState = CURRENT_STATE.BLOCKED;
                 owner.attacker.GetAnimator().SetBool("Blocked", true);
 
                 //막기 이팩트 재생

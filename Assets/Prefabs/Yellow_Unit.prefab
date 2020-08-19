@@ -1906,6 +1906,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   team: 1
   health: 60
+  currentState: 0
   undrawedWeapon:
   - {fileID: 7335592015905055597}
   drawedWeapon:
@@ -1926,20 +1927,21 @@ MonoBehaviour:
   isDetected: 0
   undetectedTime: 8
   attackList: []
-  isAttacking: 0
+  cancelAttackAvailable: 0
+  wasComboAttack: 0
+  canComboAttacking: 0
   medAttackType: 0
   prevMedAttackType: 0
+  attackEnableTime: 0
   attackEndTime: 0
   attackRange: 0
   attackChargeDes: {x: 0, y: 0, z: 0}
-  chargeDis: 2
-  isDodging: 0
+  chargeDis: 2.5
   parryDodgeEndTime: 0
   moveParryDodgeVec: {x: 0, y: 0, z: 0}
-  isParrying: 0
   hurtAnimOnce: 0
+  invincible: 0
   attacker: {fileID: 0}
-  isDead: 0
   bloodEffect: {fileID: 5561698443439670171, guid: cd1f0591bc5af1b40970967f4d66aee6,
     type: 3}
   isTurning: 0
@@ -1951,6 +1953,7 @@ MonoBehaviour:
   curUndetectedTimer: 0
   attackTimer: 0
   parryDodgeTimer: 0
+  blockedTimer: 0
 --- !u!114 &7335592016086474036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3274,6 +3277,7 @@ MonoBehaviour:
   damageOnce: 0
   flashParticle: {fileID: 9123166036617986411, guid: 3adb415d5c6f6b84e94cd6de4a4c1b17,
     type: 3}
+  parryOnce: 0
 --- !u!1001 &7335592016889958593
 PrefabInstance:
   m_ObjectHideFlags: 0
