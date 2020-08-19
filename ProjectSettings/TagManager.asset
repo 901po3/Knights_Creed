@@ -9,6 +9,7 @@ TagManager:
   - AI
   - Weapon
   - Ground
+  - Tree
   layers:
   - Default
   - TransparentFX
