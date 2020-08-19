@@ -24,7 +24,7 @@ namespace HyukinKwon
             //거리가 가까울때 선택 가능
             MOVE_BACK_DODGE, MOVE_BACK,
             //거리가 적당할때 적이 공격중이면
-            DODGE, PARRY, IDLE_02,
+            DODGE_01, DODGE_02, PARRY_01, IDLE_02,
             //거리가 적당할때 적이 공격중이 아니면
             ATTACK_01, IDLE_03
         }
@@ -70,7 +70,7 @@ namespace HyukinKwon
                     CheckDistance();                  
                     if((distanceState == DISTANCE_STATE.GOOD && character.runVelocity != Vector3.zero) ||
                         (distanceState == DISTANCE_STATE.CLOSE && character.runVelocity.z > 0) || 
-                        (distanceState == DISTANCE_STATE.FAR && character.currentState != CURRENT_STATE.MOVE_DODGE && character.moveParryDodgeVec.z < 0))
+                        (distanceState == DISTANCE_STATE.FAR && character.currentState != CURRENT_STATE.MOVE_DODGE && character.runVelocity.z < 0))
                     {
                         movingDirection = Vector3.zero;
                         decicion = DECICION.IDLE_01;
@@ -85,13 +85,13 @@ namespace HyukinKwon
                         if (disToTarget <= targetScript.chargeDis)
                         {
                             // DODGE, PARRY, IDLE_02 중에서 선택
-                            if (targetScript.currentState == CURRENT_STATE.ATTACK && targetScript.attackTimer < targetScript.attackEnableTime)
+                            if (targetScript.currentState == CURRENT_STATE.ATTACK && targetScript.attackTimer < targetScript.attackEndTime - 0.1f)
                             {
                                 once = true;
                                 movingDirection = Vector3.zero;
                                 StopMoving();
 
-                                decicion = (DECICION)Random.Range((int)DECICION.DODGE, (int)DECICION.IDLE_02 + 1);
+                                decicion = (DECICION)Random.Range((int)DECICION.DODGE_01, (int)DECICION.IDLE_02 + 1);
                                 UpdateStateByDecicion();
                                 character.ApplyCurrentState();
                             }
@@ -110,6 +110,7 @@ namespace HyukinKwon
                             if(character.runVelocity == Vector3.zero)
                             {
                                 decided = false;
+                                once = false;
                             }
                         }
                     }
@@ -197,9 +198,9 @@ namespace HyukinKwon
             if(disToTarget <= targetScript.chargeDis)
             {
                 // DODGE, PARRY, IDLE_02 중에서 선택
-                if (targetScript.currentState == CURRENT_STATE.ATTACK && targetScript.attackTimer < targetScript.attackEnableTime)
+                if (targetScript.currentState == CURRENT_STATE.ATTACK)
                 {
-                    decicion = (DECICION)Random.Range((int)DECICION.DODGE, (int)DECICION.IDLE_02 + 1);
+                    decicion = (DECICION)Random.Range((int)DECICION.DODGE_01, (int)DECICION.IDLE_02 + 1);
                 }
             }
         }
@@ -213,7 +214,7 @@ namespace HyukinKwon
                 case DECICION.IDLE_03:
                     //2~4초간 대기
                     decicion = DECICION.IDLE_01;
-                    nextDecicionTime = Random.Range(1f, 4f);
+                    nextDecicionTime = Random.Range(1f, 3f);
                     break;
                 case DECICION.MOVE_TO_TARGET:
                     //최대 3~7초간 앞으로 이동
@@ -226,21 +227,34 @@ namespace HyukinKwon
                     nextDecicionTime = 99999f;
                     break;
                 case DECICION.MOVE_BACK_DODGE:
-                    character.runVelocity.z = -1f;
+                    //방향 선택
+                    character.runVelocity.z = Random.Range(-0.75f, -1f);
+                    int ran = Random.Range(0, 3);
+                    if(ran == 0)
+                    {
+                        character.runVelocity.x = Random.Range(-0.75f, -1f);
+                    }
+                    else if(ran == 1)
+                    {
+                        character.runVelocity.x = Random.Range(0.75f, 1f);
+                    }
+
                     character.currentState = CURRENT_STATE.MOVE_DODGE;
-                    nextDecicionTime = 3.5f;
+                    nextDecicionTime = 2f;
                     break;
-                case DECICION.DODGE:
+                case DECICION.DODGE_01:
+                case DECICION.DODGE_02:
+                    decicion = DECICION.DODGE_01;
                     character.currentState = CURRENT_STATE.DODGE;
-                    nextDecicionTime = 3f;
+                    nextDecicionTime = 2f;
                     break;
-                case DECICION.PARRY:
+                case DECICION.PARRY_01:
                     character.currentState = CURRENT_STATE.PARRY;
-                    nextDecicionTime = 3f;
+                    nextDecicionTime = 1.5f;
                     break;
                 case DECICION.ATTACK_01:
                     character.currentState = CURRENT_STATE.ATTACK;
-                    nextDecicionTime = 3f;
+                    nextDecicionTime = 2.2f;
                     break;
             }
         }
