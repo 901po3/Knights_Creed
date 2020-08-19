@@ -76,8 +76,7 @@ namespace HyukinKwon
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
-            CharacterControl character = characterState.GetCharacterControl(animator);
-            CapsuleCollider capsule = character.GetComponent<CapsuleCollider>();
+
         }
     }
 

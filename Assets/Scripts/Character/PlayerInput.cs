@@ -93,7 +93,7 @@ namespace HyukinKwon
                     {
                         if (character.currentState != CURRENT_STATE.DODGE && character.currentState != CURRENT_STATE.MOVE_DODGE)
                         {
-                            if (character.targetEnemy != null && character.targetEnemy.GetComponent<CharacterControl>().currentState == CURRENT_STATE.ATTACK)
+                            if (character.runVelocity.magnitude < 0.1f && character.targetEnemy != null)
                             {
                                 character.currentState = CURRENT_STATE.PARRY;
                             }

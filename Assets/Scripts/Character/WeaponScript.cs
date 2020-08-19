@@ -80,8 +80,6 @@ namespace HyukinKwon
                 owner.attacker = collision.gameObject.GetComponentInParent<CharacterControl>();
                 owner.attacker.attacker = owner;
                 owner.canComboAttacking = true;
-                GetComponent<CapsuleCollider>().isTrigger = true;
-                GetComponent<CapsuleCollider>().enabled = false;
                 owner.attacker.currentState = CURRENT_STATE.BLOCKED;
                 owner.attacker.GetAnimator().SetBool("Blocked", true);
 

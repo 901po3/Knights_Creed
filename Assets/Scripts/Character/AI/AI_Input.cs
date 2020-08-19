@@ -37,7 +37,7 @@ namespace HyukinKwon
         private Vector3 movingDirection = Vector3.zero;
         private float dampSpeed = 2f;
         [SerializeField] private float nextDecicionTime = 0f; // 다음 행동 정하기까지의 시간
-        [SerializeField] private bool decided = false; // nextDecicionTime 중복 설정 방지 
+        private bool decided = false; // nextDecicionTime 중복 설정 방지 
         private bool once = false;
 
         private void Awake()
@@ -53,14 +53,6 @@ namespace HyukinKwon
 
             if(decided)
             {
-                if(nextDecicionTime < 0)
-                {
-                    movingDirection = Vector3.zero;
-                    decided = false;
-                    StopMoving();
-                    return;
-                }
-
                 // 1. 이동 방향 체크
                 if (character.targetEnemy != null) // 계속 이동
                 {
@@ -139,7 +131,7 @@ namespace HyukinKwon
                     {
                         if (character.currentState == CURRENT_STATE.HURT || character.currentState == CURRENT_STATE.BLOCKED)
                         {
-                            nextDecicionTime = character.curAimTime + 0.2f;
+                            nextDecicionTime = character.curAimTime + 0.5f;
                             decided = true;
                         }
                     }
