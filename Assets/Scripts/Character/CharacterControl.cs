@@ -7,6 +7,7 @@
  *              플레이어면 인풋 클래스와 함께 사용
  *              적이면 AI 클래스와 함께 사용
 */
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +16,11 @@ namespace HyukinKwon
     public enum TEAM
     {
         BLUE, YELLOW, BLACK
+    }
+
+    public enum CURRENT_STATE
+    {
+        NONE, DODGE, MOVE_DODGE, PARRY, ATTACK, COMBO_ATTACK, BLOCKED, HURT, DEAD
     }
 
     public enum NORMAL_IDLE_TYPE
@@ -29,14 +35,14 @@ namespace HyukinKwon
 
     public enum MED_ATTACK_TYPE
     {
-        HIGH, MIDDLE, LOW
+        HIGH, MIDDLE, LOW, COMBO
     }
 
     public class CharacterControl : MonoBehaviour
     {
         public TEAM team;
         public int health;
-        public int damage;
+        public CURRENT_STATE currentState = CURRENT_STATE.NONE;
 
         public List<GameObject> undrawedWeapon;
         public List<GameObject> drawedWeapon;
@@ -48,12 +54,6 @@ namespace HyukinKwon
         public float curAimTime = 0; //현재 사용하는 애니메이션의 길이
         public float curAnimSpeed = 0; //애니메이션 이동 관련에 사용되는 속도
         public GameObject targetEnemy; //타겟팅 된 적
-        public bool isTargetChanged = false;
-
-        //레그돌
-        private Collider[] colliders;
-        private Rigidbody[] rigidbodies;
-        private Collider mCollider;
 
         //이동 방향의 기준
         //플레이어면 카매라 - 카매라 정면이 기준
@@ -78,28 +78,34 @@ namespace HyukinKwon
         public float undetectedTime; //undetectedTime초 이후에 전투모드 Off
 
         //공격 관련
-        public bool isAttacking = false;
+        public List<CharacterControl> attackList; //자신이 때린 적
+        public bool cancelAttackAvailable = false; //공격 취소 가능한지 판단
+        public bool wasComboAttack = false;
+        public bool canComboAttacking = false; //용도: 콤보 어텍 한번만 시전
         public MED_ATTACK_TYPE medAttackType;
         public MED_ATTACK_TYPE prevMedAttackType;
+        public float attackEnableTime = 0;
         public float attackEndTime = 0;
         public float attackRange = 0;
         public Vector3 attackChargeDes = new Vector3(0, 10000, 0); //공격시 위치 보정 용도
         public float chargeDis = 2.2f;
 
         //피하기 관련
-        public bool isDodging = false;
-        public float dodgeEndTime = 0; //Dodge 애니메이션의 피하기 모션 파트가 끝나는 시간. 용도: 자연스러운 피하기 연출
-        public Vector3 moveDodgeVec = Vector3.zero;
+        public float parryDodgeEndTime = 0; //Dodge와 Parry 애니메이션의 피하기 모션 파트가 끝나는 시간. 용도: 자연스러운 피하기 연출
+        public Vector3 moveParryDodgeVec = Vector3.zero;
 
         //공격 받음 관련
+        public bool hurtAnimOnce = false;
+        public bool invincible = false; //true면 무적
         public CharacterControl attacker; //자신을 때린 적
-        private Vector3 contactPoint = new Vector3(0, 10000, 0);
-        private Vector3 contactDir = Vector3.zero;
+        //피 이펙트 관련 변수
         public GameObject bloodEffect;
         private List<GameObject> blooodEffectList;
         private int maxBloodNum = 3;
         private int curBloodIndex = 0;
-        public bool isDead = false;
+        //칼 충돌 위치 관련 변수
+        private Vector3 contactPoint = new Vector3(0, 10000, 0);
+        private Vector3 contactDir = Vector3.zero;
 
         //회전 관련
         public bool isTurning = false; //회전중
@@ -112,7 +118,8 @@ namespace HyukinKwon
         public float deathTimer = 0;
         public float curUndetectedTimer = 0; //undetectedTime 타이머
         public float attackTimer; //공격 타이머
-        public float dodgeTimer = 0f; //파하기 타이머
+        public float parryDodgeTimer = 0f; //파하기 타이머
+        public float blockedTimer = 0f; //공격막힘 타이머
 
         private void Awake()
         {
@@ -120,40 +127,26 @@ namespace HyukinKwon
             Equipment.Clear(this);
             Equipment.ToogleWeapon(this);
             drawedWeapon[(int)weapon].GetComponent<BoxCollider>().enabled = false;
-            colliders = GetComponentsInChildren<Collider>();
-            rigidbodies = GetComponentsInChildren<Rigidbody>();
+            drawedWeapon[(int)weapon].GetComponent<CapsuleCollider>().enabled = false;
 
-            mCollider = GetComponent<Collider>();
             mRigidbody = GetComponent<Rigidbody>();
-            mAnimator = GetComponent<Animator>();
+            mAnimator = GetComponent<Animator>();           
 
-            //파티클 이펙트
-            blooodEffectList = new List<GameObject>();
-            for (int i = 0; i < maxBloodNum; i++) //피 이펙트 3개
-            {
-                GameObject blood = Instantiate(bloodEffect);
-                blood.transform.parent = transform;
-                blooodEffectList.Add(blood);
-                blood.SetActive(false);
-            }
-            bloodEffect.SetActive(false);
-
-            ToggleRagdoll(false);
+            attackList = new List<CharacterControl>();
 
             //처음 공격 예약
-            switch(Random.Range(0, 3))
+            PickFirstNextAttack();
+
+            //파티클 이펙트
+            SetupParticleEffects();
+        }
+
+        private void Update()
+        {
+            if(isDrawingWeapon)
             {
-                case 0:
-                    prevMedAttackType = MED_ATTACK_TYPE.HIGH;
-                    break;
-                case 1:
-                    prevMedAttackType = MED_ATTACK_TYPE.MIDDLE;
-                    break;
-                case 2:
-                    prevMedAttackType = MED_ATTACK_TYPE.LOW;
-                    break;
+                drawedWeapon[(int)weapon].GetComponent<WeaponScript>().FixTransform();
             }
-            PickNextAttack();
         }
 
         public Animator GetAnimator()
@@ -171,105 +164,183 @@ namespace HyukinKwon
             CheckHurt(collision);
         }
 
+        //파티클 이펙트 초기 설정
+        private void SetupParticleEffects()
+        {
+            blooodEffectList = new List<GameObject>();
+            for (int i = 0; i < maxBloodNum; i++) //피 이펙트 3개
+            {
+                GameObject blood = Instantiate(bloodEffect);
+                blood.transform.parent = transform;
+                blooodEffectList.Add(blood);
+                blood.SetActive(false);
+            }
+        }
+
         //피해 적용
         private void CheckHurt(Collision collision)
         {
-            if (collision.transform.tag == "Weapon" && !isDodging && !isDead)
+            if(collision.transform.tag == "Weapon")
             {
-                CharacterControl atk = collision.gameObject.GetComponentInParent<CharacterControl>();
-                if (atk.team != team)
-                {
-                    //공격한 무기의 트리거를 끄고 충돌시 발생하는 힘을 제거한다
-                    collision.gameObject.GetComponent<Collider>().isTrigger = true; 
-                    mRigidbody.velocity = new Vector3(0, mRigidbody.velocity.y, 0);
-                    atk.GetRigidbody().velocity = new Vector3(0, atk.GetRigidbody().velocity.y, 0);
+                //공격한 대상 등록
+                attacker = collision.gameObject.GetComponentInParent<CharacterControl>();
+                targetEnemy = attacker.gameObject;
 
-                    attacker = atk;
-                    contactDir = collision.contacts[0].point - collision.gameObject.transform.position;
-                    contactPoint = collision.contacts[0].point;
-                    mAnimator.SetBool("Hurt", true);
-                    mAnimator.SetBool("Dead", false);
+                if (!invincible)
+                {                               //Parrying떄 콜라이더가 쳐지기 떄문에 예외처리 필요
+                    if (attacker.team != team && attacker.currentState != CURRENT_STATE.PARRY) //적이 막는중이 아니면 다친다
+                    {
+                        //충돌 위치 저장
+                        //용도: 옳바른 위치에 파티클 이팩트 생성
+                        contactDir = (gameObject.transform.position - collision.contacts[0].point).normalized;
+                        contactPoint = collision.contacts[0].point;
+
+                        //피 이팩트 재생
+                        if (contactPoint != new Vector3(0, 10000, 0))
+                        {
+                            GameObject blood = blooodEffectList[curBloodIndex];
+                            if (!blood.activeSelf)
+                            {
+                                curBloodIndex = (curBloodIndex + 1) % maxBloodNum;
+                                blood.transform.rotation = Quaternion.Euler(contactDir);
+                                blood.transform.position = contactPoint;
+                                if (attacker.medAttackType == MED_ATTACK_TYPE.COMBO)
+                                {
+                                    blood.transform.position = new Vector3(blood.transform.position.x, blood.transform.position.y - 0.5f, blood.transform.position.z);
+                                }
+                                blood.SetActive(true);
+                                StartCoroutine(TurnOffBloodEffect(blood)); //일정 시간후 비활성
+                            }
+                            contactPoint = new Vector3(0, 10000, 0);
+                            contactDir = Vector3.zero;
+                        }
+                        collision.gameObject.GetComponent<Collider>().isTrigger = true;
+
+                        if (!hurtAnimOnce)
+                        {
+                            hurtAnimOnce = true;
+
+                            //일정 시간마다 Hurt 애니메이션 재생
+                            StartCoroutine(HurtPlayFrequency());
+
+                            //공격중에 피해를 받으면 미리 다음 공격을 정해둔다
+                            if (medAttackType == MED_ATTACK_TYPE.COMBO)
+                            {
+                                PickFirstNextAttack();
+                            }
+                            else if (currentState == CURRENT_STATE.ATTACK)
+                            {
+                                PickNextAttack(false);
+                            }
+                            currentState = CURRENT_STATE.HURT;
+                            mAnimator.SetBool("Hurt", true);
+                            mAnimator.SetTrigger("HurtEnterOnce");
+                        }
+                    }
                 }
             }           
         }
 
-        private void ToggleRagdoll(bool b) //if b == true 레그돌 활성
+        IEnumerator TurnOffBloodEffect(GameObject blood)
         {
-            foreach (Collider c in colliders)
-            {
-                c.enabled = b;
-            }
-            foreach (Rigidbody r in rigidbodies)
-            {
-                r.isKinematic = !b;
-            }
-
-            mAnimator.enabled = !b;
-            mCollider.enabled = !b;
-            mRigidbody.isKinematic = b;
+            yield return new WaitForSeconds(0.8f);
+            blood.SetActive(false);
         }
 
-        public void GetDamaged(int damage)
+        IEnumerator HurtPlayFrequency()
         {
-            health -= damage;
-            targetEnemy = attacker.gameObject;
-
-            //피 생성
-            foreach (GameObject b in blooodEffectList)
-            {
-                if (b.GetComponent<ParticleSystem>().time >= 0.3f - Time.deltaTime)
-                {
-                    b.SetActive(false);
-                }
-            }
-            if(contactPoint != new Vector3(0, 10000, 0))
-            {
-                GameObject blood = blooodEffectList[curBloodIndex];
-                if (!blood.activeSelf)
-                {
-                    curBloodIndex = (curBloodIndex + 1) % maxBloodNum;
-                    blood.transform.rotation = Quaternion.Euler(contactDir);
-                    blood.transform.position = contactPoint;
-                    blood.SetActive(true);
-                }
-
-                contactPoint = new Vector3(0, 10000, 0);
-                contactDir = Vector3.zero;
-            }
-
-
-            Debug.Log(gameObject + "'s health: " + health);
+            yield return new WaitForSeconds(2f);
+            hurtAnimOnce = false;
         }
 
         //미리 다음 공격을 정해둔다
         //미라 정하는 이유: 상대방이 옳바른 Dodge와 Parry 애니메이션을 재생
-        public void PickNextAttack()
+        public void PickFirstNextAttack()
         {
             switch (Random.Range(0, 3))
             {
                 case 0:
-                    medAttackType = MED_ATTACK_TYPE.HIGH;
-                    curAimTime = 1.783f;
-                    attackRange = 1.2f;
+                    prevMedAttackType = MED_ATTACK_TYPE.HIGH;
                     break;
                 case 1:
-                    medAttackType = MED_ATTACK_TYPE.MIDDLE;
-                    curAimTime = 1.5f;
-                    attackRange = 0.3f;
+                    prevMedAttackType = MED_ATTACK_TYPE.MIDDLE;
                     break;
                 case 2:
-                    medAttackType = MED_ATTACK_TYPE.LOW;
-                    curAimTime = 1.9f;
-                    attackRange = 1.2f;
+                    prevMedAttackType = MED_ATTACK_TYPE.LOW;
                     break;
             }
-            if (prevMedAttackType == medAttackType)
+            PickNextAttack(false);
+        }
+
+        public void PickNextAttack(bool Combo)
+        {
+            if(!Combo)
             {
-                medAttackType = (medAttackType + 1);
-                if ((int)medAttackType >= 3)
-                    medAttackType = 0;
+                switch (Random.Range(0, 3))
+                {
+                    case 0:
+                        medAttackType = MED_ATTACK_TYPE.HIGH;
+                        curAimTime = 1.783f;
+                        attackEndTime = 1f;
+                        attackEnableTime = 0.3f;
+                        attackRange = 1.2f;
+                        break;
+                    case 1:
+                        medAttackType = MED_ATTACK_TYPE.MIDDLE;
+                        curAimTime = 1.5f;
+                        attackEndTime = 0.75f;
+                        attackEnableTime = 0.3f;
+                        attackRange = 0.7f;
+                        break;
+                    case 2:
+                        medAttackType = MED_ATTACK_TYPE.LOW;
+                        curAimTime = 1.9f;
+                        attackEndTime = 1f;
+                        attackEnableTime = 0.3f;
+                        attackRange = 1.2f;
+                        break;
+                }
+                if (prevMedAttackType == medAttackType)
+                {
+                    medAttackType = (medAttackType + 1);
+                    if ((int)medAttackType >= 3)
+                        medAttackType = 0;
+                }
+                prevMedAttackType = medAttackType;
             }
-            prevMedAttackType = medAttackType;
+            else
+            {
+                medAttackType = MED_ATTACK_TYPE.COMBO;
+                curAimTime = 1.4f;
+                attackEndTime = 0.55f;
+                attackEnableTime = 0.45f;
+                attackRange = 0.75f;
+            }
+        }
+
+        public void ApplyCurrentState()
+        {
+            switch (currentState)
+            {
+                case CURRENT_STATE.COMBO_ATTACK:
+                    canComboAttacking = false;
+                    GetAnimator().SetBool("ComboAttack", true);
+                    GetAnimator().SetBool("Attack", true);
+                    break;
+                case CURRENT_STATE.ATTACK:
+                    GetAnimator().SetBool("ComboAttack", false);
+                    GetAnimator().SetBool("Attack", true);
+                    break;
+                case CURRENT_STATE.DODGE:
+                    GetAnimator().SetBool("Dodge", true);
+                    break;
+                case CURRENT_STATE.MOVE_DODGE:
+                    GetAnimator().SetBool("MoveDodge", true);
+                    break;
+                case CURRENT_STATE.PARRY:
+                    GetAnimator().SetBool("Parry", true);
+                    break;
+            }
         }
     }
 }

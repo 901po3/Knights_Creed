@@ -44,6 +44,7 @@ namespace HyukinKwon
         {
             Vector3 curRunVelocity = character.runVelocity;
             Vector3 targetDirection = character.facingStandardTransfom.forward;
+            targetDirection.y = 0f;
             Vector3 forward = character.facingStandardTransfom.transform.forward;
             Vector3 right = character.facingStandardTransfom.transform.right;
 
@@ -60,22 +61,41 @@ namespace HyukinKwon
             Vector3 dir = forward * curRunVelocity.z + right * curRunVelocity.x;
             character.GetRigidbody().MovePosition(character.transform.position + dir * power * runSpeed * Time.fixedDeltaTime);
 
-            if (character.targetEnemy != null && Vector3.Distance(character.transform.position, character.targetEnemy.transform.position) <= battleRoteEnableDis)
+            if (character.tag == "Player")
             {
-                dir = character.transform.forward * curRunVelocity.z + character.transform.right * curRunVelocity.x;
-                animator.SetFloat("BattleMoveHorizontal", dir.x);
-                animator.SetFloat("BattleMoveVertical", dir.z);
+                if (character.targetEnemy != null && Vector3.Distance(character.transform.position, character.targetEnemy.transform.position) <= battleRoteEnableDis)
+                {
+                    dir = character.transform.forward * curRunVelocity.z + character.transform.right * curRunVelocity.x;
+                    animator.SetFloat("BattleMoveHorizontal", dir.x);
+                    animator.SetFloat("BattleMoveVertical", dir.z);
+
+                    //회전
+                    targetDirection = (character.targetEnemy.transform.position - character.transform.position).normalized;
+                    targetDirection.y = 0;
+                }
+                else
+                {
+                    animator.SetFloat("BattleMoveHorizontal", curRunVelocity.x);
+                    animator.SetFloat("BattleMoveVertical", curRunVelocity.z);
+                }
             }
             else
             {
-                animator.SetFloat("BattleMoveHorizontal", curRunVelocity.x);
-                animator.SetFloat("BattleMoveVertical", curRunVelocity.z);
+                if(character.targetEnemy != null)
+                {
+                    animator.SetFloat("BattleMoveHorizontal", curRunVelocity.x);
+                    animator.SetFloat("BattleMoveVertical", curRunVelocity.z);
 
-                //회전
-                targetDirection.y = 0f;
-                character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards
-                    (character.transform.forward, targetDirection, turnSpeed * Time.fixedDeltaTime, 0f)));
+                    //회전
+                    targetDirection = (character.targetEnemy.transform.position - character.transform.position).normalized;
+                    targetDirection.y = 0;
+                }
             }
+
+
+            character.GetRigidbody().MoveRotation(Quaternion.LookRotation(Vector3.RotateTowards
+                    (character.transform.forward, targetDirection, turnSpeed * Time.fixedDeltaTime, 0f)));
+
             character.prevRunVelocity = curRunVelocity;
         }
     }

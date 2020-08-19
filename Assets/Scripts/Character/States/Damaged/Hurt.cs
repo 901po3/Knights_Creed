@@ -19,57 +19,59 @@ namespace HyukinKwon
             {
                 case MED_ATTACK_TYPE.HIGH:
                     animator.SetFloat("RandomHit", 0);
+                    character.curAimTime = 1.45f;
                     break;
                 case MED_ATTACK_TYPE.MIDDLE:
                     animator.SetFloat("RandomHit", 1);
+                    character.curAimTime = 1f;
                     break;
                 case MED_ATTACK_TYPE.LOW:
                     animator.SetFloat("RandomHit", 2);
+                    character.curAimTime = 1.1f;
+                    break;
+                case MED_ATTACK_TYPE.COMBO:
+                    animator.SetFloat("RandomHit", 3);
+                    character.curAimTime = 3.1f;
                     break;
             }
             Transform attackerTrans = character.attacker.transform;
             attackerTrans.position = new Vector3(character.attacker.transform.position.x, 
                 character.transform.position.y, character.attacker.transform.position.z);
             character.transform.LookAt(attackerTrans);
-
-            if(!character.isDodging)
-            {
-                character.GetDamaged(character.attacker.damage);
-                if(character.targetEnemy == null)
-                {
-                    character.targetEnemy = character.attacker.gameObject;
-                    character.isTargetChanged = true;
-                }
-            }
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
 
-            if(character.health > 0) //체력이 0 Hurt 재생
+            if (character.health > 0) //체력이 0 Hurt 재생
             {
-                if (character.hurtTimer < duration)
+                character.hurtTimer += Time.deltaTime;
+                if (character.hurtTimer >= character.curAimTime) //애니메이션 시간이 끝나면 나간다
                 {
-                    character.hurtTimer += Time.deltaTime;
-                    if (character.hurtTimer >= duration) //애니메이션 시간이 끝나면 나간다
-                    {
-                        character.hurtTimer = 0f;
-                        animator.SetBool("Hurt", false);
-                        character.isBattleModeOn = true;
-                    }
+                    character.currentState = CURRENT_STATE.NONE;
+                    character.hurtTimer = 0f;
+                    animator.SetBool("Hurt", false);
+                    character.isBattleModeOn = true;
+
+                    //이미 맞았으므로 피하기 취소
+                    animator.SetBool("Dodge", false);
                 }
             }
             else //체력이 0 이하면 죽음
             {
                 character.hurtTimer = 0f;
+                character.currentState = CURRENT_STATE.DEAD;
                 animator.SetBool("Dead", true);               
             }
 
             //회전 //나중에 다른 State로 분리
-            Vector3 targetDirection = (character.attacker.transform.position - character.transform.position).normalized;
-            targetDirection.y = 0f;
-            character.transform.rotation = Quaternion.RotateTowards(character.transform.rotation, Quaternion.LookRotation(targetDirection), Time.fixedDeltaTime);
+            if(character.attacker != null)
+            {
+                Vector3 targetDirection = (character.attacker.transform.position - character.transform.position).normalized;
+                targetDirection.y = 0f;
+                character.transform.rotation = Quaternion.RotateTowards(character.transform.rotation, Quaternion.LookRotation(targetDirection), Time.fixedDeltaTime);
+            }
         }
 
         public override void ExitAbility(CharacterState characterState, Animator animator)

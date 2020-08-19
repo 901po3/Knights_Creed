@@ -13,8 +13,32 @@ namespace HyukinKwon
 {
     public class AI_Input : MonoBehaviour
     {
-        private CharacterControl character; //캐릭터 Gameobject의 CharacterControl 스크립트
-        private bool statePicked = false; //행동을 한번만 선택한다.
+        public enum DISTANCE_STATE
+        {
+            FAR, CLOSE, GOOD
+        }
+        public enum DECICION
+        {
+            //거리가 멀때 선택 가능
+            MOVE_TO_TARGET, IDLE_01,
+            //거리가 가까울때 선택 가능
+            MOVE_BACK_DODGE, MOVE_BACK,
+            //거리가 적당할때 적이 공격중이면
+            DODGE_01, DODGE_02, PARRY_01, IDLE_02,
+            //거리가 적당할때 적이 공격중이 아니면
+            ATTACK_01, IDLE_03
+        }
+
+        private CharacterControl character; // 캐릭터 Gameobject의 CharacterControl 스크립트
+        private CharacterControl targetScript;
+        private float disToTarget;
+        [SerializeField] private DISTANCE_STATE distanceState;
+        [SerializeField] private DECICION decicion;
+        private Vector3 movingDirection = Vector3.zero;
+        private float dampSpeed = 2f;
+        [SerializeField] private float nextDecicionTime = 0f; // 다음 행동 정하기까지의 시간
+        private bool decided = false; // nextDecicionTime 중복 설정 방지 
+        private bool once = false;
 
         private void Awake()
         {
@@ -25,127 +49,300 @@ namespace HyukinKwon
 
         private void Update()
         {
-            if (character.targetEnemy != null)
+            if (!character.isDrawingWeapon) return;
+
+            if(decided)
             {
-                if (character.isBattleModeOn && character.isDrawingWeapon) //전투중인지 먼저 체크 후 
+                // 1. 이동 방향 체크
+                if (character.targetEnemy != null) // 계속 이동
                 {
-                    if(!statePicked)
+                    if(movingDirection == Vector3.right || movingDirection == Vector3.left)
                     {
-                        if(character.runVelocity == Vector3.zero)
+                        StartMoving(movingDirection);
+                        character.runVelocity.z = -character.targetEnemy.GetComponent<CharacterControl>().runVelocity.z;
+                    }
+                    else if(movingDirection == Vector3.forward || movingDirection == Vector3.back)
+                    {
+                        StartMoving(movingDirection);
+                    }
+
+                    //거리 체크 후 멈춤
+                    CheckDistance();                  
+                    if((distanceState == DISTANCE_STATE.GOOD && character.runVelocity != Vector3.zero) ||
+                        (distanceState == DISTANCE_STATE.CLOSE && character.runVelocity.z > 0) || 
+                        (distanceState == DISTANCE_STATE.FAR && character.currentState != CURRENT_STATE.MOVE_DODGE && character.runVelocity.z < 0))
+                    {
+                        movingDirection = Vector3.zero;
+                        decicion = DECICION.IDLE_01;
+                        nextDecicionTime = 1f;
+                        StopMoving();
+                    }
+
+
+                    //공격이 들어오면 추가 판단을 한다
+                    if((decicion == DECICION.IDLE_01 || decicion == DECICION.MOVE_TO_TARGET || decicion == DECICION.MOVE_BACK) && !once)
+                    {
+                        if (disToTarget <= targetScript.chargeDis)
                         {
-                            if (!character.isAttacking)
+                            // DODGE, PARRY, IDLE_02 중에서 선택
+                            if (targetScript.currentState == CURRENT_STATE.ATTACK && targetScript.attackTimer < targetScript.attackEndTime - 0.1f)
                             {
-                                DodgeInput();
-                            }
-                            if (!character.isDodging)
-                            {
-                                AttackInput();
+                                once = true;
+                                movingDirection = Vector3.zero;
+                                StopMoving();
+
+                                decicion = (DECICION)Random.Range((int)DECICION.DODGE_01, (int)DECICION.IDLE_02 + 1);
+                                UpdateStateByDecicion();
+                                character.ApplyCurrentState();
                             }
                         }
-                        MoveToTarget();
                     }
-                    else
+
+                    // 2. 다른 행동
+                    if(nextDecicionTime > 0 && character.runVelocity == Vector3.zero)
                     {
-                        StartCoroutine(ResetPickedState(1.5f));
+                        nextDecicionTime -= Time.deltaTime;
+                        if(nextDecicionTime <= 0)
+                        {
+                            movingDirection = Vector3.zero;
+                            decicion = DECICION.IDLE_01;
+                            StopMoving();
+                            if(character.runVelocity == Vector3.zero)
+                            {
+                                decided = false;
+                                once = false;
+                            }
+                        }
+                    }
+                }
+                else // 멈춤
+                {
+                    StopMoving();
+                    nextDecicionTime = 1f;
+                }
+            }
+            else
+            {
+                // 1. AI 자신의 상태 체크
+                if (character.currentState != CURRENT_STATE.NONE || character.runVelocity != Vector3.zero)
+                {
+                    // 외부에서 정해지는 State 상태
+                    if (!decided)
+                    {
+                        if (character.currentState == CURRENT_STATE.HURT || character.currentState == CURRENT_STATE.BLOCKED)
+                        {
+                            nextDecicionTime = character.curAimTime + 0.5f;
+                            decided = true;
+                        }
+                    }
+                    return;
+                }
+
+                // 2. 타겟이 있는지 체크
+                if (character.targetEnemy == null) return;
+                targetScript = character.targetEnemy.GetComponent<CharacterControl>();
+
+                // 3. 거리 체크
+                CheckDistance();
+
+                // 4. 확률로 다음 상태 정하기
+                PickDecicion();
+
+                // 5. 선택된 행동에 맞는 값 넣기
+                UpdateStateByDecicion();
+                decided = true;
+
+                // 6. 결정 적용
+                character.ApplyCurrentState();
+            }          
+        }
+
+        private void CheckDistance()
+        {
+            disToTarget = Vector3.Distance(character.transform.position, targetScript.transform.position);
+
+            if (disToTarget > character.chargeDis) // 3-1. 거리가 멀다
+            {
+                distanceState = DISTANCE_STATE.FAR;
+            }
+            else if (disToTarget < character.chargeDis - 1) // 3-2. 거리가 짧다
+            {
+                distanceState = DISTANCE_STATE.CLOSE;
+            }
+            else // 3-3. 적당한 거리
+            {
+                distanceState = DISTANCE_STATE.GOOD;
+            }
+        }
+
+        private void PickDecicion()
+        {
+            switch (distanceState)
+            {
+                case DISTANCE_STATE.FAR:
+                    // 4-1. MOVE_TO_TARGET, IDLE_01 중에서 선택
+                    decicion = (DECICION)Random.Range((int)DECICION.MOVE_TO_TARGET, (int)DECICION.IDLE_01 + 1); 
+                    break;
+                case DISTANCE_STATE.CLOSE:
+                    // 4-2. MOVE_BACK_DODGE, MOVE_BACK 중에서 선택
+                    decicion = (DECICION)Random.Range((int)DECICION.MOVE_BACK_DODGE, (int)DECICION.MOVE_BACK + 1); 
+                    break;
+                case DISTANCE_STATE.GOOD:
+                    // 4- 3 ATTACK_01, IDLE_03 중에서 선택
+                    if (targetScript.currentState != CURRENT_STATE.ATTACK) 
+                    {
+                        decicion = (DECICION)Random.Range((int)DECICION.ATTACK_01, (int)DECICION.IDLE_03 + 1);
+                    }
+                    break;
+            }
+            if(disToTarget <= targetScript.chargeDis)
+            {
+                // DODGE, PARRY, IDLE_02 중에서 선택
+                if (targetScript.currentState == CURRENT_STATE.ATTACK)
+                {
+                    decicion = (DECICION)Random.Range((int)DECICION.DODGE_01, (int)DECICION.IDLE_02 + 1);
+                }
+            }
+        }
+
+        private void UpdateStateByDecicion()
+        {
+            switch (decicion)
+            {
+                case DECICION.IDLE_01:
+                case DECICION.IDLE_02:
+                case DECICION.IDLE_03:
+                    //2~4초간 대기
+                    decicion = DECICION.IDLE_01;
+                    nextDecicionTime = Random.Range(1f, 3f);
+                    break;
+                case DECICION.MOVE_TO_TARGET:
+                    //최대 3~7초간 앞으로 이동
+                    movingDirection = Vector3.forward;
+                    nextDecicionTime = Random.Range(3f, 7f);
+                    break;
+                case DECICION.MOVE_BACK:
+                    //거리가 적당해질떄까지 뒤로 이동
+                    movingDirection = Vector3.back;
+                    nextDecicionTime = 99999f;
+                    break;
+                case DECICION.MOVE_BACK_DODGE:
+                    //방향 선택
+                    character.runVelocity.z = Random.Range(-0.75f, -1f);
+                    int ran = Random.Range(0, 3);
+                    if(ran == 0)
+                    {
+                        character.runVelocity.x = Random.Range(-0.75f, -1f);
+                    }
+                    else if(ran == 1)
+                    {
+                        character.runVelocity.x = Random.Range(0.75f, 1f);
+                    }
+
+                    character.currentState = CURRENT_STATE.MOVE_DODGE;
+                    nextDecicionTime = 2f;
+                    break;
+                case DECICION.DODGE_01:
+                case DECICION.DODGE_02:
+                    decicion = DECICION.DODGE_01;
+                    character.currentState = CURRENT_STATE.DODGE;
+                    nextDecicionTime = 2f;
+                    break;
+                case DECICION.PARRY_01:
+                    character.currentState = CURRENT_STATE.PARRY;
+                    nextDecicionTime = 1.5f;
+                    break;
+                case DECICION.ATTACK_01:
+                    character.currentState = CURRENT_STATE.ATTACK;
+                    nextDecicionTime = 2.2f;
+                    break;
+            }
+        }
+
+        private void StartMoving(Vector3 dir)
+        {
+            if(dir == Vector3.forward)
+            {
+                if (character.runVelocity.z < 1) // 앞으로 이동
+                {
+                    character.runVelocity.z += dampSpeed * Time.deltaTime;
+                    if (character.runVelocity.z > 1)
+                    {
+                        character.runVelocity.z = 1f;
+                    }
+                }
+            }
+            else if(dir == Vector3.back)
+            {
+                if (character.runVelocity.z > -1) // 좌측으로 회전 이동
+                {
+                    character.runVelocity.z -= dampSpeed * Time.deltaTime;
+                    if (character.runVelocity.z < -1)
+                    {
+                        character.runVelocity.z = -1f;
+                    }
+                }
+            }
+            else if(dir == Vector3.right)
+            {
+                if (character.runVelocity.x < 1) // 앞으로 이동
+                {
+                    character.runVelocity.x += dampSpeed * Time.deltaTime;
+                    if (character.runVelocity.x > 1)
+                    {
+                        character.runVelocity.x = 1f;
+                    }
+                }
+            }
+            else if(dir == Vector3.left)
+            {
+                if (character.runVelocity.x > -1) // 좌측으로 회전 이동
+                {
+                    character.runVelocity.x -= dampSpeed * Time.deltaTime;
+                    if (character.runVelocity.x < -1)
+                    {
+                        character.runVelocity.x = -1f;
                     }
                 }
             }
         }
 
-        private void MoveToTarget() //에비 함수
+        private void StopMoving()
         {
-            if (!character.isAttacking && !character.isDodging)
+            if(character.runVelocity.z > 0)
             {
-                float dis = Vector3.Distance(character.transform.position, character.targetEnemy.transform.position);
-                if (dis >= character.chargeDis)
+                character.runVelocity.z -= dampSpeed * Time.deltaTime;
+                if(character.runVelocity.z < 0)
                 {
-                    Vector3 dir = (character.targetEnemy.transform.position - character.transform.position).normalized;
-                    dir.y = 0;
-
-                    if (dir.z > 0)
-                    {
-                        character.runVelocity.z += Time.deltaTime;
-                    }
-                    else if (dir.z < 0)
-                    {
-                        character.runVelocity.z -= Time.deltaTime;
-                    }
-                    else
-                    {
-                        if (character.runVelocity.z > 0)
-                        {
-                            character.runVelocity.z -= Time.deltaTime;
-                            if (character.runVelocity.z < 0)
-                                character.runVelocity.z = 0;
-                        }
-                        else if (character.runVelocity.z < 0)
-                        {
-                            character.runVelocity.z += Time.deltaTime;
-                            if (character.runVelocity.z > 0)
-                                character.runVelocity.z = 0;
-                        }
-                    }
-                    character.runVelocity.z = Mathf.Clamp(character.runVelocity.z, 0, 1);
-                }           
+                    character.runVelocity.z = 0;
+                }
             }
-
-        }
-
-        private void DodgeInput()
-        {
-            CharacterControl targetScript = character.targetEnemy.GetComponent<CharacterControl>();
-            if (!character.targetEnemy.GetComponent<CharacterControl>().isAttacking && character.isDodging)
+            else if(character.runVelocity.z < 0)
             {
-                character.isDodging = false;
-                character.GetAnimator().SetBool("Dodge", false);
-            }
-
-            if (Vector3.Distance(transform.position, character.targetEnemy.transform.position) < targetScript.chargeDis - 0.3f)
-            {
-                if (targetScript.isAttacking)
+                character.runVelocity.z += dampSpeed * Time.deltaTime;
+                if(character.runVelocity.z > 0)
                 {
-                    statePicked = true;
-
-                    if (Random.Range(0, 3) == 0) // 1/3 확률도 피하기
-                    {
-                        StartCoroutine(PlayDodgeDelay());
-                    }
-                }               
+                    character.runVelocity.z = 0;
+                }
             }
-        }
-
-        private void AttackInput()
-        {
-            CharacterControl targetScript = character.targetEnemy.GetComponent<CharacterControl>();
-            if (Vector3.Distance(transform.position, character.targetEnemy.transform.position) < character.chargeDis)
+            if (character.runVelocity.x > 0)
             {
-                if (Random.Range(0, 5) == 0) // 1/5 확률도 공격
+                character.runVelocity.x -= dampSpeed * Time.deltaTime;
+                if (character.runVelocity.x < 0)
                 {
-                    character.curUndetectedTimer = 0; //공격 -> 전투 해제 타이머 리셋
-                    character.isAttacking = true;
-                    character.isDodging = false;
-                    character.GetAnimator().SetBool("Dodge", false);
+                    character.runVelocity.x = 0;
+                }
+            }
+            else if (character.runVelocity.x < 0)
+            {
+                character.runVelocity.x += dampSpeed * Time.deltaTime;
+                if (character.runVelocity.x > 0)
+                {
+                    character.runVelocity.x = 0;
                 }
             }
         }
-        
-        IEnumerator PlayDodgeDelay()
-        {
-            yield return new WaitForSeconds(0.2f);
-            if(character.targetEnemy.GetComponent<CharacterControl>().isAttacking) //아직까지 공격중인지 체크
-            {
-                yield return new WaitForSeconds(0.3f);
-                character.isAttacking = false;
-                character.isDodging = true;
-                character.GetAnimator().SetBool("Dodge", true);
-            }
-        }
 
-        IEnumerator ResetPickedState(float frequency)
-        {
-            yield return new WaitForSeconds(frequency);
-            statePicked = false;
-        }
     }
 
 }

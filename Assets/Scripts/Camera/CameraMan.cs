@@ -16,7 +16,6 @@ namespace HyukinKwon
         [SerializeField] private float dampSpeed; //카매라 따라가는 속도
         private Rigidbody rigidbody;
         
-
         private void Awake()
         {
             rigidbody = GetComponent<Rigidbody>();
