@@ -187,7 +187,7 @@ namespace HyukinKwon
                 targetEnemy = attacker.gameObject;
 
                 if (!invincible)
-                {                               //Parrying떄 콜라이더가 쳐지기 떄문에 예외처리 필요
+                {                               //Parrying떄 콜라이더가 켜지기 떄문에 예외처리 필요
                     if (attacker.team != team && attacker.currentState != CURRENT_STATE.PARRY) //적이 막는중이 아니면 다친다
                     {
                         //충돌 위치 저장
@@ -204,6 +204,10 @@ namespace HyukinKwon
                                 curBloodIndex = (curBloodIndex + 1) % maxBloodNum;
                                 blood.transform.rotation = Quaternion.Euler(contactDir);
                                 blood.transform.position = contactPoint;
+                                if (attacker.currentState == CURRENT_STATE.COMBO_ATTACK)
+                                {
+                                    blood.transform.position = new Vector3(blood.transform.position.x, blood.transform.position.y - 0.6f, blood.transform.position.z);
+                                }
                                 blood.SetActive(true);
                                 StartCoroutine(TurnOffBloodEffect(blood)); //일정 시간후 비활성
                             }
@@ -307,9 +311,10 @@ namespace HyukinKwon
             else
             {
                 medAttackType = MED_ATTACK_TYPE.COMBO;
+                mAnimator.SetFloat("RandomNum", (float)Random.Range(0, 2));
                 curAimTime = 1.4f;
-                attackEndTime = 0.55f;
-                attackEnableTime = 0.45f;
+                attackEndTime = 0.59f;
+                attackEnableTime = 0.55f;
                 attackRange = 0.75f;
             }
         }
