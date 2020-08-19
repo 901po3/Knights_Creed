@@ -204,6 +204,10 @@ namespace HyukinKwon
                                 curBloodIndex = (curBloodIndex + 1) % maxBloodNum;
                                 blood.transform.rotation = Quaternion.Euler(contactDir);
                                 blood.transform.position = contactPoint;
+                                if (attacker.medAttackType == MED_ATTACK_TYPE.COMBO)
+                                {
+                                    blood.transform.position = new Vector3(blood.transform.position.x, blood.transform.position.y - 0.5f, blood.transform.position.z);
+                                }
                                 blood.SetActive(true);
                                 StartCoroutine(TurnOffBloodEffect(blood)); //일정 시간후 비활성
                             }
