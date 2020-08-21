@@ -52,17 +52,18 @@ namespace HyukinKwon
                     character.currentState = CURRENT_STATE.NONE;
                     character.hurtTimer = 0f;
                     animator.SetBool("Hurt", false);
+                    animator.SetBool("Dead", false);
                     character.isBattleModeOn = true;
 
                     //이미 맞았으므로 피하기 취소
                     animator.SetBool("Dodge", false);
                 }
             }
-            else //체력이 0 이하면 죽음
+            else if(character.health <= 0)
             {
                 character.hurtTimer = 0f;
                 character.currentState = CURRENT_STATE.DEAD;
-                animator.SetBool("Dead", true);               
+                animator.SetBool("Dead", true);
             }
 
             //회전 //나중에 다른 State로 분리

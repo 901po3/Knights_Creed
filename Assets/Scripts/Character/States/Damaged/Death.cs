@@ -30,18 +30,6 @@ namespace HyukinKwon
                     character.curAimTime = 3.6f;
                     break;
             }
-
-            //자신이 공격했던 적중에 자신을 타겟으로 하는 적의 타겟을 초기화
-            foreach(CharacterControl c in character.attackList)
-            {
-                if(c.targetEnemy == character.gameObject)
-                {
-                    if (c.attacker == character)
-                        c.attacker = null;
-                    c.targetEnemy = null;
-                }
-            }
-
             character.gameObject.layer = 15;
             character.invincible = true;
         }
@@ -58,6 +46,7 @@ namespace HyukinKwon
                 animator.enabled = false;
                 character.GetRigidbody().isKinematic = true;
                 character.GetComponent<Collider>().isTrigger = true;
+                //character.gameObject.SetActive(false);
             }
         }
 

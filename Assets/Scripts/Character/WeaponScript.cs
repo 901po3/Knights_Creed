@@ -118,26 +118,12 @@ namespace HyukinKwon
                         {
                             damageOnce = true;
                             //때린 대상의을 무기 타겟으로 변경
-                            if (owner.targetEnemy != collision.gameObject)
+                            if(owner.tag == "Player")
                             {
-                                owner.targetEnemy = collision.gameObject;
-                            }
-
-                            //공격한 적이 이미 전에 떄린적이 아니면 AttackList에 추가한다
-                            //옹도: 무기 소유자가 죽었을때 소유자를 타겟으로 갖고있는 대상의 타겟을 초기화
-                            bool isAlreadyAdded = false;
-                            foreach (CharacterControl c in owner.attackList)
-                            {
-                                if (c.gameObject == targetScript.gameObject)
+                                if (owner.targetEnemy != collision.gameObject)
                                 {
-                                    isAlreadyAdded = true;
-                                    break;
+                                    owner.targetEnemy = collision.gameObject;
                                 }
-
-                            }
-                            if (!isAlreadyAdded)
-                            {
-                                owner.attackList.Add(targetScript);
                             }
 
                             //데미지 적용

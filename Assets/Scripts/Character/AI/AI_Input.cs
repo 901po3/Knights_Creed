@@ -39,7 +39,7 @@ namespace HyukinKwon
         [SerializeField] private float nextDecicionTime = 0f; // 다음 행동 정하기까지의 시간
         private bool decided = false; // nextDecicionTime 중복 설정 방지 
         private bool once = false;
-        public GameObject nearestEnemy;
+        public GameObject nearestEnemy; //타겟으로 삼을 적
 
         private void Awake()
         {
@@ -50,15 +50,7 @@ namespace HyukinKwon
 
         private void Update()
         {
-            if(character.attacker == null)
-            {
-                if(nearestEnemy != null)
-                {
-                    character.targetEnemy = nearestEnemy;
-                    targetScript = character.targetEnemy.GetComponent<CharacterControl>();
-                    character.isBattleModeOn = true;
-                }
-            }
+            SetTarget();
 
             if (!character.isDrawingWeapon) return;
             if(decided)
@@ -76,16 +68,35 @@ namespace HyukinKwon
                         StartMoving(movingDirection);
                     }
 
-                    //거리 체크 후 멈춤
-                    CheckDistance();                  
-                    if((distanceState == DISTANCE_STATE.GOOD && character.runVelocity != Vector3.zero) ||
-                        (distanceState == DISTANCE_STATE.CLOSE && character.runVelocity.z > 0) || 
-                        (distanceState == DISTANCE_STATE.FAR && character.currentState != CURRENT_STATE.MOVE_DODGE && character.runVelocity.z < 0))
+                    //멈추기
+                    if(decicion == DECICION.IDLE_01)
                     {
-                        movingDirection = Vector3.zero;
-                        decicion = DECICION.IDLE_01;
-                        nextDecicionTime = 1f;
                         StopMoving();
+                    }
+                    else
+                    {
+                        //거리 체크 후 멈춤
+                        CheckDistance();
+                        if ((distanceState == DISTANCE_STATE.GOOD && character.runVelocity != Vector3.zero) ||
+                            (distanceState == DISTANCE_STATE.CLOSE && character.runVelocity.z > 0) ||
+                            (distanceState == DISTANCE_STATE.FAR && character.currentState != CURRENT_STATE.MOVE_DODGE && character.runVelocity.z < 0))
+                        {
+                            movingDirection = Vector3.zero;
+                            decicion = DECICION.IDLE_01;
+                            nextDecicionTime = 1f;
+                        }
+
+                        //AI 행동 예외처리 
+                        if (targetScript.tag != "Player" && character.runVelocity.z != 0)
+                        {
+                            if ((movingDirection == Vector3.forward && targetScript.GetComponent<AI_Input>().movingDirection == Vector3.back) ||
+                                (movingDirection == Vector3.back && targetScript.GetComponent<AI_Input>().movingDirection == Vector3.forward))
+                            {
+                                movingDirection = Vector3.zero;
+                                decicion = DECICION.IDLE_01;
+                                nextDecicionTime = 1f;
+                            }
+                        }
                     }
 
 
@@ -164,6 +175,97 @@ namespace HyukinKwon
                 // 6. 결정 적용
                 character.ApplyCurrentState();
             }          
+        }
+
+        private void SetTarget()
+        {
+            if (nearestEnemy == null)
+            {
+                character.targetEnemy = null;
+                character.attacker = null;
+                character.isBattleModeOn = false;
+                return;
+            }
+
+            if (character.attacker == null) //캐릭터를 때린 적이 없으면
+            {
+                if (character.targetEnemy == null) //현재 타겟이 없다면
+                {
+                    if (nearestEnemy != null) //가장 가까운 적을 찾는다
+                    {
+                        character.targetEnemy = nearestEnemy;
+                        //NearestEnemy의 TargetOnMe에 자신을 추가한다
+                        bool check = false;
+                        for(int i = 0; i < nearestEnemy.GetComponent<CharacterControl>().targetOnMe.Count; i++)
+                        {
+                            if(character == nearestEnemy.GetComponent<CharacterControl>().targetOnMe[i])
+                            {
+                                check = true;
+                                break;
+                            }
+                        }
+                        if(!check)
+                        {
+                            nearestEnemy.GetComponent<CharacterControl>().targetOnMe.Add(character);
+                        }
+                    }
+                }
+                else //이미 타겟이 있다면
+                {
+                    if (character.targetEnemy != nearestEnemy) //현재 타겟과 가장 가까운 적이 다르다면
+                    {
+                        //현재 Target의 TargetOnMe에 자신을 뺀다
+                        character.targetEnemy.GetComponent<CharacterControl>().targetOnMe.Remove(character);
+                        bool check = false;
+                        for (int i = 0; i < nearestEnemy.GetComponent<CharacterControl>().targetOnMe.Count; i++)
+                        {
+                            if (character == nearestEnemy.GetComponent<CharacterControl>().targetOnMe[i])
+                            {
+                                check = true;
+                                break;
+                            }
+                        }
+                        if (!check)
+                        {
+                            nearestEnemy.GetComponent<CharacterControl>().targetOnMe.Add(character);
+                        }
+                        character.targetEnemy = nearestEnemy; //가장 가까운 적으로 타겟 변경
+                    }
+                }
+            }
+            else  //캐릭터를 때린 적이 있으면
+            {
+                //타겟이 없거나 때린자라 다르면 타겟 변경
+                if (character.targetEnemy == null || character.targetEnemy != character.attacker) 
+                {
+                    bool check = false;
+                    for (int i = 0; i < character.attacker.GetComponent<CharacterControl>().targetOnMe.Count; i++)
+                    {
+                        if (character == character.attacker.GetComponent<CharacterControl>().targetOnMe[i])
+                        {
+                            check = true;
+                            break;
+                        }
+                    }
+                    if (!check)
+                    {
+                        character.attacker.GetComponent<CharacterControl>().targetOnMe.Add(character);
+                    }
+
+                    if(character.targetEnemy != character.attacker)
+                    {
+                        character.targetEnemy.GetComponent<CharacterControl>().targetOnMe.Remove(character);
+                    }
+
+                    character.targetEnemy = character.attacker.gameObject;
+                }
+            }
+
+            if(character.targetEnemy != null)
+            {
+                character.isBattleModeOn = true;
+                targetScript = character.targetEnemy.GetComponent<CharacterControl>();
+            }
         }
 
         private void CheckDistance()

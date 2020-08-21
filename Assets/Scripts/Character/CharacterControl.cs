@@ -76,9 +76,9 @@ namespace HyukinKwon
         //어그로 관련
         public bool isDetected = false; //어그로 체크
         public float undetectedTime; //undetectedTime초 이후에 전투모드 Off
+        public List<CharacterControl> targetOnMe = new List<CharacterControl>(); // 자신을 타겟으로 갖고있는 모든 적들
 
         //공격 관련
-        public List<CharacterControl> attackList; //자신이 때린 적
         public bool cancelAttackAvailable = false; //공격 취소 가능한지 판단
         public bool wasComboAttack = false;
         public bool canComboAttacking = false; //용도: 콤보 어텍 한번만 시전
@@ -132,8 +132,6 @@ namespace HyukinKwon
             mRigidbody = GetComponent<Rigidbody>();
             mAnimator = GetComponent<Animator>();           
 
-            attackList = new List<CharacterControl>();
-
             //처음 공격 예약
             PickFirstNextAttack();
 
@@ -183,8 +181,27 @@ namespace HyukinKwon
             if(collision.transform.tag == "Weapon")
             {
                 //공격한 대상 등록
-                attacker = collision.gameObject.GetComponentInParent<CharacterControl>();
-                targetEnemy = attacker.gameObject;
+                //기준: 때린 상대중 가장 가까운 상대로 타겟 변경
+                CharacterControl newAttacker = collision.gameObject.GetComponentInParent<CharacterControl>();
+                
+                if(attacker == null)
+                {
+                    newAttacker.targetOnMe.Add(this);
+                    attacker = newAttacker;
+                }
+                else if(tag != "Player")
+                {   //가장 가까운 적이 attacker면
+                    if (GetComponent<AI_Input>().nearestEnemy == newAttacker)
+                    { 
+                        //공격자가 다르면 교체
+                        if (newAttacker != attacker)
+                        {
+                            attacker.targetOnMe.Remove(this);
+                            newAttacker.targetOnMe.Add(this);
+                            attacker = newAttacker;
+                        }
+                    }
+                }
 
                 if (!invincible)
                 {                               //Parrying떄 콜라이더가 쳐지기 떄문에 예외처리 필요
@@ -234,6 +251,7 @@ namespace HyukinKwon
                             }
                             currentState = CURRENT_STATE.HURT;
                             mAnimator.SetBool("Hurt", true);
+                            mAnimator.SetBool("Dead", false);
                             mAnimator.SetTrigger("HurtEnterOnce");
                         }
                     }

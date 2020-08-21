@@ -5,8 +5,6 @@
  * Author: Hyukin Kwon 
  * Description: 가장 가까운 타겟을 찾는다
 */
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HyukinKwon
@@ -20,45 +18,67 @@ namespace HyukinKwon
 
         private void Start()
         {            
-            foreach(CharacterControl character in teamOne.GetComponentsInChildren<CharacterControl>())
-            {
-                teamOneMembers.Add(character);
-            }
-            foreach (CharacterControl character in teamTwo.GetComponentsInChildren<CharacterControl>())
-            {
-                teamTwoMembers.Add(character);
-            }
+            //foreach(CharacterControl character in teamOne.GetComponentsInChildren<CharacterControl>())
+            //{
+            //    teamOneMembers.Add(character);
+            //}
+            //foreach (CharacterControl character in teamTwo.GetComponentsInChildren<CharacterControl>())
+            //{
+            //    teamTwoMembers.Add(character);
+            //}
         }
 
         private void Update()
         {
+            RemoveDeadCharacter(teamOneMembers, teamOne);
+            RemoveDeadCharacter(teamTwoMembers, teamTwo);
+
             teamOneMembers.UpdatePositions();
             teamTwoMembers.UpdatePositions();
 
+            UpdateNearestObject(teamOneMembers, teamTwoMembers);
+            UpdateNearestObject(teamTwoMembers, teamOneMembers);
+        }
 
-            for (int i = 0; i < teamOneMembers.Count; i++)
+        //죽은 적 리스트에서 제거
+        private void RemoveDeadCharacter(KdTree<CharacterControl> cTree, GameObject team)
+        {
+            cTree.Clear();
+            foreach (CharacterControl character in team.GetComponentsInChildren<CharacterControl>())
             {
-                if (teamOneMembers[i].health <= 0)
+                if(character.health > 0)
                 {
-                    teamOneMembers.RemoveAt(i);
-                }
-                CharacterControl nearestTarget = teamTwoMembers.FindClosest(teamOneMembers[i].transform.position);
-                if (teamOneMembers[i].GetComponent<AI_Input>() != null)
-                {
-                    teamOneMembers[i].GetComponent<AI_Input>().nearestEnemy = nearestTarget.gameObject;
+                    cTree.Add(character);
                 }
             }
 
-            for (int i = 0; i < teamTwoMembers.Count; i++)
+            //for (int i = 0; i < cTree.Count; i++)
+            //{
+            //    if (cTree[i].health <= 0)
+            //    {
+            //        foreach (CharacterControl cTarget in cTree[i].targetOnMe)
+            //        {
+            //            if (cTarget.attacker == cTree[i])
+            //            {
+            //                cTarget.attacker = null;
+            //            }
+            //            cTarget.targetEnemy = null;
+            //        }
+            //        cTree[i].targetOnMe.Clear();
+            //        cTree.RemoveAt(i);
+            //    }
+            //}
+        }
+
+        //가장 가까운 타겟 찾기
+        private void UpdateNearestObject(KdTree<CharacterControl> cTree, KdTree<CharacterControl> targetCTree)
+        {
+            for (int i = 0; i < cTree.Count; i++)
             {
-                if(teamTwoMembers[i].health <= 0)
+                CharacterControl nearestTarget = targetCTree.FindClosest(cTree[i].transform.position);
+                if (cTree[i].GetComponent<AI_Input>() != null)
                 {
-                    teamTwoMembers.RemoveAt(i);
-                }
-                CharacterControl nearestTarget = teamOneMembers.FindClosest(teamTwoMembers[i].transform.position);
-                if (teamTwoMembers[i].GetComponent<AI_Input>() != null)
-                {
-                    teamTwoMembers[i].GetComponent<AI_Input>().nearestEnemy = nearestTarget.gameObject;
+                    cTree[i].GetComponent<AI_Input>().nearestEnemy = nearestTarget.gameObject;
                 }
             }
         }
