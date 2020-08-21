@@ -50,12 +50,17 @@ namespace HyukinKwon
 
         private void Update()
         {
-            if(targetScript == null)
+            if(character.attacker == null)
             {
-
+                if(nearestEnemy != null)
+                {
+                    character.targetEnemy = nearestEnemy;
+                    targetScript = character.targetEnemy.GetComponent<CharacterControl>();
+                    character.isBattleModeOn = true;
+                }
             }
-            if (!character.isDrawingWeapon) return;
 
+            if (!character.isDrawingWeapon) return;
             if(decided)
             {
                 // 1. 이동 방향 체크
@@ -145,7 +150,6 @@ namespace HyukinKwon
 
                 // 2. 타겟이 있는지 체크
                 if (character.targetEnemy == null) return;
-                targetScript = character.targetEnemy.GetComponent<CharacterControl>();
 
                 // 3. 거리 체크
                 CheckDistance();

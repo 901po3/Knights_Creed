@@ -32,14 +32,35 @@ namespace HyukinKwon
 
         private void Update()
         {
+            teamOneMembers.UpdatePositions();
             teamTwoMembers.UpdatePositions();
 
-            foreach(CharacterControl c in teamTwoMembers)
+
+            for (int i = 0; i < teamOneMembers.Count; i++)
             {
-                CharacterControl nearestTarget = teamOneMembers.FindClosest(c.transform.position);
-                Debug.DrawLine(c.transform.position, nearestTarget.transform.position, Color.red);
+                if (teamOneMembers[i].health <= 0)
+                {
+                    teamOneMembers.RemoveAt(i);
+                }
+                CharacterControl nearestTarget = teamTwoMembers.FindClosest(teamOneMembers[i].transform.position);
+                if (teamOneMembers[i].GetComponent<AI_Input>() != null)
+                {
+                    teamOneMembers[i].GetComponent<AI_Input>().nearestEnemy = nearestTarget.gameObject;
+                }
             }
 
+            for (int i = 0; i < teamTwoMembers.Count; i++)
+            {
+                if(teamTwoMembers[i].health <= 0)
+                {
+                    teamTwoMembers.RemoveAt(i);
+                }
+                CharacterControl nearestTarget = teamOneMembers.FindClosest(teamTwoMembers[i].transform.position);
+                if (teamTwoMembers[i].GetComponent<AI_Input>() != null)
+                {
+                    teamTwoMembers[i].GetComponent<AI_Input>().nearestEnemy = nearestTarget.gameObject;
+                }
+            }
         }
     }
 
