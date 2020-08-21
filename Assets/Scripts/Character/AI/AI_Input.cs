@@ -39,6 +39,7 @@ namespace HyukinKwon
         [SerializeField] private float nextDecicionTime = 0f; // 다음 행동 정하기까지의 시간
         private bool decided = false; // nextDecicionTime 중복 설정 방지 
         private bool once = false;
+        public GameObject nearestEnemy;
 
         private void Awake()
         {
@@ -49,6 +50,10 @@ namespace HyukinKwon
 
         private void Update()
         {
+            if(targetScript == null)
+            {
+
+            }
             if (!character.isDrawingWeapon) return;
 
             if(decided)
