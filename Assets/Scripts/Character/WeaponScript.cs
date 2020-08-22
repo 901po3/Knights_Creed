@@ -1,7 +1,7 @@
 ﻿/*
  * Class: WeaponScript
  * Date: 2020.8.16
- * Last Modified : 2020.8.17
+ * Last Modified : 2020.8.22
  * Author: Hyukin Kwon 
  * Description:  무기에 들어가는 스크립트
  *             
@@ -114,33 +114,100 @@ namespace HyukinKwon
                         GetComponent<Collider>().enabled = false;
 
                         //데미지 적용
-                        if (!damageOnce)
-                        {
-                            damageOnce = true;
-                            //때린 대상의을 무기 타겟으로 변경
-                            if(owner.tag == "Player")
-                            {
-                                if (owner.targetEnemy != collision.gameObject)
-                                {
-                                    owner.targetEnemy = collision.gameObject;
-                                }
-                            }
+                        ApplyDamage(targetScript);
 
-                            //데미지 적용
-                            if(owner.medAttackType == MED_ATTACK_TYPE.COMBO)
-                            {
-                                targetScript.health -= (damage * 2);
-                                Debug.Log("Combo!");
-                            }
-                            else
-                            {
-                                targetScript.health -= damage;
-                            }
-                            Debug.Log(targetScript.gameObject + "'s health: " + targetScript.health);
+                        //Hurt Anim
+                        if(targetScript.health > 0)
+                        {
+                            MoveToHurt(targetScript);
+                        }
+                        else //Death
+                        {
+                            GoToDeath(targetScript);
                         }
                     }
                 }
             }              
+        }
+
+        private void ApplyDamage(CharacterControl targetScript)
+        {
+            if(targetScript.health > 0)
+            {
+                if (!damageOnce)
+                {
+                    damageOnce = true;
+                    //때린 대상의을 무기 타겟으로 변경
+                    if (owner.tag == "Player")
+                    {
+                        if (owner.targetEnemy != targetScript.gameObject)
+                        {
+                            owner.targetEnemy = targetScript.gameObject;
+                        }
+                    }
+
+                    //데미지 적용
+                    if (owner.medAttackType == MED_ATTACK_TYPE.COMBO)
+                    {
+                        targetScript.health -= (damage * 2);
+                        Debug.Log("Combo!");
+                    }
+                    else
+                    {
+                        targetScript.health -= damage;
+                    }
+                    Debug.Log(targetScript.gameObject + "'s health: " + targetScript.health);
+                }
+            }      
+        }
+
+        private void MoveToHurt(CharacterControl targetScript)
+        {
+            if (!targetScript.hurtAnimOnce)
+            {
+                targetScript.hurtAnimOnce = true;
+
+                //일정 시간마다 Hurt 애니메이션 재생
+                StartCoroutine(HurtPlayFrequency(targetScript));
+
+                //공격중에 피해를 받으면 미리 다음 공격을 정해둔다
+                if (targetScript.medAttackType == MED_ATTACK_TYPE.COMBO)
+                {
+                    targetScript.PickFirstNextAttack();
+                }
+                else if (targetScript.currentState == CURRENT_STATE.ATTACK)
+                {
+                    targetScript.PickNextAttack(false);
+                }
+
+                targetScript.currentState = CURRENT_STATE.HURT;
+                targetScript.hurtTimer = 0f;
+                targetScript.GetAnimator().SetBool("Hurt", true);
+                targetScript.GetAnimator().SetBool("Dead", false);
+                targetScript.GetAnimator().SetTrigger("HurtEnterOnce");
+            }
+        }
+
+        IEnumerator HurtPlayFrequency(CharacterControl targetScript)
+        {
+            yield return new WaitForSeconds(2f);
+            targetScript.hurtAnimOnce = false;
+        }
+
+        private void GoToDeath(CharacterControl targetScript)
+        {
+            if (targetScript.medAttackType == MED_ATTACK_TYPE.COMBO)
+            {
+                targetScript.PickFirstNextAttack();
+            }
+            else if (targetScript.currentState == CURRENT_STATE.ATTACK)
+            {
+                targetScript.PickNextAttack(false);
+            }
+            targetScript.deathTimer = 0f;
+            targetScript.currentState = CURRENT_STATE.DEAD;
+            targetScript.GetAnimator().SetBool("Dead", true);
+            targetScript.GetAnimator().SetTrigger("DeadEnterOnce");
         }
     }
 }

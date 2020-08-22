@@ -236,29 +236,7 @@ namespace HyukinKwon
                             contactPoint = new Vector3(0, 10000, 0);
                             contactDir = Vector3.zero;
                         }
-                        collision.gameObject.GetComponent<Collider>().isTrigger = true;
-
-                        if (!hurtAnimOnce)
-                        {
-                            hurtAnimOnce = true;
-
-                            //일정 시간마다 Hurt 애니메이션 재생
-                            StartCoroutine(HurtPlayFrequency());
-
-                            //공격중에 피해를 받으면 미리 다음 공격을 정해둔다
-                            if (medAttackType == MED_ATTACK_TYPE.COMBO)
-                            {
-                                PickFirstNextAttack();
-                            }
-                            else if (currentState == CURRENT_STATE.ATTACK)
-                            {
-                                PickNextAttack(false);
-                            }
-                            currentState = CURRENT_STATE.HURT;
-                            mAnimator.SetBool("Hurt", true);
-                            mAnimator.SetBool("Dead", false);
-                            mAnimator.SetTrigger("HurtEnterOnce");
-                        }
+                        collision.gameObject.GetComponent<Collider>().isTrigger = true;                      
                     }
                 }
             }           
@@ -268,12 +246,6 @@ namespace HyukinKwon
         {
             yield return new WaitForSeconds(0.8f);
             blood.SetActive(false);
-        }
-
-        IEnumerator HurtPlayFrequency()
-        {
-            yield return new WaitForSeconds(2f);
-            hurtAnimOnce = false;
         }
 
         //미리 다음 공격을 정해둔다

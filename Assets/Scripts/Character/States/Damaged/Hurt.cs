@@ -48,26 +48,15 @@ namespace HyukinKwon
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
 
-            if (character.health > 0) //체력이 0 Hurt 재생
+            character.hurtTimer += Time.deltaTime;
+            if (character.hurtTimer >= character.curAimTime && character.currentState != CURRENT_STATE.DEAD) //애니메이션 시간이 끝나면 나간다
             {
-                character.hurtTimer += Time.deltaTime;
-                if (character.hurtTimer >= character.curAimTime) //애니메이션 시간이 끝나면 나간다
-                {
-                    character.currentState = CURRENT_STATE.NONE;
-                    character.hurtTimer = 0f;
-                    animator.SetBool("Hurt", false);
-                    animator.SetBool("Dead", false);
-                    character.isBattleModeOn = true;
+                character.currentState = CURRENT_STATE.NONE;
+                animator.SetBool("Hurt", false);
+                character.isBattleModeOn = true;
 
-                    //이미 맞았으므로 피하기 취소
-                    animator.SetBool("Dodge", false);
-                }
-            }
-            else if(character.health <= 0)
-            {
-                character.hurtTimer = 0f;
-                character.currentState = CURRENT_STATE.DEAD;
-                animator.SetBool("Dead", true);
+                //이미 맞았으므로 피하기 취소
+                animator.SetBool("Dodge", false);
             }
 
             //회전 //나중에 다른 State로 분리
