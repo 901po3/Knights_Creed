@@ -17,7 +17,7 @@ namespace HyukinKwon
         public KdTree<CharacterControl> teamTwoMembers = new KdTree<CharacterControl>();
 
         private void Start()
-        {            
+        {
             //foreach(CharacterControl character in teamOne.GetComponentsInChildren<CharacterControl>())
             //{
             //    teamOneMembers.Add(character);
@@ -73,15 +73,27 @@ namespace HyukinKwon
         //가장 가까운 타겟 찾기
         private void UpdateNearestObject(KdTree<CharacterControl> cTree, KdTree<CharacterControl> targetCTree)
         {
-            for (int i = 0; i < cTree.Count; i++)
+            if(targetCTree.Count > 0)
             {
-                CharacterControl nearestTarget = targetCTree.FindClosest(cTree[i].transform.position);
-                if (cTree[i].GetComponent<AI_Input>() != null)
+                foreach (CharacterControl c in cTree)
                 {
-                    cTree[i].GetComponent<AI_Input>().nearestEnemy = nearestTarget.gameObject;
+                    CharacterControl nearestTarget = targetCTree.FindClosest(c.transform.position);
+                    if (c.GetComponent<AI_Input>() != null)
+                    {
+                        c.GetComponent<AI_Input>().nearestEnemy = nearestTarget.gameObject;
+                    }
+                }
+            }
+            else
+            {
+                foreach (CharacterControl c in cTree)
+                {
+                    if (c.GetComponent<AI_Input>() != null)
+                    {
+                        c.GetComponent<AI_Input>().nearestEnemy = null;
+                    }
                 }
             }
         }
     }
-
 }

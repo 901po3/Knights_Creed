@@ -15,29 +15,33 @@ namespace HyukinKwon
         public override void StartAbility(CharacterState characterState, Animator animator)
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
-            switch(character.attacker.medAttackType)
+            if(character.attacker != null)
             {
-                case MED_ATTACK_TYPE.HIGH:
-                    animator.SetFloat("RandomHit", 0);
-                    character.curAimTime = 1.45f;
-                    break;
-                case MED_ATTACK_TYPE.MIDDLE:
-                    animator.SetFloat("RandomHit", 1);
-                    character.curAimTime = 1f;
-                    break;
-                case MED_ATTACK_TYPE.LOW:
-                    animator.SetFloat("RandomHit", 2);
-                    character.curAimTime = 1.1f;
-                    break;
-                case MED_ATTACK_TYPE.COMBO:
-                    animator.SetFloat("RandomHit", 3);
-                    character.curAimTime = 3.1f;
-                    break;
+                switch (character.attacker.medAttackType)
+                {
+                    case MED_ATTACK_TYPE.HIGH:
+                        animator.SetFloat("RandomHit", 0);
+                        character.curAimTime = 1.45f;
+                        break;
+                    case MED_ATTACK_TYPE.MIDDLE:
+                        animator.SetFloat("RandomHit", 1);
+                        character.curAimTime = 1f;
+                        break;
+                    case MED_ATTACK_TYPE.LOW:
+                        animator.SetFloat("RandomHit", 2);
+                        character.curAimTime = 1.1f;
+                        break;
+                    case MED_ATTACK_TYPE.COMBO:
+                        animator.SetFloat("RandomHit", 3);
+                        character.curAimTime = 3.1f;
+                        break;
+                }
+
+                Transform attackerTrans = character.attacker.transform;
+                attackerTrans.position = new Vector3(character.attacker.transform.position.x,
+                    character.transform.position.y, character.attacker.transform.position.z);
+                character.transform.LookAt(attackerTrans);
             }
-            Transform attackerTrans = character.attacker.transform;
-            attackerTrans.position = new Vector3(character.attacker.transform.position.x, 
-                character.transform.position.y, character.attacker.transform.position.z);
-            character.transform.LookAt(attackerTrans);
         }
 
         public override void UpdateAbility(CharacterState characterState, Animator animator)

@@ -178,13 +178,18 @@ namespace HyukinKwon
         //피해 적용
         private void CheckHurt(Collision collision)
         {
+            if(currentState == CURRENT_STATE.DEAD)
+            {
+                return;
+            }
+
             if(collision.transform.tag == "Weapon")
             {
                 //공격한 대상 등록
                 //기준: 때린 상대중 가장 가까운 상대로 타겟 변경
                 CharacterControl newAttacker = collision.gameObject.GetComponentInParent<CharacterControl>();
                 
-                if(attacker == null)
+                if(attacker == null || attacker.health <= 0)
                 {
                     newAttacker.targetOnMe.Add(this);
                     attacker = newAttacker;

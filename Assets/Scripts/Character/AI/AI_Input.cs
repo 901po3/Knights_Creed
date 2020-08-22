@@ -235,8 +235,12 @@ namespace HyukinKwon
             }
             else  //캐릭터를 때린 적이 있으면
             {
-                //타겟이 없거나 때린자라 다르면 타겟 변경
-                if (character.targetEnemy == null || character.targetEnemy != character.attacker) 
+                //타겟이 없거나 때린자와 다르면 타겟 변경
+                if(character.attacker.health <= 0)
+                {
+                    character.attacker = null;
+                }
+                else if (character.targetEnemy == null || character.targetEnemy != character.attacker) 
                 {
                     bool check = false;
                     for (int i = 0; i < character.attacker.GetComponent<CharacterControl>().targetOnMe.Count; i++)
@@ -247,12 +251,13 @@ namespace HyukinKwon
                             break;
                         }
                     }
-                    if (!check)
+                    if (!check) //한번만 추가
                     {
                         character.attacker.GetComponent<CharacterControl>().targetOnMe.Add(character);
                     }
 
-                    if(character.targetEnemy != character.attacker)
+                    //타겟의 변경 되었으니 예전 타겟의 TargetOnMe에서 자신 지우기
+                    if(character.targetEnemy != null && character.targetEnemy != character.attacker)
                     {
                         character.targetEnemy.GetComponent<CharacterControl>().targetOnMe.Remove(character);
                     }

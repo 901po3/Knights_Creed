@@ -42,7 +42,10 @@ namespace HyukinKwon
             character.deathTimer += Time.deltaTime;
             if(character.deathTimer >= character.curAimTime - Time.deltaTime)
             {
-                character.attacker.targetEnemy = null;
+                if(character.attacker != null && character.attacker.currentState != CURRENT_STATE.DEAD)
+                {
+                    character.attacker.targetEnemy = null;
+                }
                 animator.enabled = false;
                 character.GetRigidbody().isKinematic = true;
                 character.GetComponent<Collider>().isTrigger = true;
@@ -52,7 +55,10 @@ namespace HyukinKwon
 
         public override void ExitAbility(CharacterState characterState, Animator animator)
         {
-
+            CharacterControl character = characterState.GetCharacterControl(animator);
+            animator.enabled = false;
+            character.GetRigidbody().isKinematic = true;
+            character.GetComponent<Collider>().isTrigger = true;
         }
     }
 
