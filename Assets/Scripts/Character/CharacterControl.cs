@@ -1,7 +1,7 @@
 ﻿/*
  * Class: CharacterControl
  * Date: 2020.8.10
- * Last Modified : 2020.8.17
+ * Last Modified : 2020.8.25
  * Author: Hyukin Kwon 
  * Description: 캐릭터(플레이어, AI)의 상태 클래스 
  *              플레이어면 인풋 클래스와 함께 사용
@@ -267,6 +267,8 @@ namespace HyukinKwon
             PickNextAttack(false);
         }
 
+        //매개변수가 false면 일반 공격 예약
+        //매개변수가 true면 콤보 공격 예약
         public void PickNextAttack(bool Combo)
         {
             if(!Combo)
