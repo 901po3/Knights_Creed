@@ -21,7 +21,7 @@ namespace HyukinKwon
         {
             CharacterControl character = characterState.GetCharacterControl(animator);
             //if(!character.isDetected)
-            if(character.targetEnemy == null)
+            if(character.targetEnemy == null && character.attacker == null)
             {
                 character.curUndetectedTimer += Time.deltaTime;
                 if(character.curUndetectedTimer >= character.undetectedTime)

@@ -1,7 +1,7 @@
 ﻿/*
  * Class: CharacterState
  * Date: 2020.8.10
- * Last Modified : 2020.8.13
+ * Last Modified : 2020.9.15
  * Author: Hyukin Kwon 
  * Description: 플레이어의 인풋을 받는 클래스
  *              플레이어의 인풋으로 CharacterControl 상태 변수를 제어한다.
@@ -14,6 +14,7 @@ namespace HyukinKwon
     {
         //캐릭터 Gameobject의 CharacterControl 스크립트
         private CharacterControl character;
+        private CharacterControl closestTargetFromPlayer;
 
         private void Awake()
         {
@@ -39,6 +40,14 @@ namespace HyukinKwon
             character.runVelocity.z = Input.GetAxis("Vertical");
             character.runVelocity.x = Input.GetAxis("Horizontal");
             character.runVelocity.y = 0;
+        }
+
+        private void OnTriggerStay(Collider other) //가장 가까운 적을 찾는다
+        {
+            if(other.gameObject.tag == "AI" && other.GetComponent<CharacterControl>().team != character.team)
+            {
+                closestTargetFromPlayer = other.GetComponent<CharacterControl>();
+            }
         }
 
         private void StartBattleInput()
@@ -93,6 +102,11 @@ namespace HyukinKwon
                     {
                         if (character.currentState != CURRENT_STATE.DODGE && character.currentState != CURRENT_STATE.MOVE_DODGE)
                         {
+                            if(character.targetEnemy == null)
+                            {
+                                if (closestTargetFromPlayer != null)
+                                    character.targetEnemy = closestTargetFromPlayer.gameObject;
+                            }
                             if (character.runVelocity.magnitude < 0.1f && character.targetEnemy != null)
                             {
                                 character.currentState = CURRENT_STATE.PARRY;

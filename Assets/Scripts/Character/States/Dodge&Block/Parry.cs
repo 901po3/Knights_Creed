@@ -20,24 +20,32 @@ namespace HyukinKwon
             character.curUndetectedTimer = 0; //피하기 시도하면-> 전투 해제 시간 리셋
 
             //피하기 종류 선택
-            switch (character.targetEnemy.GetComponent<CharacterControl>().medAttackType)
+            if(character.targetEnemy != null)
             {
-                case MED_ATTACK_TYPE.HIGH:
-                    character.curAimTime = 1.2f;
-                    character.parryDodgeEndTime = 1f;
-                    animator.SetFloat("RandomHit", 0);
-                    break;
-                case MED_ATTACK_TYPE.MIDDLE:
-                    character.curAimTime = 0.9f;
-                    character.parryDodgeEndTime = 0.8f;
-                    animator.SetFloat("RandomHit", 1);
-                    break;
-                case MED_ATTACK_TYPE.LOW:
-                    character.curAimTime = 1.2f;
-                    character.parryDodgeEndTime = 0.7f;
-                    animator.SetFloat("RandomHit", 2);
-                    break;
+                switch (character.targetEnemy.GetComponent<CharacterControl>().medAttackType)
+                {
+                    case MED_ATTACK_TYPE.HIGH:
+                        character.curAimTime = 1.2f;
+                        character.parryDodgeEndTime = 1f;
+                        animator.SetFloat("RandomHit", 0);
+                        break;
+                    case MED_ATTACK_TYPE.MIDDLE:
+                        character.curAimTime = 0.9f;
+                        character.parryDodgeEndTime = 0.8f;
+                        animator.SetFloat("RandomHit", 1);
+                        break;
+                    case MED_ATTACK_TYPE.LOW:
+                        character.curAimTime = 1.2f;
+                        character.parryDodgeEndTime = 0.7f;
+                        animator.SetFloat("RandomHit", 2);
+                        break;
+                }
             }
+            else
+            {
+                //가장 가까운 적을 targetEnemy로 설정
+            }
+           
             //공격에서 넘어왔을때를 대비 무기 콜라이더 비활성
             character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().ToggleCollision(false);
 
