@@ -40,7 +40,7 @@ namespace HyukinKwon
 
             //애니메이션이 끝나면 캐릭터 비활성화
             character.deathTimer += Time.deltaTime;
-            if(character.deathTimer >= character.curAimTime - Time.deltaTime)
+            if(character.deathTimer > character.curAimTime - Time.deltaTime)
             {
                 if(character.attacker != null && character.attacker.currentState != CURRENT_STATE.DEAD)
                 {

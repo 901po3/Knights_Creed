@@ -80,6 +80,8 @@ namespace HyukinKwon
                 owner.attacker = collision.gameObject.GetComponentInParent<CharacterControl>();
                 owner.attacker.attacker = owner;
                 owner.canComboAttacking = true;
+                if (owner.attacker.targetEnemy == null)
+                    owner.attacker.targetEnemy = owner.gameObject;
                 owner.attacker.currentState = CURRENT_STATE.BLOCKED;
                 owner.attacker.GetAnimator().SetBool("Blocked", true);
 
@@ -123,6 +125,8 @@ namespace HyukinKwon
                         }
                         else //Death
                         {
+                            if (targetScript.attacker == null)
+                                targetScript.attacker = owner;
                             GoToDeath(targetScript);
                         }
                     }
@@ -137,7 +141,7 @@ namespace HyukinKwon
                 if (!damageOnce)
                 {
                     damageOnce = true;
-                    //때린 대상의을 무기 타겟으로 변경
+                    //때린 대상을 무기 타겟으로 변경
                     if (owner.tag == "Player")
                     {
                         if (owner.targetEnemy != targetScript.gameObject)
