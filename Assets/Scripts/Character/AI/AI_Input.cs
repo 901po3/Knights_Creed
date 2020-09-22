@@ -39,6 +39,7 @@ namespace HyukinKwon
         [SerializeField] private float nextDecicionTime = 0f; // 다음 행동 정하기까지의 시간
         private bool decided = false; // nextDecicionTime 중복 설정 방지 
         private bool once = false;
+        private bool delayPlayOnce = false; //딜레이가 필요한 행동을 한번만 재생
         public GameObject nearestEnemy; //타겟으로 삼을 적
 
         private void Awake()
@@ -114,7 +115,7 @@ namespace HyukinKwon
 
                                 decicion = (DECICION)Random.Range((int)DECICION.DODGE_01, (int)DECICION.IDLE_02 + 1);
                                 UpdateStateByDecicion();
-                                character.ApplyCurrentState();
+                                ApplyCurrentState();
                             }
                         }
                     }
@@ -173,7 +174,7 @@ namespace HyukinKwon
                 decided = true;
 
                 // 6. 결정 적용
-                character.ApplyCurrentState();
+                ApplyCurrentState();
             }          
         }
 
@@ -459,6 +460,52 @@ namespace HyukinKwon
             }
         }
 
+        public void ApplyCurrentState()
+        {
+            switch (character.currentState)
+            {
+                case CURRENT_STATE.COMBO_ATTACK:
+                    character.canComboAttacking = false;
+                    character.GetAnimator().SetBool("ComboAttack", true);
+                    character.GetAnimator().SetBool("Attack", true);
+                    break;
+                case CURRENT_STATE.ATTACK:
+                    character.GetAnimator().SetBool("ComboAttack", false);
+                    character.GetAnimator().SetBool("Attack", true);
+                    break;
+                case CURRENT_STATE.DODGE:
+                    if(!delayPlayOnce)
+                    {
+                        StartCoroutine(PlayDodgeOnDelay(0.4f));
+                    }
+                    break;
+                case CURRENT_STATE.MOVE_DODGE:
+                    character.GetAnimator().SetBool("MoveDodge", true);
+                    break;
+                case CURRENT_STATE.PARRY:
+                    if (!delayPlayOnce)
+                    {
+                        StartCoroutine(PlayParryOnDelay(0.3f));
+                    }
+                    break;
+            }
+        }
+
+        IEnumerator PlayDodgeOnDelay(float time)
+        {
+            delayPlayOnce = true;
+            yield return new WaitForSeconds(time);
+            character.GetAnimator().SetBool("Dodge", true);
+            delayPlayOnce = false;
+        }
+
+        IEnumerator PlayParryOnDelay(float time)
+        {
+            delayPlayOnce = true;
+            yield return new WaitForSeconds(time);
+            character.GetAnimator().SetBool("Parry", true);
+            delayPlayOnce = false;
+        }
     }
 
 }

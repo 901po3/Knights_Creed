@@ -30,7 +30,7 @@ namespace HyukinKwon
                     character.curAimTime = 3.6f;
                     break;
             }
-            character.gameObject.layer = 15;
+            //character.gameObject.layer = 15;
             character.invincible = true;
         }
 

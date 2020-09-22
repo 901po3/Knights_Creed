@@ -314,30 +314,5 @@ namespace HyukinKwon
                 attackRange = 0.75f;
             }
         }
-
-        public void ApplyCurrentState()
-        {
-            switch (currentState)
-            {
-                case CURRENT_STATE.COMBO_ATTACK:
-                    canComboAttacking = false;
-                    GetAnimator().SetBool("ComboAttack", true);
-                    GetAnimator().SetBool("Attack", true);
-                    break;
-                case CURRENT_STATE.ATTACK:
-                    GetAnimator().SetBool("ComboAttack", false);
-                    GetAnimator().SetBool("Attack", true);
-                    break;
-                case CURRENT_STATE.DODGE:
-                    GetAnimator().SetBool("Dodge", true);
-                    break;
-                case CURRENT_STATE.MOVE_DODGE:
-                    GetAnimator().SetBool("MoveDodge", true);
-                    break;
-                case CURRENT_STATE.PARRY:
-                    GetAnimator().SetBool("Parry", true);
-                    break;
-            }
-        }
     }
 }
