@@ -109,7 +109,7 @@ namespace HyukinKwon
                 if(targetScript.tag == "Player" || targetScript.tag == "AI")
                 {
                     //적이고, 적이 피하는중이 아니고, 내가 막는중이 아니면 공격 적용
-                    if (targetScript.team != owner.team && !targetScript.invincible)
+                    if (targetScript.team != owner.team && !targetScript.invincible && targetScript.currentState != CURRENT_STATE.PARRY)
                     {
                         //충돌 직후 콜라이더 비활성
                         //한명만 떄린다

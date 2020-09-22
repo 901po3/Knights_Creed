@@ -71,6 +71,7 @@ namespace HyukinKwon
                 character.GetAnimator().SetBool("MoveDodge", false);
                 character.moveParryDodgeVec = Vector3.zero;
                 character.runVelocity = Vector3.zero;
+                
             }
         }
 

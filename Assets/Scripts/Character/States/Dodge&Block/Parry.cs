@@ -22,6 +22,13 @@ namespace HyukinKwon
             //피하기 종류 선택
             if(character.targetEnemy != null)
             {
+                if(character.tag == "AI" && character.targetEnemy.GetComponent<CharacterControl>().currentState != CURRENT_STATE.ATTACK)
+                {
+                    character.currentState = CURRENT_STATE.NONE;
+                    character.GetAnimator().SetBool("Parry", false);
+                    character.drawedWeapon[(int)character.weapon].GetComponent<WeaponScript>().parryOnce = false;
+                    return;
+                }
                 switch (character.targetEnemy.GetComponent<CharacterControl>().medAttackType)
                 {
                     case MED_ATTACK_TYPE.HIGH:

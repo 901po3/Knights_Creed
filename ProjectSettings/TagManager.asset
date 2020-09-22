@@ -10,6 +10,7 @@ TagManager:
   - Weapon
   - Ground
   - Tree
+  - stair
   layers:
   - Default
   - TransparentFX

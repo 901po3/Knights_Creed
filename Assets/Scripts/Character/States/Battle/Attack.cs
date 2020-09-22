@@ -84,9 +84,12 @@ namespace HyukinKwon
                 {
                     animator.SetBool("Parry", true);
                 }
-                else if(character.currentState == CURRENT_STATE.BLOCKED)
+                else if(character.targetEnemy && character.targetEnemy.GetComponent<CharacterControl>().currentState != CURRENT_STATE.PARRY)
                 {
-                    animator.SetBool("Blocked", true);
+                    if (character.currentState == CURRENT_STATE.BLOCKED)
+                    {
+                        animator.SetBool("Blocked", true);
+                    }
                 }
                 animator.SetBool("Attack", false);
             }
