@@ -20,8 +20,10 @@ namespace HyukinKwon
             character.curUndetectedTimer = 0; //피하기 시도하면-> 전투 해제 시간 리셋
 
             //피하기 종류 선택
-            switch (character.targetEnemy.GetComponent<CharacterControl>().medAttackType)
+            //상대방의 예약된 공격 정보를 받아온다.
+            switch (character.targetEnemy.GetComponent<CharacterControl>().medAttackType) 
             {
+                //적의 공격 타입에 따라 피하기 애니메이션 설정
                 case MED_ATTACK_TYPE.HIGH:
                     character.curAimTime = 1.3f;
                     character.parryDodgeEndTime = 0.75f;
